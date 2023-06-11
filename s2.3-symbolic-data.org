@@ -1,0 +1,1386 @@
+#+PROPERTY: header-args  :cache yes
+#+PROPERTY: header-args+  :exports both
+#+PROPERTY: header-args+  :noweb strip-export
+#+TITLE: 2.3 Symbolic Data
+#+options: num:nil
+
+Extending the representation from numbers to also include arbitrary symbols.
+
+** 2.3.1 Quotation
+
+How to compound data using symbols? e.g. to obtain lists like
+~(a b c d)~
+~(23 45 17)~
+~((Norah 12) (Molly 9))~
+
+To manipulate symbols, we need the ability to /quote/ a data object.
+~(list a b)~ won't work as it will take /values/ of ~a~ and ~b~.
+
+"say your name aloud" vs "say 'your name' aloud".
+
+Scheme's way to quote is to place ' at the beginning of the object to be quoted:
+#+begin_src racket
+  (define a 1)
+  (define b 2)
+  (list a b)
+  (list 'a 'b)
+  (list 'a b)
+#+end_src
+
+#+RESULTS[d549289c88cd65e03a1c0fb9ba4a8a8aa3556f92]:
+: '(1 2)
+: '(a b)
+: '(a 2)
+
+Quoting lists:
+#+begin_src racket
+  #lang sicp
+  
+  (car '(a b c))
+  (cdr '(a b c))
+  '()
+  nil
+#+end_src
+
+#+RESULTS[7017373403f185a920044575d5252129772cf925]:
+: a
+: (b c)
+: ()
+: ()
+
+~eq?~ can be used to check if two symbols are the same.
+
+#+name: memq
+#+begin_src racket
+  (define (memq item x)
+    (cond ((null? x) false)
+	  ((eq? item (car x)) x)
+	  (else (memq item (cdr x)))))
+
+#+end_src
+
+#+RESULTS[a8539e1a53544cf5c9f3adc4ab5c785a7eaef16e]: memq
+
+#+begin_src racket
+  <<memq>>
+  (memq 'apple '(pear banana prune))
+  (memq 'apple '(pear apple banana apple))
+#+end_src
+
+#+RESULTS[f32a637e7bdbd3a23446e75202d1f7ee5fff450d]:
+: #f
+: '(apple banana apple)
+
+**** Exercise 2.53 - quotation practice
+#+begin_src racket
+  #lang sicp
+
+  (list 'a 'b 'c)  ; => (a b c)
+  (list (list 'george))  ; => ((george))
+  (cdr '((x1 x2) (y1 y2)))  ; => ((y1 y2))
+  (cadr '((x1 x2) (y1 y2)))  ; => (y1 y2)
+  (pair? (car '(a short list)))  ; => false
+  (memq 'red '((red shoes) (blue socks)))  ; => false
+  (memq 'red '(red shoes blue socks))  ; => (red shoes blue socks)
+#+end_src
+
+#+RESULTS[0cc9d48ceee62058dc385f625e55f71eafd3c527]:
+: (a b c)
+: ((george))
+: ((y1 y2))
+: (y1 y2)
+: #f
+: #f
+: (red shoes blue socks)
+
+**** Exercise 2.54 - ~equal?~ to compare lists
+
+#+begin_src racket
+  #lang sicp
+
+  (define (equal? a b)
+    (cond ((and (symbol? a) (symbol? b) (eq? a b))
+	   true)
+	  ((and (null? a) (null? b))
+	   true)
+	  ((and (list? a)
+		(list? b)
+		(not (null? a))
+		(not (null? b))
+		(equal? (car a) (car b))
+		(equal? (cdr a) (cdr b)))
+	   true)
+	  (else
+	   false)))
+
+  (equal? 'a 'a)
+  (equal? '(a b) '(a b))
+  (equal? '(a b) '(a))
+  (equal? '(this is a list) '(this is a list))
+  (equal? '(this (is a) list) '(this is a list))
+#+end_src
+
+#+RESULTS[75da913452c5980b0600802c74e88ba3113a732c]:
+: #t
+: #t
+: #f
+: #t
+: #f
+
+**** Exercise 2.55
+
+~(car ''abracadabra)~ is the same as ~(car '(quote abracadabra))~ and this should evaluate to ~quote~.
+
+** 2.3.2 example: symbolic differentiation
+
+strategy of data abstraction - first define a differentiation algorithm that operates on abstract objects suchs as sums, products and variables, and only afterwards address the representation problem.
+
+*** the differentiation program with abstract data
+
+we will consider a symbolic differentiation program that handle expressions involving addition and multiplication of two variables.
+
+differentiation of any such expression can be carried out following these reduction rules:
+
+$$\frac{dc}{dx} = 0$$
+where $c$ is a constant or a variable different than $x$
+
+$$\frac{dx}{dx} = 1$$
+
+$$\frac{d(u+v)}{dx} = \frac{du}{dx}+\frac{dv}{dx}$$
+
+$$\frac{d(uv)}{dx} = u\left(\frac{dv}{dx}\right) + v\left(\frac{du}{dx}\right)$$
+
+assume the following are defined:
+#+name: deriv-algorithm
+#+begin_src racket
+  (define (deriv exp var)
+    (cond ((number? exp) 0)
+	  ((variable? exp)
+	   (if (same-variable? exp var) 1 0))
+	  ((sum? exp)
+	   (make-sum (deriv (addend exp) var)
+		     (deriv (augend exp) var)))
+	  ((product? exp)
+	   (make-sum (make-product
+		      (multiplier exp)
+		      (deriv (multiplicand exp) var))
+		     (make-product
+		      (deriv (multiplier exp) var)
+		      (multiplicand exp))))
+	  ; Exercise 2.56
+	  ((and (exponentiation? exp) (number? (exponent exp)))
+	   (make-product
+	    (exponent exp)
+	    (make-product
+	     (make-exponentiation (base exp) (- (exponent exp) 1))
+	     (deriv (base exp) var))))
+	  (else
+	   (error "unknown expression type -- deriv" exp))))
+
+#+end_src
+
+#+RESULTS[5eac6a29369a42c7cc97acb7904b679cea64b718]: deriv-algorithm
+: /var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-vnKy6L/ob-racketuB7lG2.rkt:5:10: variable?: unbound identifier
+:   in: variable?
+:   location...:
+:    /var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-vnKy6L/ob-racketuB7lG2.rkt:5:10
+
+#+begin_src racket :exports code
+  (variable? e)
+  (same-variable? v1 v2)
+  (sum? e)
+  (addend e)
+  (augend e)
+  (make-sum a1 a2)
+  (product? e)
+  (multiplier e)
+  (multiplicand e)
+  (make-product m1 m2)
+#+end_src
+
+#+RESULTS[26d58c3e9cded42c5b70274c866b4da2eec43c13]:
+: /var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-ROoqMH/ob-racketwnZSVz.rkt:3:1: variable?: unbound identifier
+:   in: variable?
+:   location...:
+:    /var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-ROoqMH/ob-racketwnZSVz.rkt:3:1
+
+*** Representing algebraic expression
+
+Use parenthesised prefix notation (as in Lisp) to represent algebraic expressions:
+
+#+name: deriv-primitives
+#+begin_src racket :exports code
+  (define (variable? x) (symbol? x))
+  (define (same-variable? v1 v2) (and (variable? v1) (variable? v2) (eq? v1 v2)))
+
+  (define (=number? exp num)
+    (and (number? exp) (= exp num)))
+
+  ; (define (make-sum a1 a2) (list '+ a1 a2))
+  (define (make-sum a1 . as)
+    (cond
+      ((null? as)
+       a1)
+      ((null? (cdr as))
+       (let ((a2 (car as)))
+	 (cond ((=number? a1 0) a2)
+	       ((=number? a2 0) a1)
+	       ((and (number? a1) (number? a2)) (+ a1 a2))
+	       (else (list '+ a1 a2)))))
+      (else
+       (make-sum a1
+		 (apply make-sum as)))))
+  (define (sum? x) (and (pair? x) (eq? (car x) '+)))
+  (define (addend s) (cadr s))
+  (define (augend s)
+    (cond
+      ((= (length s) 2) 0)
+      ((= (length s) 3) (caddr s))
+      (else
+       (make-sum (caddr s)
+		 (apply make-sum (cdddr s))))))
+
+  ; (define (make-product m1 m2) (list '* m1 m2))
+  (define (make-product m1 . ms)
+    (cond
+      ((= (length ms) 0) m1)
+      ((= (length ms) 1)
+       (let ((m2 (car ms)))
+	 (cond ((or (=number? m1 0) (=number? m2 0)) 0)
+	       ((=number? m1 1) m2)
+	       ((=number? m2 1) m1)
+	       ((and (number? m1) (number? m2)) (* m1 m2))
+	       (else (list '* m1 m2)))))
+      (else
+       (make-product m1
+		     (apply make-product (cdr ms))))))
+  (define (product? x) (and (pair? x) (eq? (car x) '*)))
+  (define (multiplier p) (cadr p))
+  (define (multiplicand p)
+    (cond ((= (length p) 2)
+	   1)
+	  ((= (length p) 3)
+	   (caddr p))
+	  (else
+	   (make-product (caddr p)
+			 (apply make-product (cdddr p))))))
+
+  ; Exercise 2.56
+  (define (make-exponentiation b e)
+    (cond ((=number? e 0) 1)
+	  ((=number? e 1) b)
+	  (else (list '** b e))))
+  (define (exponentiation? x) (and (pair? x) (eq? (car x) '**)))
+  (define (base x) (cadr x))
+  (define (exponent x) (caddr x))
+#+end_src
+
+#+RESULTS[de34cbcbcb0cf949d079b25a73f81e4e0dade7f1]: deriv-primitives
+
+Examples
+
+#+begin_src racket :noweb yes
+  #lang sicp
+  <<deriv-algorithm>>
+  <<deriv-primitives>>
+
+  (deriv '(+ x 3) 'x)
+  (deriv '(* x y) 'x)
+  (deriv '(* (* x y) (+ x 3)) 'x)
+
+  ; Exercise 2.56
+  (deriv '(** x 2) 'x)
+  (deriv '(** x 3) 'x)
+  (deriv '(* 14 (** x 3)) 'x)
+
+  ; Exercise 2.57
+  (deriv '(+ x x x) 'x)
+  (deriv '(* x x x x) 'x)
+#+end_src
+
+#+RESULTS[b660b5626db8e37525e10408b91d84c59014d14b]:
+: 1
+: y
+: (+ (* x y) (* y (+ x 3)))
+: (* 2 x)
+: (* 3 (** x 2))
+: (* 14 (* 3 (** x 2)))
+: 3
+: (+ (* x (+ (* x (+ x x)) (* x x))) (* x (* x x)))
+
+**** Exercise 2.58a - constructors and selectors for the fully parenthesised infix notation
+
+Assume that + and * always take two arguments and that expressions are fully parenthesized
+
+#+name: deriv-primitives-infix
+#+begin_src racket :exports code
+  (define (variable? x) (symbol? x))
+  (define (same-variable? v1 v2)
+    (and (variable? v1)
+	 (variable? v2)
+	 (eq? v1 v2)))
+
+  (define (=number? x n)
+    (and (number? x) (= x n)))
+
+  (define (make-sum a1 a2)
+    (cond ((=number? a1 0) a2)
+	  ((=number? a2 0) a1)
+	  ((and (number? a1) (number? a2)) (+ a1 a2))
+	  (else (list a1 '+ a2))))
+  (define (sum? x) (and (pair? x) (eq? (cadr x) '+)))
+  (define (addend s) (car s))
+  (define (augend s) (caddr s))
+
+  (define (make-product m1 m2)
+    (cond ((or (=number? m1 0) (=number? m2 0)) 0)
+	  ((=number? m1 1) m2)
+	  ((=number? m2 1) m1)
+	  ((and (number? m1) (number? m2)) (* m1 m2))
+	  (else (list m1 '* m2))))
+  (define (product? x) (and (pair? x) (eq? (cadr x) '*)))
+  (define (multiplier p) (car p))
+  (define (multiplicand p) (caddr p))
+
+
+  (define (make-exponentiation b e)
+    (cond ((=number? e 0) 1)
+	  ((=number? e 1) b)
+	  (else (list b '** e))))
+  (define (exponentiation? x) (and (pair? x) (eq? (cadr x) '**)))
+  (define (base x) (car x))
+  (define (exponent x) (caddr x))
+#+end_src
+
+#+RESULTS[b9fe1decd63396fe27a1b1d2e33e040f4d06908f]: deriv-primitives-infix
+
+Looks good:
+#+begin_src racket
+  #lang sicp
+  <<deriv-algorithm>>
+  <<deriv-primitives-infix>>
+
+  (deriv '(x + 3) 'x)
+  (deriv '(x * y) 'x)
+  (deriv '((x * y) * (x * 3)) 'x)
+  (deriv '((x * y) * (x ** 3)) 'x)
+#+end_src
+
+#+RESULTS[559fd549979f1d5512297da747858e7765702d33]:
+: 1
+: y
+: (((x * y) * 3) + (y * (x * 3)))
+: (((x * y) * (3 * (x ** 2))) + (y * (x ** 3)))
+
+**** Exercise 2.58a - constructors and selectors for the partially parenthesised infix notation
+
+~(x + 3 * (x + y + 2))~
+
+#+name: deriv-primitives-infix-2
+#+begin_src racket :exports none
+  (define (filter pred xs)
+    (cond ((null? xs) nil)
+	  ((pred (car xs))
+	   (cons (car xs) (filter pred (cdr xs))))
+	  (else
+	   (filter pred (cdr xs)))))
+
+  (define (accumulate op init xs)
+    (if (null? xs)
+	init
+	(op (car xs)
+	    (accumulate op init (cdr xs)))))
+
+  (define (sum xs)
+    (accumulate + 0 xs))
+
+  (define (multiply xs)
+    (accumulate * 1 xs))
+
+  (define (=number? x n)
+    (and (number? x) (= x n)))
+
+  (define (intersperce xs joint)
+    (cond ((null? xs) nil)
+	  ((null? (cdr xs)) xs)
+	  (else (append (list (car xs) joint)
+			(intersperce (cdr xs) joint)))))
+
+  (define (collect-numbers xs)
+    (filter number? xs))
+
+  (define (collect-non-numbers xs)
+    (filter (lambda (x) (not (number? x))) xs))
+
+  (define (split-at-sym xs s)
+    (define (iter left right)
+      (cond ((null? right)
+	     (cons left right))
+	    ((eq? (car right) s)
+	     (cons left (cdr right)))
+	    (else
+	     (iter (append left (list (car right)))
+		   (cdr right)))))
+    (iter '() xs))
+
+  (define (parse-product expr)
+    (split-at-sym expr '+))
+
+  (define (expand-single x)
+    (cond ((not (pair? x)) x)
+	  ((null? x) 0)
+	  ((null? (cdr x)) (car x))
+	  (else x)))
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+  (define (variable? x) (symbol? x))
+  (define (same-variable? v1 v2)
+    (and (variable? v1)
+	 (variable? v2)
+	 (eq? v1 v2)))
+
+  (define (make-sum . xs)
+    (expand-single
+     (cond ((null? xs) 0)
+	   (else
+	    (let ((c (sum (collect-numbers xs))))
+	      (let ((terms (cond
+			     ((zero? c)
+			      (collect-non-numbers xs))
+			     (else
+			      (cons c (collect-non-numbers xs))))))
+		(intersperce terms '+)))))))
+
+  (define (sum? expr)
+    (not (null? (filter (lambda (t) (eq? t '+))
+			expr))))
+
+  (define (addend expr)
+    (expand-single
+     (cond ((null? (cdr expr))
+	    (car expr))
+	   ((eq? (cadr expr)
+		 '+)
+	    (car expr))
+	   ((eq? (cadr expr)
+		 '*)
+	    (car (parse-product expr)))
+	   (else
+	    (error "Unknown expression -- ADDEND" expr)))))
+
+  (define (augend expr)
+    (expand-single (cond ((eq? (cadr expr)
+		 '+)
+	    (cddr expr))
+	   ((eq? (cadr expr)
+		 '*)
+	    (cdr (parse-product expr)))
+	   (else
+	    (error "Unknown expression -- AUGEND" expr)))))
+
+  (define (make-product . xs)
+    (expand-single
+     (cond ((null? xs) 1)
+	   (else
+	    (let ((c (multiply (collect-numbers xs))))
+	      (let ((terms (cond ((= 0 c)
+				  (list 0))
+				 ((= 1 c)
+				  (collect-non-numbers xs))
+				 (else
+				  (cons c (collect-non-numbers xs))))))
+		(intersperce terms '*)))))))
+
+  (define (product? expr)
+    (and (> (length expr) 1)
+	 (null? (filter (lambda (t) (eq? t '+))
+			expr))))
+
+  (define (multiplier expr)
+    (expand-single
+     (cond ((null? (cdr expr))
+	    (car expr))
+	   ((eq? (cadr expr)
+		 '*)
+	    (car expr))
+	   (else
+	    expr))))
+
+  (define (multiplicand expr)
+    (expand-single
+     (cond ((eq? (cadr expr)
+		 '*)
+	    (expand-single (cddr expr)))
+	   (else
+	    (error "Unknown expression -- MULTIPLICAND" expr)))))
+
+  (define (make-exponentiation b e)
+    (cond ((=number? e 0) 1)
+	  ((=number? e 1) b)
+	  (else (list b '** e))))
+  (define (exponentiation? x) (and (pair? x) (eq? (cadr x) '**)))
+  (define (base x) (car x))
+  (define (exponent x) (caddr x))
+#+end_src
+
+#+RESULTS[51854b0707528c62fae90df00bea9893ccf1e025]: deriv-primitives-infix-2
+: /var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-DV1tZm/ob-racket1UZAsu.rkt:4:20: nil: unbound identifier
+:   in: nil
+:   location...:
+:    /var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-DV1tZm/ob-racket1UZAsu.rkt:4:20
+
+
+#+begin_src racket -n 1 :noweb yes
+  #lang sicp
+n
+  <<deriv-primitives-infix-2>>  
+  <<deriv-algorithm>>
+
+  (deriv '(x + 3) 'x)
+  (deriv '(x * y) 'x)
+  (deriv '((x * y) * (3 * x)) 'x)
+  (deriv '(x * y * 3 * x) 'x)
+  (deriv '(x * (3 * y) * x) 'x)
+  
+#+end_src
+
+#+RESULTS[24b15acb9a04b827f8c4512836bb66a7693412b6]:
+: /var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-lSuimp/ob-racketMsaYTW.rkt:3:0: n: unbound identifier
+:   in: n
+:   location...:
+:    /var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-lSuimp/ob-racketMsaYTW.rkt:3:0
+
+Derivative algorithm still works (exponentiation is not supported)! But the output is not obvious again 
+
+Notes
+- this exercise need more time to design and test properly that I'm not willing to take in favor of broader coverage. I expect a lot of mistakes in this version
+- parsing is designed after existing constructor/selectors interface
+- precedence of * over + is implemented in addend
+- collect constants in constructors into a single constant
+- any of addend/augend/multiplier/multiplicand can be either (), (x), or (x1 # x2 # ...), this should be accounted for 
+- I don't know how to debug this - in this env debugging needs to happen beforehand, in a good design it seems
+- For the results to be more intelligible, constructors should also expand nested terms of the same precedence e.g. ~(x * (3 * y)~ => ~(3 * x * y)~
+- consider bringing user input expression to some standardized representation
+
+** 2.3.3 Example: Representing Sets
+
+Informally, a set is a collection of distinct objects.
+
+To give a more precise definition, use data abstraction:
+#+begin_src racket :exports code
+  union-set
+  intersection-set
+  element-of-set?
+  adjoint-set
+#+end_src
+
+#+RESULTS[50cec63fd834fcbb9c20c56370329897cdafdf6d]:
+: /var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-psuURg/ob-racketG4Asmr.rkt:3:0: union-set: unbound identifier
+:   in: union-set
+:   location...:
+:    /var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-psuURg/ob-racketG4Asmr.rkt:3:0
+
+*** Sets as unordered lists
+
+Set is represented as a list where no element is presented more than once
+
+#+name: sets-interface-unordered-list
+#+begin_src racket
+  (define (element-of-set? x set)
+    (cond ((null? set) false)
+	  ((equal? x (car set)) true)
+	  (else (element-of-set? x (cdr set)))))
+
+  (define (adjoint-set x set)
+    (if (element-of-set? x set)
+	set
+	(cons x set)))
+
+  ;; element-of-set? has time complexity of O(n), and so intersection-set has O(n^2)
+  (define (intersection-set set1 set2)
+    (cond ((or (null? set1) (null? set2)) '())
+	  ((element-of-set? (car set1) set2)
+	   (cons (car set1)
+		 (intersection-set (cdr set1) set2)))
+	  (else
+	   (intersection-set (cdr set1) set2))))
+
+  ;; Exercise 2.59
+  (define (union-set set1 set2)
+    (cond ((null? set1) set2)
+	  ((null? set2) set1)
+	  ((element-of-set? (car set1) set2)
+	   (union-set (cdr set1) set2))
+	  (else
+	   (cons (car set1)
+		 (union-set (cdr set1) set2)))))
+#+end_src
+
+#+RESULTS[7822dfcb6ffd023d68764c615119bbeea09eaed2]: sets-interface-unordered-list
+
+**** Exercise 2.59 - ~union-set~
+
+~union-set~ is similar in recursive structure to ~intersection-set~:
+- if either of sets is empty, the result is the other set
+- if (car set1) is in set2, then don't include it again
+- if (car set1) is not in set2, then it should be included in the result
+
+#+begin_src racket
+  #lang sicp
+
+  <<sets-interface-unordered-list>>
+
+  (define s1 '(1 2 3 4))
+  (define s2 '(2 4 5 6))
+  (adjoint-set 4 s1)
+  (adjoint-set 5 s1)
+  (element-of-set? 4 s1)
+  (element-of-set? 5 s1)
+  (union-set s1 s2)
+  (intersection-set s1 s2)
+#+end_src
+
+#+RESULTS[4a708427e5c37c267431e32f23c35a630655c8ee]:
+: (1 2 3 4)
+: (5 1 2 3 4)
+: #t
+: #f
+: (1 3 2 4 5 6)
+: (2 4)
+
+**** Exercise 2.60 - ~sets-interface-list-with-duplicates~
+
+Suppose the set is represented using a list with duplicates.
+~element-of-set?~ and ~intersection-set~ would be the same.
+~adjoint-set~ and ~union-set~ are different however:
+- ~adjoint-set~ now does not have to respect "no duplicates" rule, can just ~cons~ a new list
+- similarly ~union-set~ can be just a combination of two sets
+
+| Operation          | Comment                                                | Complexity                                                  |
+|--------------------+--------------------------------------------------------+-------------------------------------------------------------|
+| ~element-of-set?~  | Can remain the same                                    | $O(n*e)$, where $e$ is the expected duplication             |
+| ~adjoint-set~      | No need to respect "no dupes" rule, ~cons~ new element | $O(1)$                                                      |
+| ~intersection-set~ | Can remain the same                                    | $O(n*m)$, where $n$ and $m$ are the cardinality of two sets |
+| ~union-set~        | No need to respect "no dupes" rule, ~append~ two sets  | Whatever complexity of ~append~ is, likely $O(n)$           |
+
+One interesting property of new ~adjoint-set~ is that most recent elements are close to the start of the list, meaning that applications that check ~element-of-set?~ for recent values need not check all $n$ elements, and will have better average running time. Combined with constant running time of ~adjoint-set~ itself, the profile of applications that could benefit from the new representation is as follows:
+- frequently calls ~adjoint-set~ (but not frequently enough to exhaust memory, although this may be addressed with occasional deduplication)
+- frequently calls ~element-of-set?~ with recently added values
+- may call ~union-set~, with potential "optimization" to use the set with more recent values as the first argument to optimize future ~element-of-set?~ checks
+- infrequent calls to ~intersection-set~, as it remains of quadratic running time
+
+#+begin_src racket
+  #lang sicp
+
+  (define (element-of-set? x set)
+    (cond ((null? set) false)
+	  ((equal? (car set) x) true)
+	  (else (element-of-set? x (cdr set)))))
+
+  (define (adjoint-set x set)
+    (cons x set))
+
+  (define (union-set set1 set2)
+    (append set1 set2))
+
+  (define (intersection-set set1 set2)
+    (cond ((or (null? set1) (null? set2)) '())
+	  ((element-of-set? (car set1) set2)
+	   (cons (car set1)
+		 (intersection-set (cdr set1) set2)))
+	  (else
+	   (intersection-set (cdr set1) set2))))
+
+  (union-set '(1 2 3) '(3 4 4))
+  (intersection-set '(1 2 3 3) '(2 2 2 2 3))
+#+end_src
+
+#+RESULTS[0f39db022007635034a81b33ce374dcccf52c244]:
+: (1 2 3 3 4 4)
+: (2 3 3)
+
+*** Sets as ordered lists
+
+Keep elements of set in a list in an increasing order, e.g. {1, 3, 6, 10} would be (1 3 6 10).
+
+#+name: sets-interface-ordered-lists
+#+begin_src racket
+  (define (element-of-set? x set)
+    (cond ((null? set) false)
+	  ((> (car set) x) false)
+	  ((= (car set) x) true)
+	  (else (element-of-set? x (cdr set)))))
+
+  ;; Exercise 2.61
+  ;; Similarly to element-of-set?, on a diverse set of x adjoint-set will stop early, about n/2 on average
+  (define (adjoint-set x set)
+    (cond ((null? set) (list x))
+	  ((< x (car set)) (cons x set))
+	  ((= x (car set)) set)
+	  ((> x (car set))
+	   (cons (car set)
+		 (adjoint-set x (cdr set))))))
+
+  (define (intersection-set set1 set2)
+    (if (or (null? set1) (null? set2))
+	'()
+	(let ((x1 (car set1))
+	      (x2 (car set2)))
+	  (cond ((= x1 x2)
+		 (cons x1 (intersection-set (cdr set1) (cdr set2))))
+		((< x1 x2)
+		 (intersection-set (cdr set1) set2))
+		((> x1 x2)
+		 (intersection-set set1 (cdr set2)))))))
+
+  ;; Exercise 2.62
+  (define (union-set set1 set2)
+    (cond ((null? set1) set2)
+	  ((null? set2) set1)
+	  (else
+	   (let ((x1 (car set1))
+		 (x2 (car set2)))
+	     (cond ((= x1 x2)
+		    (cons x1 (union-set (cdr set1) (cdr set2))))
+		   ((< x1 x2)
+		    (cons x1 (union-set (cdr set1) set2)))
+		   ((> x1 x2)
+		    (cons x2 (union-set set1 (cdr set2)))))))))
+#+end_src
+
+#+RESULTS[483cd3967ac99f9d243cbf5c7cf2c38ef71efaf9]: sets-interface-ordered-lists
+
+#+begin_src racket
+  #lang sicp
+  <<sets-interface-ordered-lists>>
+
+  (element-of-set? 1 '(1 2 3 4))
+  (element-of-set? 4 '(1 2 3 4))
+  (element-of-set? 3 '(1 2 4 5))
+  (element-of-set? 6 '(1 2 4 5))
+  (adjoint-set 1 '())
+  (adjoint-set 1 '(2 3 4))
+  (adjoint-set 3 '(1 2 4))
+  (adjoint-set 4 '(1 2 3))
+  (intersection-set '(1 2 4 6) '(2 3 4 5))
+  (union-set '() '(1 2 3))
+  (union-set '(1 2 3) '())
+  (union-set '(1 2 3) '(1 2 3))
+  (union-set '(1 3 5) '(2 4 6))
+  (union-set '(6) '(1 2 3 4 5))
+  (union-set '(6) '(1 2 3 4 5 6))
+#+end_src
+
+#+RESULTS[e7c15f82dbc5dd30abb530d700fcc7dba9d6c13c]:
+#+begin_example
+#t
+#t
+#f
+#f
+(1)
+(1 2 3 4)
+(1 2 3 4)
+(1 2 3 4)
+(2 4)
+(1 2 3)
+(1 2 3)
+(1 2 3)
+(1 2 3 4 5 6)
+(1 2 3 4 5 6)
+(1 2 3 4 5 6)
+#+end_example
+
+*** Sets as binary trees
+
+Each node of the tree holds one element of the set, the "entry" of that node, and links to other two nodes, possibly empty.
+The "left" node's entry is smaller than the node's "entry", and the "right" node's entry is larger.
+
+Because every node has left and right, each represents a tree with two subtrees, with left subree holding elements smaller than node's entry, and right holding elements larger thant node's entry.
+
+Benefit of the tree structure is that when searching a tree for the element ~, at each node ~x~ is either equal, smaller or greater than the entry of that node. If equal - search is finished, otherwise the element is either in left or right subtrees, if at all.
+Thus, assuming the tree is "balanced", at each node the search space is approximately halved, and so search would have asymptotic complexity of $O(\log{n})$.
+
+#+name: sets-interface-binary-tree-1
+#+begin_src racket :exports code
+  (define (make-tree entry left right)
+    (list entry left right))
+
+  (define (entry tree) (car tree))
+  (define (left-branch tree) (cadr tree))
+  (define (right-branch tree) (caddr tree))
+
+  (define (element-of-set? x set)
+    (cond ((null? set) false)
+	  ((= x (entry set)) true)
+	  ((< x (entry set)) (element-of-set? x (left-branch set)))
+	  ((> x (entry set)) (element-of-set? x (right-branch set)))))
+
+  (define (adjoint-set x set)
+    (cond ((null? set) (make-tree x '() '()))
+	  ((= x (entry set)) set)
+	  ((< x (entry set))
+	   (make-tree x
+		      (adjoint-set x (left-branch set))
+		      (right-branch set)))
+	  ((> x (entry set))
+	   (make-tree x
+		      (left-branch set)
+		      (adjoint-set x (right-branch set))))))
+#+end_src
+
+"Balanced" assumption is important for search and insert to maintain $O(\log{n})$ complexity, and there ways to design data structres in a way to maintan balance, they are not discussed here.
+
+**** Exercise 2.63 - ~tree->list~
+
+#+name: tree->list
+#+begin_src racket :exports code
+  (define (tree->list-1 tree)
+    (if (null? tree)
+	'()
+	(append (tree->list-1 (left-branch tree))
+		(cons (entry tree)
+		      (tree->list-1 (right-branch tree))))))
+
+  (define (tree->list-2 tree)
+    (define (copy-to-list tree result-list)
+      (if (null? tree)
+	  result-list
+	  (copy-to-list (left-branch tree)
+			(cons (entry tree)
+			      (copy-to-list (right-branch tree)
+					    result-list)))))
+    (copy-to-list tree '()))
+#+end_src
+
+Both procedures produce the same result for every tree - an ordered list of elements from smaller to larger.
+
+For each of the tree they both produce ~(1 3 5 7 9 11)~ as output.
+
+Assuming the tree is balanced, let's calculate the orders of growth:
+
+For ~tree->list-1~:
+
+Let $T(n)$ be the number of steps it takes for ~tree->list-1~ to convert a tree into a list.
+~tree->list-1~ calls itself twice with halved tree + it calls ~append~ which grows as $O(n)$:
+
+$$ T(n) = 2*T(n/2)+O(n/2) $$
+
+expanding a few levels into the tree
+
+$$ T(n) = 2*(2*(2*T(n/8)+O(n/8))+O(n/4))+O(n/2) = ... \text{nested} \log{n}\,\text{times} ... = 2^{\log{n}}*T(1) + \log{n}*O(n/2), $$
+
+it can easily be shown that $$ T(1) = c $$
+
+therefore  $$ T(n) = nc+\log{n}O(n/2) $$ and ~tree->list-1~ number of steps grows as $O(n\log{n})$
+
+For ~tree->list-1~:
+Let $T(n)$ be the number of steps it takes for ~tree->list-2~ to convert a tree into a list.
+~tree->list-2~ calls itself twice with halved tree + ~cons~ which grows as $O(1)$:
+
+$$ T(n) = 2*T(n/2) + O(1) $$
+
+expanding a few levels into the tree
+
+$$ T(n) = 2*(2*(2*T(n/8) + O(1)) + O(1)) + O(1) = ... = 2^{\log{n}}*T(1) + \log{n}*O(1) $$
+
+as $$ T(1) = c $$
+
+$$ T(n) = nc + \log{n} $$
+
+and therefore ~tree->list-2~ has the order of growth of $O(n)$.
+
+Thus, the number of steps to compute ~tree->list-2~ grows slower than the number of steps to compute ~tree->list-1~ with the number of elements in a balanced tree.
+
+**** Exercise 2.64 - ~list->tree~
+
+~list->tree~ converts a list of ordered elements to a balanced binary tree.
+
+#+name: list->tree
+#+begin_src racket :exports code
+  (define (list->tree elements)
+    (car (partial-tree elements (length elements))))
+
+  (define (partial-tree elts n)
+    (if (= n 0)
+	(cons '() elts)
+	(let ((left-size (quotient (- n 1) 2)))
+	  (let ((left-result (partial-tree elts left-size)))
+	    (let ((left-tree (car left-result))
+		  (non-left-elts (cdr left-result))
+		  (right-size (- n (+ left-size 1))))
+	      (let ((this-entry (car non-left-elts))
+		    (right-result (partial-tree (cdr non-left-elts) right-size)))
+		(let ((right-tree (car right-result))
+		      (remaining-elts (cdr right-result)))
+		  (cons (make-tree this-entry left-tree right-tree)
+			remaining-elts))))))))
+#+end_src
+
+~partial-tree~ splits the first ~n~ items of ~elts~ into 3 parts - left (of size $(n-1)/2)$, "this" (1 element) and right ($n-left-1$ elements). Then it comptes ~partial-tree~ for left, right, and constructs a tree with "this" as an entry and newly constructed left and right subtrees.
+
+Result of the execution for input ~(1 3 5 7 9 11)~ is the tree:
+#+begin_export ascii
+          5
+	 / \
+        /   \
+       1     9
+	\   / \
+         3 7   11
+#+end_export
+
+Let $T(n)$ be the number of steps it takes to convert $n$ element list for ~partial-tree~.
+
+~partial-tree~ calls itself with approximately halved input twice, for left and right trees.
+
+$$ T(n) = 2*T(n/2) = 2*2*T(n/4) = ... = 2^{\log{n}} * T(1) = n * T(1) $$
+
+and in can be shown that $$ T(1) = c $$ for some constant $c$
+
+Thus, $$ T(n) = nc $$ and therefore ~partial-tree~ has the order of growth of the number of steps of $O(n)$.
+
+**** Exercise 2.65 - ~union-set~ and ~intersection-set~
+
+#+name: sets-interface-binary-tree-2
+#+begin_src racket :exports code :noweb strip-export
+  <<tree->list>>
+  <<list->tree>>
+  (define (union-set set1 set2)
+    (define (merge xs ys)
+      (cond ((null? xs) ys)
+	    ((null? ys) xs)
+	    (else
+	     (let ((x (car xs))
+		   (y (car ys)))
+	       (cond ((= x y)
+		      (cons x (merge (cdr xs) (cdr ys))))
+		     ((< x y)
+		      (cons x (merge (cdr xs) ys)))
+		     ((> x y)
+		      (cons y (merge xs (cdr ys)))))))))
+    (let ((xs (tree->list-2 set1))
+	  (ys (tree->list-2 set2)))
+      (list->tree (merge xs ys))))
+
+
+  (define (intersection-set set1 set2)
+    (define (common xs ys)
+      (cond ((or (null? xs) (null? ys))
+	     '())
+	    (else
+	     (let ((x (car xs))
+		   (y (car ys)))
+	       (cond ((= x y)
+		      (cons x (common (cdr xs) (cdr ys))))
+		     ((< x y)
+		      (common (cdr xs) ys))
+		     ((> x y)
+		      (common xs (cdr ys))))))))
+    (let ((xs (tree->list-2 set1))
+	  (ys (tree->list-2 set2)))
+      (list->tree (common xs ys))))
+#+end_src
+
+#+begin_src racket
+  #lang sicp
+  <<sets-interface-binary-tree-1>>
+  <<sets-interface-binary-tree-2>>
+
+
+  (union-set (make-tree 5
+			(make-tree 3 '() '())
+			(make-tree 7
+				   (make-tree 6 '() '())
+				   '()))
+	     (make-tree 5
+			(make-tree 3 '() '())
+			(make-tree 9
+				   '()
+				   (make-tree 11 '() '()))))
+
+  (intersection-set (make-tree 5
+			       (make-tree 3 '() '())
+			       (make-tree 7
+					  (make-tree 6 '() '())
+					  '()))
+		    (make-tree 5
+			       (make-tree 3 '() '())
+			       (make-tree 9
+					  '()
+					  (make-tree 11 '() '()))))
+
+  (define t make-tree)
+  (define o '())
+  
+  (intersection-set (t 5
+		       (t 3 o o)
+		       (t 7
+			  (t 6 o o)
+			  o))
+		    (t 10
+		       o
+		       (t 11
+			  o
+			  (t 12
+			     o
+			     o))))
+
+#+end_src
+
+#+RESULTS[04602d53f381b73c0ca25e7715130dfefae7e83c]:
+: (6 (3 () (5 () ())) (9 (7 () ()) (11 () ())))
+: (3 () (5 () ()))
+: ()
+
+*** Sets and information retrieval
+
+Given a set of records, we need a way to retrieve any individual record often and fast. For that, each record can be identified with a unique key.
+
+If the set of records is represented as an unordered list:
+
+#+begin_src racket
+  (define (lookup given-key set-of-records)
+    (cond ((null? set-of-records) false)
+	  ((equal? given-key (key (car set-of-records)))
+	   (car set-of-records))
+	  (else
+	   (lookup given-key (cdr set-of-records)))))
+#+end_src
+
+**** Exercise 2.66 - ~lookup~ for the set representation based on binary tree
+
+#+begin_src racket
+  (define (lookup given-key node)
+    (cond ((null? node)
+	   false)
+	  ((= given-key (key (entry node)))
+	   (entry node))
+	  ((< given-key (key (entry node)))
+	   (lookup given-key (left node)))
+	  ((> given-key (key (entry node)))
+	   (lookup given-key (right node)))))
+
+  (define (node key record left right)
+    (list key record left right))
+
+  (define (entry node)
+    (cons (car node) (cadr node)))
+
+  (define (key entry)
+    (car entry))
+
+  (define (left node)
+    (caddr node))
+
+  (define (right node)
+    (cadddr node))
+
+  (lookup 9 (node 5
+		  (list 'bob 23)
+		  (node 3
+			(list 'alice 22)
+			'()
+			'())
+		  (node 7
+			(list 'camille 28)
+			'()
+			(node 9
+			      (list 'david 25)
+			      '()
+			      '()))))
+#+end_src
+
+#+RESULTS[2e3907ce34244b429e932acfdd82bd81e065acd8]:
+: '(9 david 25)
+
+** 2.3.4 Example: Huffman Encoding Trees
+
+p.161-162 have description of fixed-length vs variable-length binary encoding.
+
+A problem with variable-length encoding is knowing when the end of a symbol is reached. Morse code solves it by the separator code (pause). Another way to solve it is to not let any letter code be an exact prefix of any other letter code.
+
+Huffman encoding is a way to implement variable-length binary encoding.
+
+A Huffman code can be represented as a tree where each leaf represents a letter to be encoded, and each non-leaf node stores a set of letters under that node. In addition, each letter at a leaf is assigned a weight (which is a relative frequency), and each non-leaf node stores the sum of all weights in leafs under that node.
+
+Given a Huffman tree, we can find an encoding of any letter by descending down the tree until the leaf with that letter is reached, appending 0 each time left subtree is selected and 1 each time right subtree is selected. Subtree is selected using the set of letters under the subtree.
+
+To decode a binary sequence, start at the root and for 0 go left, for 1 go down, when reaching a leaf write down that symbol, and start over again at the root.
+
+
+*** Generating Huffman trees
+
+The idea is to arrange tree such that the symbols with the lowest frequencies appear further away from the root.
+
+Start with the set of leaf nodes, find two nodes with the smallest weights, merge them to form a new node with the two nodes as the subtrees and weight of the sum of the two nodes weights, and replace the two nodes with the new set. Repeat until the set contains a signle node, which is the Huffman tree for the given frequencies.
+
+*** Representing Huffman trees
+
+#+name: huffman-tree-interface
+#+begin_src racket :exports code
+  (define (make-leaf symbol weight)
+    (list 'leaf symbol weight))
+
+  (define (leaf? object)
+    (eq? (car object) 'leaf))
+
+  (define (symbol-leaf x) (cadr x))
+  (define (weight-leaf x) (caddr x))
+
+  (define (make-code-tree left right)
+    (list left
+	  right
+	  (append (symbols left) (symbols right))
+	  (+ (weight left) (weight right))))
+
+  (define (left-branch tree) (car tree))
+  (define (right-branch tree) (cadr tree))
+  (define (symbols tree)
+    (if (leaf? tree)
+	(list (symbol-leaf tree))
+	(caddr tree)))
+  (define (weight tree)
+    (if (leaf? tree)
+	(weight-leaf tree)
+	(cadddr tree)))
+#+end_src
+
+~symbols~ and ~weight~ are examples of /generic procedures/ - those can handle more than one type of data.
+
+*** The decoding procedure
+
+#+name: huffman-tree-decode
+#+begin_src racket :exports code
+  (define (decode bits tree)
+    (define (decode-1 bits current-branch)
+      (if (null? bits)
+	  '()
+	  (let ((next-branch (choose-branch (car bits) current-branch)))
+	    (if (leaf? next-branch)
+		(cons (symbol-leaf next-branch)
+		      (decode-1 (cdr bits) tree))
+		(decode-1 (cdr bits) next-branch)))))
+    (decode-1 bits tree))
+
+  (define (choose-branch bit tree)
+    (cond ((= 0 bit)
+	   (left-branch tree))
+	  ((= 1 bit)
+	   (right-branch tree))
+	  (else
+	   (error "bad bit -- CHOOSE-BRANCH" bit))))
+#+end_src
+
+*** Set of weighted-elements
+
+#+name: huffman-tree-leaf-set
+#+begin_src racket :exports code
+  (define (adjoint-set x set)
+    (cond ((null? set) (list x))
+	  ((< (weight x) (weight (car set)))
+	   (cons x set))
+	  (else
+	   (cons (car set) (adjoint-set x (cdr set))))))
+
+  (define (make-leaf-set pairs)
+    (if (null? pairs)
+	'()
+	(let ((pair (car pairs)))
+	  (adjoint-set (make-leaf (car pair) (cadr pair))
+		       (make-leaf-set (cdr pairs))))))
+#+end_src
+
+*** Exercise 2.67 - run ~decode~
+
+#+begin_src racket
+  #lang sicp
+
+  <<huffman-tree-interface>>
+  <<huffman-tree-decode>>
+
+  (define sample-tree
+    (make-code-tree (make-leaf 'A 4)
+		    (make-code-tree
+		     (make-leaf 'B 2)
+		     (make-code-tree
+		      (make-leaf 'D 1)
+		      (make-leaf 'C 1)))))
+
+  (define sample-message '(0 1 1 0 0 1 0 1 0 1 1 1 0))
+
+  (decode sample-message sample-tree)
+#+end_src
+
+#+RESULTS[abf24b7f981779bae20fe42169bfcdee31dc72c9]:
+: (A D A B B C A)
+
+*** Exercise 2.68 - ~encode~
+
+#+name: huffman-tree-encode
+#+begin_src racket :exports code
+  (define (encode message tree)
+    (if (null? message)
+	'()
+	(append (encode-symbol (car message) tree)
+		(encode (cdr message) tree))))
+
+  (define (encode-symbol symbol tree)
+    (cond ((leaf? tree) '())
+	  ((contains? (symbols (left-branch tree)) symbol)
+	   (cons 0 (encode-symbol symbol (left-branch tree))))
+	  ((contains? (symbols (right-branch tree)) symbol)
+	   (cons 1 (encode-symbol symbol (right-branch tree))))
+	  (else
+	   (error "symbol has no encoding -- ENCODE-SYMBOL" symbol))))
+
+  (define (contains? haystack needle)
+    (cond ((null? haystack) false)
+	  ((eq? (car haystack) needle) true)
+	  (else (contains? (cdr haystack) needle))))
+#+end_src
+
+#+begin_src racket
+  <<huffman-tree-interface>>
+  <<huffman-tree-encode>>
+
+  (define sample-tree
+    (make-code-tree (make-leaf 'A 4)
+		    (make-code-tree
+		     (make-leaf 'B 2)
+		     (make-code-tree
+		      (make-leaf 'D 1)
+		      (make-leaf 'C 1)))))
+
+  (define sample-message '(A D A B B C A))
+
+  (encode sample-message sample-tree)
+#+end_src
+
+#+RESULTS[5cbecb9f856f6f3e47c9d2a696f2ccda780e09af]:
+: '(0 1 1 0 0 1 0 1 0 1 1 1 0)
+
+*** Exercise 2.69 - ~generate-huffman-tree~
+
+#+name: huffman-tree-generate
+#+begin_src racket :exports code
+  (define (generate-huffman-tree pairs)
+    (successive-merge (make-leaf-set pairs)))
+
+  (define (successive-merge node-set)
+    (cond ((null? node-set)
+	   (error "Empty node-set -- SUCCESSIVE-MERGE"))
+	  ((null? (cdr node-set))
+	   (car node-set))
+	  (else
+	   (successive-merge
+	    (adjoint-set (make-code-tree
+			  (car node-set)
+			  (cadr node-set))
+			 (cddr node-set))))))
+#+end_src
+
+*** Exercise 2.70 - check it out
+
+Here's the full listing of the code developed so far:
+#+name: huffman-tree-full
+#+begin_src racket -n 1 :exports code :noweb yes :tangle "s2.3.3-huffman-encoding-trees.rkt"
+  #lang sicp
+
+  <<huffman-tree-interface>>
+
+  <<huffman-tree-leaf-set>>
+
+  <<huffman-tree-generate>>
+
+  <<huffman-tree-encode>>
+
+  <<huffman-tree-decode>>
+#+end_src
+
+#+RESULTS[2c8341f37b55dce7019649ddad9c8f803b3a1f0f]: huffman-tree-full
+
+#+begin_src racket
+  <<huffman-tree-full>>
+  (define rock-frequencies '((A 2)
+			     (BOOM 1)
+			     (GET 2)
+			     (JOB 2)
+			     (NA 16)
+			     (SHA 3)
+			     (YIP 9)
+			     (WAH 1)))
+
+  (define rock-tree (generate-huffman-tree rock-frequencies))
+
+  (define rock-song '(GET A JOB
+			  SHA NA NA NA NA NA NA NA NA
+			  GET A JOB
+			  SHA NA NA NA NA NA NA NA NA
+			  WAH YIP YIP YIP YIP YIP YIP YIP YIP YIP
+			  SHA BOOM))
+
+  (define enc (encode rock-song rock-tree))
+  (define dec (decode enc rock-tree))
+
+  enc
+  (display (list (length enc) "bits required to encode original message using a variable-length encoding method")) (newline)
+  dec
+  (display (list (* 3 (length dec))
+		 "bits would be used by the the fixed-length for 8=2^3 characters alphabet")) (newline)
+#+end_src
+
+#+RESULTS[ddc4218c8ee808da10eae23bc5cba41e8072f866]:
+: '(1 1 1 1 1 1 1 0 0 1 1 1 1 0 1 1 1 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 0 0 1 1 1 1 0 1 1 1 0 0 0 0 0 0 0 0 0 1 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 1 1 0 1 1 0 1 1)
+: (84 bits required to encode original message using a variable-length encoding method)
+: '(GET A JOB SHA NA NA NA NA NA NA NA NA GET A JOB SHA NA NA NA NA NA NA NA NA WAH YIP YIP YIP YIP YIP YIP YIP YIP YIP SHA BOOM)
+: (108 bits would be used by the the fixed-length for 8=2^3 characters alphabet)
+
+*** Exercise 2.71 - frequencies in geometric progression
+
+Suppose we have a Huffman tree for an alphabet of $n$ symbols, with relative frequences $1, 2, 4, ..., 2^{n-1}$.
+Example of tree for $n = 5$
+#+begin_src
+    .
+   / \
+  a   .
+     / \
+    b   .
+       / \
+      c   .
+	 / \
+	d   e
+#+end_src
+
+Example of tree for $n = 10$
+#+begin_src
+    .
+   / \
+  a   .
+     / \
+    b   .
+       / \
+      c   .
+	 / \
+	d   .
+	   / \
+	  e   .
+	     / \
+	    f   .
+	       / \
+	      g   .
+		 / \
+		h   .
+		   / \
+                  i   j
+#+end_src
+
+Key observation with this special case is that during the tree generation, newly merged node's weight is always less than the least-weight node weight in the remaining set ($2^{k+1} - 1 < 2^{k+1}$).
+Then, on every merge except the very first one, the first node is a leaf node and the second is a tree with all less frequent symbols than the first node's symbol.
+
+The leaf with the least frequent symbol will be carried over in the same growing tree until construction is done, that is for $n-1$ steps, and thus will have a distance of $n-1$ from the root.
+
+The most frequent symbol will be merged last, and so will be at a distance of $1$ from the root.
+
+*** Exercise 2.72 - order of growth of ~encode~
+

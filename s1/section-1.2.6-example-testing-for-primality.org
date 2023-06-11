@@ -1,0 +1,349 @@
+* Section 1.2.6. Example: Testing for Primality
+
+
+** Searching for divisors
+The $O (\sqrt {n})$ version finds the smallest divisor of n, by trying 2,3,...,$\left\lfloor \sqrt {n}\right\rfloor$. If none of them is a divisor, then n must be the only divisor of itself, and so is prime.
+
+#+name: smallest-divisor
+#+begin_src racket :exports both :cache yes
+  #lang sicp
+
+  (define (smallest-divisor n)
+    (find-divisor n 2))
+
+  (define (square x) (* x x))
+
+  (define (divides? d n) (= 0 (remainder n d)))
+
+  (define (find-divisor n test-divisor)
+    (cond ((> (square test-divisor) n) n)
+	  ((divides? test-divisor n) test-divisor)
+	  (else (find-divisor n (inc test-divisor)))))
+  (define (prime? n)
+    (= (smallest-divisor n) n))
+  (prime? 169)
+  (prime? 167)
+  ;; Exercise 1.21
+  (smallest-divisor 199)
+  (smallest-divisor 1999)
+  (smallest-divisor 19999)
+#+end_src
+
+#+RESULTS[4293de1fb706911f1dd4564757af796038e5d1f0]: smallest-divisor
+: #f
+: #t
+: 199
+: 1999
+: 7
+
+
+** The Fermat test
+
+*Format's Little Theorem*:
+#+begin_quote
+If $n$ is a prime and $a$ is any positive integer with $a \lt n$, then $a^n \equiv a \pmod n$.
+#+end_quote
+
+One consequence is that if $n$ is not a prime, then most of the numbers $a \lt n$ will not satisfy the property.
+
+Suggested algorithm for testing primality (the Fermat test):
+Given a number $n$, pick a random number $a \lt n$, and if $a^n \equiv a \pmod n$, then n is probably a prime. Pick another $a$ and try again. By trying more and more values for a, we can increase our confidence in the result.
+
+#+begin_src racket :exports both :cache yes
+  #lang sicp
+
+  (define (square x) (* x x))
+
+  (define (expmod base exp m)
+    (cond ((= exp 0) 1)
+	  ((even? exp)
+	   (remainder (square (expmod base (/ exp 2) m))
+		      m))
+	  (else
+	   (remainder (* base (expmod base (- exp 1) m))
+		      m))))
+
+  (define (fermat-test n)
+    (define (try-it a)
+      (= (expmod a n n) a))
+    (try-it (inc (random (dec n)))))
+
+  (define (fast-prime? n times)
+    (cond ((= times 0) #t)
+	  ((fermat-test n) (fast-prime? n (dec times)))
+	  (else #f)))
+
+  (fast-prime? 561 10)
+#+end_src
+
+#+RESULTS[6a1c7335cfe4cd8ffdf971126dcc31e3c98d31a3]:
+: #t
+
+** Exercise 1.22
+
+~(runtime)~ is a primitive in Scheme that returns the amount of time the system? has been running.
+
+#+begin_src racket :exports both :cache yes
+  #lang sicp
+
+  (define (smallest-divisor n)
+    (find-divisor n 2))
+
+  (define (square x) (* x x))
+
+  (define (divides? d n) (= 0 (remainder n d)))
+
+  (define (find-divisor n test-divisor)
+    (cond ((> (square test-divisor) n) n)
+	  ((divides? test-divisor n) test-divisor)
+	  (else (find-divisor n (inc test-divisor)))))
+
+  (define (prime? n)
+    (= (smallest-divisor n) n))
+
+  (define (timed-prime-test n)
+    (start-prime-test n (runtime)))
+
+  (define (start-prime-test n start-time)
+    (if (prime? n)
+	(report-prime n (- (runtime) start-time)))
+    (prime? n))
+
+  (define (report-prime n elapsed-time)
+    (newline)
+    (display n)
+    (display " *** ")
+    (display elapsed-time))
+
+  (define (search-for-primes n count)
+    (if (> count 0)
+	(cond ((even? n)
+	       (search-for-primes (+ n 1)
+				  count))
+	      ((timed-prime-test n)
+	       (search-for-primes (+ n 2)
+				  (dec count)))
+	      (else
+	       (search-for-primes (+ n 2)
+				  count)))))
+
+
+  (search-for-primes 10 3)
+  (search-for-primes 1000 3)
+  (search-for-primes 10000 3)
+  (search-for-primes 100000 3)
+  (search-for-primes 1000000 3)
+  (search-for-primes 10000000 3)
+  (search-for-primes 100000000 3)
+  (search-for-primes 1000000000 3)
+  (search-for-primes 10000000000 3)
+  (search-for-primes 100000000000 3)
+
+#+end_src
+
+#+RESULTS[6c2d7a915c1064abe1d82a2479199ea2d6217b47]:
+#+begin_example
+
+11 *** 1
+13 *** 0
+17 *** 1
+1009 *** 0
+1013 *** 0
+1019 *** 0
+10007 *** 0
+10009 *** 0
+10037 *** 0
+100003 *** 0
+100019 *** 1
+100043 *** 1
+1000003 *** 3
+1000033 *** 2
+1000037 *** 2
+10000019 *** 8
+10000079 *** 9
+10000103 *** 8
+100000007 *** 26
+100000037 *** 25
+100000039 *** 26
+1000000007 *** 95
+1000000009 *** 82
+1000000021 *** 81
+10000000019 *** 271
+10000000033 *** 270
+10000000061 *** 286
+100000000003 *** 867
+100000000019 *** 854
+100000000057 *** 856
+#+end_example
+
+See the timing proportions:
+#+begin_src racket :exports both :cache yes
+  (/ 26. 9)
+  (/ 81. 26)
+  (/ 271. 99)
+  (/ 852. 271)
+  (newline)
+  (sqrt 10)
+#+end_src
+
+#+RESULTS[f16d786b3970d4ee698cd1a244cea07bcae1ae17]:
+: 2.888888888888889
+: 3.1153846153846154
+: 2.7373737373737375
+: 3.143911439114391
+: 
+: 3.1622776601683795
+
+When input is scaled $10$ times, the time consumed is $\approx \sqrt{10}$
+
+
+** Exercise 1.23
+
+~find-divisor~ does a lot of extra work, we cut it at least in half by skipping even numbers
+
+#+begin_src racket :exports both
+  #lang sicp
+
+  (define (smallest-divisor n)
+    (find-divisor-2 n 2))
+
+  (define (square x) (* x x))
+
+  (define (divides? d n) (= 0 (remainder n d)))
+
+  (define (find-divisor n test-divisor)
+    (cond ((> (square test-divisor) n) n)
+	  ((divides? test-divisor n) test-divisor)
+	  (else (find-divisor n (if (= n 2) 3 (+ test-divisor 2))))))
+
+  (define (find-divisor-2 n test-divisor)
+    (cond ((> (square test-divisor) n) n)
+	  ((divides? test-divisor n) test-divisor)
+	  (else (find-divisor n (+ test-divisor 2)))))
+
+  (define (prime? n)
+    (= (smallest-divisor n) n))
+
+  (define (timed-prime-test n)
+    (start-prime-test n (runtime)))
+
+  (define (start-prime-test n start-time)
+    (if (prime? n)
+	(report-prime n (- (runtime) start-time)))
+    (prime? n))
+
+  (define (report-prime n elapsed-time)
+    (newline)
+    (display n)
+    (display " *** ")
+    (display elapsed-time))
+
+  (define (search-for-primes n count)
+    (if (> count 0)
+	(cond ((even? n)
+	       (search-for-primes (+ n 1) count))
+	      ((prime? n)
+	       (timed-prime-test n)
+	       (search-for-primes (+ n 2) (dec count)))
+	      (else
+	       search-for-primes (+ n 2) count))))
+
+
+  (search-for-primes 10 3)
+  (search-for-primes 1000 3)
+  (search-for-primes 10000 3)
+  (search-for-primes 100000 3)
+  (search-for-primes 1000000 3)
+  (search-for-primes 10000000 3)
+  (search-for-primes 100000000 3)
+  (search-for-primes 1000000000 3)
+  (search-for-primes 10000000000 3)
+  (search-for-primes 100000000000 3)
+
+#+end_src
+
+#+RESULTS[710c5357c0b6e76d99ee2e95dd21cbc48bd451d1]:
+#+begin_example
+
+11 *** 1
+13 *** 0
+15 *** 0
+1001 *** 0
+1003 *** 0
+1005 *** 0
+10001 *** 0
+10003 *** 1
+10005 *** 0
+100001 *** 1
+100003 *** 0
+100005 *** 1
+1000001 *** 2
+1000003 *** 1
+1000005 *** 1
+10000001 *** 5
+10000003 *** 5
+10000005 *** 4
+100000001 *** 15
+100000003 *** 14
+100000005 *** 14
+1000000001 *** 45
+1000000003 *** 45
+1000000005 *** 45
+10000000001 *** 144
+10000000003 *** 155
+10000000005 *** 143
+100000000001 *** 477
+100000000003 *** 477
+100000000005 *** 477
+#+end_example
+
+
+
+|----------------------+----------------------|
+| 11 *** 1             | 11 *** 5             |
+| 13 *** 0             | 13 *** 0             |
+| 17 *** 1             | 17 *** 0             |
+| 1009 *** 0           | 1009 *** 0           |
+| 1013 *** 0           | 1013 *** 0           |
+| 1019 *** 0           | 1019 *** 0           |
+| 10007 *** 0          | 10007 *** 0          |
+| 10009 *** 0          | 10009 *** 0          |
+| 10037 *** 0          | 10037 *** 0          |
+| 100003 *** 0         | 100003 *** 1         |
+| 100019 *** 1         | 100019 *** 1         |
+| 100043 *** 1         | 100043 *** 0         |
+| 1000003 *** 3        | 1000003 *** 1        |
+| 1000033 *** 2        | 1000033 *** 1        |
+| 1000037 *** 2        | 1000037 *** 1        |
+| 10000019 *** 8       | 10000019 *** 5       |
+| 10000079 *** 9       | 10000079 *** 5       |
+| 10000103 *** 8       | 10000103 *** 19      |
+| 100000007 *** 26     | 100000007 *** 14     |
+| 100000037 *** 25     | 100000037 *** 14     |
+| 100000039 *** 26     | 100000039 *** 14     |
+| 1000000007 *** 95    | 1000000007 *** 45    |
+| 1000000009 *** 82    | 1000000009 *** 45    |
+| 1000000021 *** 81    | 1000000021 *** 45    |
+| 10000000019 *** 271  | 10000000019 *** 156  |
+| 10000000033 *** 270  | 10000000033 *** 156  |
+| 10000000061 *** 286  | 10000000061 *** 156  |
+| 100000000003 *** 867 | 100000000003 *** 477 |
+| 100000000019 *** 854 | 100000000019 *** 466 |
+| 100000000057 *** 856  | 100000000057 *** 485 |
+|----------------------+----------------------|
+
+It cuts timings down $\approx 1.8$ times. Not exactly $2$ times, but close.
+
+Why is it different from $2$?
+Consider the ~find-divisor~ function:
+#+begin_src racket
+  (define (find-divisor n test-divisor)
+    (cond ((> (square test-divisor) n) n)
+	  ((divides? test-divisor n) test-divisor)
+	  (else (find-divisor n (next test-divisor)))))
+#+end_src
+
+
+| Name | Age | Phone |   |   |
+|------+-----+-------+---+---|
+|      |     |       |   |   |

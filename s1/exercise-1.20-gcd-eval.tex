@@ -1,0 +1,197 @@
+% Created 2023-05-17 Wed 15:32
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\author{LMG}
+\date{\today}
+\title{}
+\hypersetup{
+ pdfauthor={LMG},
+ pdftitle={},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 28.2 (Org mode 9.5.5)}, 
+ pdflang={English}}
+\begin{document}
+
+\tableofcontents
+
+\section{Exercise context}
+\label{sec:orgd575b89}
+In the Section 1.2.5 SICP discusses Greates Common Divisor and Euclid's
+algorithm.
+
+Exercise is to work through the normal-order and applicative-order evaluation.
+
+Here the code:
+\begin{verbatim}
+#lang sicp
+
+(define (gcd a b)
+  (if (= b 0)
+      a
+      (gcd b (remainder a b))))
+(gcd 24 18)
+\end{verbatim}
+
+\begin{verbatim}
+6
+\end{verbatim}
+
+
+\subsection{Normal-order evaluation:}
+\label{sec:org78db0d2}
+
+\begin{verbatim}
+ 1  (gcd 206
+ 2  	 40)
+ 3  (if (= 40 0)
+ 4      206
+ 5      (gcd 40
+ 6  	 (remainder 206 40)))
+ 7  (gcd 40
+ 8       (remainder 206 40))
+ 9  (if (= (remainder 206 40) 0)
+10      40
+11      (gcd (remainder 206 40)
+12  	 (remainder 40 (remainder 206 40))))
+13  ;; +1
+14  (if (= 6 0)
+15      40
+16      (gcd (remainder 206 40)
+17  	 (remainder 40 (remainder 206 40))))
+18  
+19  (gcd (remainder 206 40)
+20       (remainder 40 (remainder 206 40)))
+21  
+22  (if (= (remainder 40 (remainder 206 40)) 0)
+23      (remainder 206 40)
+24      (gcd (remainder 40 (remainder 206 40))
+25  	 (remainder (remainder 206 40)
+26  		    (remainder 40 (remainder 206 40)))))
+27  
+28  ;; +2
+29  (if (= 4 0)
+30      (remainder 206 40)
+31      (gcd (remainder 40 (remainder 206 40))
+32  	 (remainder (remainder 206 40)
+33  		    (remainder 40 (remainder 206 40)))))
+34  
+35  (gcd (remainder 40 (remainder 206 40))
+36       (remainder (remainder 206 40)
+37  		(remainder 40 (remainder 206 40))))
+38  (if (= (remainder (remainder 206 40)
+39  		  (remainder 40 (remainder 206 40)))
+40         0)
+41      (remainder 206 40)
+42      (gcd (remainder (remainder 206 40)
+43  		    (remainder 40 (remainder 206 40)))
+44  	 (remainder (remainder 40 (remainder 206 40))
+45  		    (remainder (remainder 206 40)
+46  			       (remainder 40 (remainder 206 40))))))
+47  ;; +4
+48  (if (= 2 0)
+49      (remainder 206 40)
+50      (gcd (remainder (remainder 206 40)
+51  		    (remainder 40 (remainder 206 40)))
+52  	 (remainder (remainder 40 (remainder 206 40))
+53  		    (remainder (remainder 206 40)
+54  			       (remainder 40 (remainder 206 40))))))
+55  
+56  (gcd (remainder (remainder 206 40)
+57  		(remainder 40 (remainder 206 40)))
+58       (remainder (remainder 40 (remainder 206 40))
+59  		(remainder (remainder 206 40)
+60  			   (remainder 40 (remainder 206 40)))))
+61  (if (= (remainder (remainder 40 (remainder 206 40))
+62  		  (remainder (remainder 206 40)
+63  			     (remainder 40 (remainder 206 40))))
+64         0)
+65      (remainder (remainder 206 40)
+66  	       (remainder 40 (remainder 206 40)))
+67      )
+68  ;; +7
+69  (if (= 0 0)
+70      (remainder (remainder 206 40)
+71  	       (remainder 40 (remainder 206 40)))
+72      (...))
+73  (remainder (remainder 206 40)
+74  	   (remainder 40 (remainder 206 40)))
+75  ;; +2
+76  (remainder 6
+77  	   (remainder 40 6))
+78  ;; +1
+79  (remainder 6 4)
+80  ;; +1
+81  ;; => 2
+82  
+\end{verbatim}
+
+\begin{verbatim}
+#lang sicp
+(remainder 206
+	   40)
+(remainder 40
+	   (remainder 206 40))
+(remainder (remainder 206 40)
+	   (remainder 40 (remainder 206 40)))
+(remainder (remainder 40
+		      (remainder 206 40))
+	   (remainder (remainder 206 40) (remainder 40 (remainder 206 40))))
+\end{verbatim}
+
+\begin{verbatim}
+6
+4
+2
+0
+\end{verbatim}
+
+
+So the number of calls to \texttt{remainder} is 18:
+\begin{verbatim}
+(+ 1 2 4 7 2 1 1)
+\end{verbatim}
+
+\begin{verbatim}
+18
+\end{verbatim}
+
+\subsubsection{Normal-order evaluation, \texttt{if}}
+\label{sec:org1d8a258}
+
+I'm not sure how the special form \texttt{if} is considered in normal-order evaluation.
+
+p.16 says "would not evaluate the operands until their values were needed". Arguably, \texttt{if} is one such case.
+
+p.21,Ex1.5 points that one can assume that the evaluation rule for the special form \texttt{if} does not depend on order of evaluation: the predicate exp is evaluated first and the result determines whether to evaluate the conseuqent or the alternative expression.
+
+\subsection{?}
+\label{sec:orgcb0b3ae}
+
+\subsection{Applicative-order evaluation:}
+\label{sec:orga13469e}
+
+\begin{verbatim}
+(gcd 206 40)
+(gcd 40 (remainder 206 40))
+(gcd 40 6)
+(gcd 6 (remainder 40 6))
+(gcd 6 4)
+(gcd 4 (remainder 6 4))
+(gcd 4 2)
+(gcd 2 (remainder 4 2))
+(gcd 2 0)
+=> 2
+\end{verbatim}
+\end{document}

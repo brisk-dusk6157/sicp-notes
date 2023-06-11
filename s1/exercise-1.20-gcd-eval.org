@@ -1,0 +1,160 @@
+
+** Exercise context
+In the Section 1.2.5 SICP discusses Greates Common Divisor and Euclid's
+algorithm.
+
+Exercise is to work through the normal-order and applicative-order evaluation.
+
+Here the code:
+#+begin_src racket :exports both
+#lang sicp
+
+(define (gcd a b)
+  (if (= b 0)
+      a
+      (gcd b (remainder a b))))
+(gcd 24 18)
+#+end_src
+
+#+RESULTS:
+: 6
+
+
+*** Normal-order evaluation:
+
+#+begin_src racket -n
+  (gcd 206
+	   40)
+  (if (= 40 0)
+      206
+      (gcd 40
+	   (remainder 206 40)))
+  (gcd 40
+       (remainder 206 40))
+  (if (= (remainder 206 40) 0)
+      40
+      (gcd (remainder 206 40)
+	   (remainder 40 (remainder 206 40))))
+  ;; +1
+  (if (= 6 0)
+      40
+      (gcd (remainder 206 40)
+	   (remainder 40 (remainder 206 40))))
+
+  (gcd (remainder 206 40)
+       (remainder 40 (remainder 206 40)))
+
+  (if (= (remainder 40 (remainder 206 40)) 0)
+      (remainder 206 40)
+      (gcd (remainder 40 (remainder 206 40))
+	   (remainder (remainder 206 40)
+		      (remainder 40 (remainder 206 40)))))
+
+  ;; +2
+  (if (= 4 0)
+      (remainder 206 40)
+      (gcd (remainder 40 (remainder 206 40))
+	   (remainder (remainder 206 40)
+		      (remainder 40 (remainder 206 40)))))
+
+  (gcd (remainder 40 (remainder 206 40))
+       (remainder (remainder 206 40)
+		  (remainder 40 (remainder 206 40))))
+  (if (= (remainder (remainder 206 40)
+		    (remainder 40 (remainder 206 40)))
+	 0)
+      (remainder 206 40)
+      (gcd (remainder (remainder 206 40)
+		      (remainder 40 (remainder 206 40)))
+	   (remainder (remainder 40 (remainder 206 40))
+		      (remainder (remainder 206 40)
+				 (remainder 40 (remainder 206 40))))))
+  ;; +4
+  (if (= 2 0)
+      (remainder 206 40)
+      (gcd (remainder (remainder 206 40)
+		      (remainder 40 (remainder 206 40)))
+	   (remainder (remainder 40 (remainder 206 40))
+		      (remainder (remainder 206 40)
+				 (remainder 40 (remainder 206 40))))))
+
+  (gcd (remainder (remainder 206 40)
+		  (remainder 40 (remainder 206 40)))
+       (remainder (remainder 40 (remainder 206 40))
+		  (remainder (remainder 206 40)
+			     (remainder 40 (remainder 206 40)))))
+  (if (= (remainder (remainder 40 (remainder 206 40))
+		    (remainder (remainder 206 40)
+			       (remainder 40 (remainder 206 40))))
+	 0)
+      (remainder (remainder 206 40)
+		 (remainder 40 (remainder 206 40)))
+      )
+  ;; +7
+  (if (= 0 0)
+      (remainder (remainder 206 40)
+		 (remainder 40 (remainder 206 40)))
+      (...))
+  (remainder (remainder 206 40)
+	     (remainder 40 (remainder 206 40)))
+  ;; +2
+  (remainder 6
+	     (remainder 40 6))
+  ;; +1
+  (remainder 6 4)
+  ;; +1
+  ;; => 2
+
+#+end_src
+
+#+begin_src racket :exports both
+  #lang sicp
+  (remainder 206
+	     40)
+  (remainder 40
+	     (remainder 206 40))
+  (remainder (remainder 206 40)
+	     (remainder 40 (remainder 206 40)))
+  (remainder (remainder 40
+			(remainder 206 40))
+	     (remainder (remainder 206 40) (remainder 40 (remainder 206 40))))
+#+end_src
+
+#+RESULTS:
+: 6
+: 4
+: 2
+: 0
+
+So the number of calls to ~remainder~ is 18:
+#+begin_src racket :exports both
+ (+ 1 2 4 7 2 1 1)
+#+end_src
+
+#+RESULTS:
+: 18
+
+**** Normal-order evaluation, ~if~
+
+I'm not sure how the special form ~if~ is considered in normal-order evaluation.
+
+p.16 says "would not evaluate the operands until their values were needed". Arguably, ~if~ is one such case.
+
+p.21,Ex1.5 points that one can assume that the evaluation rule for the special form ~if~ does not depend on order of evaluation: the predicate exp is evaluated first and the result determines whether to evaluate the conseuqent or the alternative expression.
+
+*** ?
+
+*** Applicative-order evaluation:
+
+#+begin_src
+(gcd 206 40)
+(gcd 40 (remainder 206 40))
+(gcd 40 6)
+(gcd 6 (remainder 40 6))
+(gcd 6 4)
+(gcd 4 (remainder 6 4))
+(gcd 4 2)
+(gcd 2 (remainder 4 2))
+(gcd 2 0)
+=> 2
+#+end_src

@@ -1,0 +1,561 @@
+* 1.2.6. Example: Testing for Primality (with exercises)
+
+** Searching for Divisors - $O(\sqrt{n})$ version
+One way to test if a positive integer $n$ is a prime is to walk through every integer $a$, $a \lt n$, and if some of such $a$ divides $n$, then $n$ is not prime.
+
+Idea of the algorithm is to find a smallest divisor of a supposed prime number, and if it's the number itself, then it's prime.
+
+Key observation here is that we only need to check such $a$ that $a \lt \sqrt{n}$, for if $a | n$, then also $\frac{n}{a} | n$, by checking one divisor we also check the other. As it's impossible to have both divisors $\gt \sqrt{n}$, then it'll suffice to check only first $\sqrt{n}$.
+
+#+name: sequential-test
+#+begin_src racket
+  #lang sicp
+
+  (define (square x) (* x x))
+
+  (define (prime? n)
+    (= (smallest-divisor n) n))
+
+  (define (smallest-divisor n)
+    (find-divisor n 2))
+
+  (define (find-divisor n test-divisor)
+    (cond ((> (square test-divisor) n) n)
+	  ((divides? test-divisor n) test-divisor)
+	  (else (find-divisor n (+ test-divisor 1)))))
+
+  (define (divides? d n)
+    (= (remainder n d) 0))
+
+#+end_src
+
+** The Fermat's Test - $O(\log{n})$ probabilistic version
+The $O(\log{n})$ version is based on the Little Fermat's Theorem.
+
+*The Little Fermat's Theorem*
+#+begin_quote
+Let $n$ and $a$ be positive integers with $a \lt n$. Then, if $n$ is prime, then $a^n \equiv a \pmod{n}$.
+#+end_quote
+
+By taking contrapositive, if $a^n \not\equiv a \pmod{n}$, then $n$ is not a prime. However, in general, $a^n \equiv a \pmod{n}$ does not imply that $n$ is a prime.
+
+This gives the idea for a test for whether given $n$ is a prime: pick some random $a \lt n$, if $a^n \not\equiv a \pmod{n}$ then $n$ is not a prime, otherwise $n$ is /probably/ a prime. The more such $a$'s pass the test, the more likely $n$ is a prime.
+
+This is called *the Fermat's test*.
+
+To implement it, we need an efficient way to compute $a^n\mod{n}$. Property of congruence used for this is that if $a \equiv b \pmod{p}$ and $c \equiv d \pmod{p}$, then $a \cdot c \equiv b \cdot d \pmod{p}$. It is similar to fast exponentiation in approach, and has $O(\log{n})$ time complexity.
+
+For individual test, random number picked should be between in the $[2, n-1]$ interval. The ~(random x)~ primitive returns non-negative integer less then ~x~. So ~(+ 1 (random (- n 1))~ will do the job.
+
+#+name: fast-test
+#+begin_src racket
+  #lang sicp
+
+  (define (expmod base exp m)
+    (define (square x) (* x x))
+    (cond ((= exp 0) 1)
+	  ((even? exp)
+	   (remainder (square (expmod base (/ exp 2) m))
+		      m))
+	  (else
+	   (remainder (* base (expmod base (- exp 1) m))
+		      m))))
+
+  (define (fermat-test n)
+    (define (try-it d)
+      (= (expmod d n n) d))
+    (try-it (+ 1 (random (- n 1)))))
+
+  (define (fast-prime? n times)
+    (cond ((= 0 times) #t)
+	  ((fermat-test n) (fast-prime? n (dec times)))
+	  (else #f)))
+
+
+#+end_src
+
+The main danger with the Fermat's test is that if it says $n$ is prime, it's /likely/ true (although, if it says $n$ is /not/ a prime, it's 100% true). There are numbers, called Carmichael numbers (e.g. 561) that fool the Fermat's test.
+
+** Ex 1.21 - Try out the functions
+
+#+begin_src racket :noweb yes :exports both :cache yes
+  <<sequential-test>>
+
+  (smallest-divisor 199)
+  (smallest-divisor 1999)
+  (smallest-divisor 19999)
+
+  (prime? 199)
+  (prime? 1999)
+  (prime? 19999)
+#+end_src
+
+#+RESULTS[47b76b3c28653795f7763733167361ac5ea0cc01]:
+: 199
+: 1999
+: 7
+: #t
+: #t
+: #f
+
+#+begin_src racket :noweb yes :exports both :cache yes
+  <<fast-test>>
+
+  (fast-prime? 199 5)
+  (fast-prime? 1999 5)
+  (fast-prime? 19999 5)
+#+end_src
+
+#+RESULTS[e38b5b27d7e88a8192f8857d5ad08e75cbfe0d94]:
+: #t
+: #t
+: #f
+
+** Ex 1.22 - Timing the $O(\sqrt{n})$ version
+
+~(runtime)~ returns an integer that specifies the amount of time the system has been running.
+This can be used to measure execution time.
+
+#+begin_src racket :noweb yes
+  <<sequential-test>>
+  
+  (define (timed-prime-test n)
+    (define (time start-time)
+      (prime? n)
+      (- (runtime) start-time))
+    (time (runtime)))
+
+  (define (timed-prime-test-avg n times)
+    (define (iter sum count)
+      (if (= count 0)
+	  sum
+	  (iter (+ sum (timed-prime-test n))
+		(dec count))))
+    (/ (iter 0 times) (* 1.0 times)))
+
+  (define (display-time-measurement n duration)
+    (display "|")
+    (display n)
+    (display "|")
+    (display duration)
+    (display "|")
+    (newline))
+
+  (define (search-for-primes n limit)
+    (cond ((= limit 0) (display ""))
+	  ((prime? n)
+	   (display-time-measurement n (timed-prime-test-avg n 1000))
+	   (search-for-primes (+ n 1) (dec limit)))
+	  (else
+	   (search-for-primes (+ n 1) limit))))
+  (search-for-primes 100000 3)
+  (search-for-primes 1000000 3)
+  (search-for-primes 10000000 3)
+  (search-for-primes 100000000 3)
+  (search-for-primes 1000000000 3)
+  (search-for-primes 10000000000 3)
+  (search-for-primes 100000000000 3)
+
+#+end_src
+
+
+#+NAME: times-sequential
+|--------------+---------|
+|       100003 |   0.933 |
+|       100019 |   0.918 |
+|       100043 |    0.91 |
+|      1000003 |   2.767 |
+|      1000033 |   2.795 |
+|      1000037 |   2.768 |
+|     10000019 |   8.637 |
+|     10000079 |   8.615 |
+|     10000103 |   8.608 |
+|    100000007 |   27.17 |
+|    100000037 |  27.139 |
+|    100000039 |  27.309 |
+|   1000000007 |   86.77 |
+|   1000000009 |  86.236 |
+|   1000000021 |   86.75 |
+|  10000000019 | 279.596 |
+|  10000000033 | 271.998 |
+|  10000000061 | 272.127 |
+| 100000000003 | 859.095 |
+| 100000000019 | 862.939 |
+| 100000000057 | 859.008 |
+|--------------+---------|
+
+#+begin_src racket :exports both :cache yes
+  (sqrt 10)
+  (/ 860.0 272.0)
+  (/ 272.0 86.7)
+  (/ 86.7 27.3)
+  (/ 27.3 8.6)
+  (/ 8.6 2.7)
+#+end_src
+
+#+RESULTS[c936d520f8857ae2792199407f4d396ed02d1a06]:
+: 3.1622776601683795
+: 3.161764705882353
+: 3.1372549019607843
+: 3.1758241758241756
+: 3.174418604651163
+: 3.1851851851851847
+
+10-fold increase in input yields an execution time increase very close to $\sqrt{10}$, which is in line with the our expectations.
+
+
+** Ex 1.23 - Optimize the $O(\sqrt{n})$ version
+#+begin_src racket
+  #lang sicp
+
+  (define (square x) (* x x))
+
+  (define (prime? n)
+    (= (smallest-divisor-opt-2 n) n))
+
+  (define (smallest-divisor-orig n)
+    (find-divisor-opt-1 n 2))
+
+  (define (smallest-divisor-opt-2 n)
+    (find-divisor-opt-2 n 3))
+  
+  (define (find-divisor-orig n test-divisor)
+    (cond ((> (square test-divisor) n) n)
+	  ((divides? test-divisor n) test-divisor)
+	  (else (find-divisor n (+ test-divisor 1)))))
+
+  (define (find-divisor-opt-1 n test-divisor)
+    (cond ((> (square test-divisor) n) n)
+	  ((divides? test-divisor n) test-divisor)
+	  (else (find-divisor n (if (= test-divisor 2) 3 (+ test-divisor 2))))))
+
+  (define (find-divisor-opt-2 n test-divisor)
+    (cond ((> (square test-divisor) n) n)
+	  ((divides? test-divisor n) test-divisor)
+	  (else (find-divisor n (+ test-divisor 2)))))
+
+  (define (divides? d n)
+    (= (remainder n d) 0))
+
+  (define (timed-prime-test n)
+    (define (time start-time)
+      (prime? n)
+      (- (runtime) start-time))
+    (time (runtime)))
+
+  (define (timed-prime-test-avg n times)
+    (define (iter sum count)
+      (if (= count 0)
+	  sum
+	  (iter (+ sum (timed-prime-test n))
+		(dec count))))
+    (/ (iter 0 times) (* 1.0 times)))
+
+  (define (display-time-measurement n duration)
+    (display "|")
+    (display n)
+    (display "|")
+    (display duration)
+    (display "|")
+    (newline))
+
+  (define (search-for-primes n limit)
+    (cond ((= limit 0) (display ""))
+	  ((prime? n)
+	   (display-time-measurement n (timed-prime-test-avg n 1000))
+	   (search-for-primes (+ n 1) (dec limit)))
+	  (else
+	   (search-for-primes (+ n 1) limit))))
+  (search-for-primes 100000 3)
+  (search-for-primes 1000000 3)
+  (search-for-primes 10000000 3)
+  (search-for-primes 100000000 3)
+  (search-for-primes 1000000000 3)
+  (search-for-primes 10000000000 3)
+  (search-for-primes 100000000000 3)
+
+#+end_src
+
+
+#+NAME: times-sequential-comparison
+|--------------+------------+----------------+------------------+---------+-----------|
+|        prime | t-seq (ms) | t-seq-opt (ms) | t-seq-opt-2 (ms) | rat-opt | rat-opt-2 |
+|--------------+------------+----------------+------------------+---------+-----------|
+|       100003 |      0.933 |          0.524 |            0.517 |    1.78 |       1.8 |
+|       100019 |      0.918 |          0.538 |            0.513 |    1.71 |      1.79 |
+|       100043 |       0.91 |          0.537 |             0.48 |    1.69 |       1.9 |
+|      1000003 |      2.767 |          1.555 |            1.469 |    1.78 |      1.88 |
+|      1000033 |      2.795 |          1.551 |            1.427 |     1.8 |      1.96 |
+|      1000037 |      2.768 |          1.557 |            1.471 |    1.78 |      1.88 |
+|     10000019 |      8.637 |          4.788 |            4.508 |     1.8 |      1.92 |
+|     10000079 |      8.615 |          4.789 |            4.528 |     1.8 |       1.9 |
+|     10000103 |      8.608 |          4.778 |            4.508 |     1.8 |      1.91 |
+|    100000007 |      27.17 |         15.055 |           14.184 |     1.8 |      1.92 |
+|    100000037 |     27.139 |         15.034 |            14.17 |    1.81 |      1.92 |
+|    100000039 |     27.309 |         15.039 |           14.162 |    1.82 |      1.93 |
+|   1000000007 |      86.77 |         47.541 |           44.719 |    1.83 |      1.94 |
+|   1000000009 |     86.236 |         47.623 |           44.785 |    1.81 |      1.93 |
+|   1000000021 |      86.75 |         48.233 |           45.291 |     1.8 |      1.92 |
+|  10000000019 |    279.596 |        151.363 |          138.577 |    1.85 |      2.02 |
+|  10000000033 |    271.998 |        151.311 |          136.069 |     1.8 |       2.0 |
+|  10000000061 |    272.127 |        151.024 |          136.114 |     1.8 |       2.0 |
+| 100000000003 |    859.095 |        475.512 |          430.351 |    1.81 |       2.0 |
+| 100000000019 |    862.939 |        475.617 |          429.859 |    1.81 |      2.01 |
+| 100000000057 |    859.008 |        475.643 |          430.389 |    1.81 |       2.0 |
+|--------------+------------+----------------+------------------+---------+-----------|
+
+So this is not exactly 2x increase, more like 1.8x, bet we added ~if~ and it probably eats into the time. As ~search-for-prime~ calls ~timed-prime-test~ only for primes, remove ~if~ and assume it starts divisor search from 3.
+
+And indeed, with that ~if~ removed, ~rat-opt-2~ is much closer to $2$x than ~rat-opt~.
+
+** Ex 1.24 - Timing the $O(\log{n})$ version
+
+For larger values of prime, ~(random n)~ fails, so I'll consider only those prime below $4.2*10^9$. Is this a real limitation of ~fast-prime?~? How do you select a large random number (e.g. is randomly selecting two digits separatly and combining them into 2-digit number the same as randomly selecting 2-digit number?)
+
+#+begin_src racket :exports code :noweb yes
+  <<fast-test>>
+
+  (define (timed-prime-test n)
+    (define (time start-time)
+      (fast-prime? n 5)
+      (- (runtime) start-time))
+    (time (runtime)))
+
+  (define (timed-prime-test-avg n times)
+    (define (iter sum count)
+      (if (= count 0)
+	  sum
+	  (iter (+ sum (timed-prime-test n))
+		(dec count))))
+    (/ (iter 0 times) (* 1.0 times)))
+
+  (define (display-time-measurement n duration)
+    (display "|")
+    (display n)
+    (display "|")
+    (display duration)
+    (display "|")
+    (newline))
+
+  (define (search-for-primes n limit)
+    (cond ((= limit 0) (display ""))
+	  ((fast-prime? n 5)
+	   (display-time-measurement n (timed-prime-test-avg n 1000))
+	   (search-for-primes (+ n 1) (dec limit)))
+	  (else
+	   (search-for-primes (+ n 1) limit))))
+  (search-for-primes 100000 3)
+  (search-for-primes 1000000 3)
+  (search-for-primes 10000000 3)
+  (search-for-primes 100000000 3)
+  (search-for-primes 1000000000 3)
+
+#+end_src
+
+#+NAME: compare-seq-fast
+|      prime | t-seq (ms) | t-seq-opt (ms) | t-seq-opt-2 (ms) | t-fast (ms) | rat-opt | rat-opt-2 | rat-fast |
+|------------+------------+----------------+------------------+-------------+---------+-----------+----------|
+|     100003 |      0.933 |          0.524 |            0.517 |        1.25 |    1.78 |       1.8 |     0.75 |
+|     100019 |      0.918 |          0.538 |            0.513 |       1.288 |    1.71 |      1.79 |     0.71 |
+|     100043 |       0.91 |          0.537 |             0.48 |       1.284 |    1.69 |       1.9 |     0.71 |
+|    1000003 |      2.767 |          1.555 |            1.469 |       1.514 |    1.78 |      1.88 |     1.83 |
+|    1000033 |      2.795 |          1.551 |            1.427 |       1.423 |     1.8 |      1.96 |     1.96 |
+|    1000037 |      2.768 |          1.557 |            1.471 |        1.47 |    1.78 |      1.88 |     1.88 |
+|   10000019 |      8.637 |          4.788 |            4.508 |       1.698 |     1.8 |      1.92 |     5.09 |
+|   10000079 |      8.615 |          4.789 |            4.528 |       1.775 |     1.8 |       1.9 |     4.85 |
+|   10000103 |      8.608 |          4.778 |            4.508 |        1.76 |     1.8 |      1.91 |     4.89 |
+|  100000007 |      27.17 |         15.055 |           14.184 |       1.955 |     1.8 |      1.92 |     13.9 |
+|  100000037 |     27.139 |         15.034 |            14.17 |       2.026 |    1.81 |      1.92 |     13.4 |
+|  100000039 |     27.309 |         15.039 |           14.162 |       2.026 |    1.82 |      1.93 |    13.48 |
+| 1000000007 |      86.77 |         47.541 |           44.719 |       2.172 |    1.83 |      1.94 |    39.95 |
+| 1000000009 |     86.236 |         47.623 |           44.785 |       2.135 |    1.81 |      1.93 |    40.39 |
+| 1000000021 |      86.75 |         48.233 |           45.291 |       2.189 |     1.8 |      1.92 |    39.63 |
+
+
+With calculated constant - $c = \frac{\sqrt{n}}{\log_{2}{n}} \cdot \frac{1}{r}$, where $r = \frac{t_{seq}}{t_{fast}}$:
+
+#+begin_src python :var t=compare-seq-fast :exports none
+  import math
+
+  return [
+      r + [(math.sqrt(r[0]) / (math.log(r[0])/math.log(2))), (math.sqrt(r[0]) / (math.log(r[0])/math.log(2)))/r[7]]
+      for r in t
+  ]
+#+end_src
+
+#+RESULTS:
+|      prime | t-seq (ms) | t-seq-opt (ms) | t-seq-opt-2 (ms) | t-fast (ms) | rat-opt | rat-opt-2 | rat-fast |     sqrt(n)/log(n) |              const |
+|------------+------------+----------------+------------------+-------------+---------+-----------+----------+--------------------+--------------------|
+|     100003 |      0.933 |          0.524 |            0.517 |        1.25 |    1.78 |       1.8 |     0.75 |  19.03904457599526 |  25.38539276799368 |
+|     100019 |      0.918 |          0.538 |            0.513 |       1.288 |    1.71 |      1.79 |     0.71 | 19.040303011592457 | 26.817328185341488 |
+|     100043 |       0.91 |          0.537 |             0.48 |       1.284 |    1.69 |       1.9 |     0.71 | 19.042190450385043 | 26.819986549838088 |
+|    1000003 |      2.767 |          1.555 |            1.469 |       1.514 |    1.78 |      1.88 |     1.83 |  50.17173030680287 | 27.416246069291187 |
+|    1000033 |      2.795 |          1.551 |            1.427 |       1.423 |     1.8 |      1.96 |     1.96 |  50.17237392891451 | 25.598149963731892 |
+|    1000037 |      2.768 |          1.557 |            1.471 |        1.47 |    1.78 |      1.88 |     1.88 |  50.17245974437893 | 26.687478587435603 |
+|   10000019 |      8.637 |          4.788 |            4.508 |       1.698 |     1.8 |      1.92 |     5.09 | 135.99160320815886 |  26.71740731005086 |
+|   10000079 |      8.615 |          4.789 |            4.528 |       1.775 |     1.8 |       1.9 |     4.85 | 135.99196055849998 | 28.039579496597938 |
+|   10000103 |      8.608 |          4.778 |            4.508 |        1.76 |     1.8 |      1.91 |     4.89 | 135.99210349830423 | 27.810246114172646 |
+|  100000007 |      27.17 |         15.055 |           14.184 |       1.955 |     1.8 |      1.92 |     13.9 |  376.2875063201172 | 27.071043620152317 |
+|  100000037 |     27.139 |         15.034 |            14.17 |       2.026 |    1.81 |      1.92 |     13.4 |   376.287556635001 | 28.081160942910522 |
+|  100000039 |     27.309 |         15.039 |           14.162 |       2.026 |    1.82 |      1.93 |    13.48 |  376.2875599893263 | 27.914507417605808 |
+| 1000000007 |      86.77 |         47.541 |           44.719 |       2.172 |    1.83 |      1.94 |    39.95 | 1057.7115925989249 | 26.475884670811634 |
+| 1000000009 |     86.236 |         47.623 |           44.785 |       2.135 |    1.81 |      1.93 |    40.39 | 1057.7115935545569 | 26.187462083549317 |
+| 1000000021 |      86.75 |         48.233 |           45.291 |       2.189 |     1.8 |      1.92 |    39.63 | 1057.7115992883487 |  26.68966942438427 |
+
+** Ex 1.25 - Would naive expmod work?
+
+Suggested expmod implementation:
+#+begin_src racket
+  #lang sicp
+
+  ;; used
+  (define (expmod base exp m)
+    (cond ((= exp 0) 1)
+	  ((even? exp) (remainder (square (expmod base (/ exp 2) m)) m))
+	  (else (remainder (* base (expmod base (- exp 1) m)) m))))
+
+  ;; suggested by Alyssa P. Hacker
+  (define (expmod-alyssa base exp m)
+    (remainder (fast-expt base exp) m))
+#+end_src
+
+One of the test steps is ~(expmod m p p)~, where ~p~ is a prime and ~m < p~ is some integer.
+The option suggested by Alyssa would work for checking very small primes p, as then ~(fast-expt m p)~ would fit into usual number boundaries.
+However, with anything a bit larger it would fail already with either boundary checks or arithmetic overflows.
+
+** Ex 1.26 - Why "normal-order"-esque `square turns $O(\log{n})$ into $O(n)$
+Louis Reasoner's version of ~expmod~:
+#+begin_src racket
+  #lang sicp
+
+  (define (expmod base exp m)
+    (cond ((= exp 0) 1)
+	  ((even? exp)
+	   (remainder (* (expmod base (/ exp 2) m)
+			 (expmod base (/ exp 2) m))
+		      m))
+	  (else
+	   (remainder (* base (expmod base (- exp 1) m))
+		      m))))
+#+end_src
+
+Example:
+#+begin_src racket
+  ;; instead of
+   (expmod 2 8 3)
+    (expmod 2 4 3)
+     (expmod 2 2 3)
+       (expmod 2 1 3)
+	(expmod 2 0 3)
+
+  ;; this tree would be calculated
+   (expmod 2 8 3)
+    (expmod 2 4 3)
+     (expmod 2 2 3)
+       (expmod 2 1 3)
+	(expmod 2 0 3)
+       (expmod 2 1 3)
+	(expmod 2 0 3)
+     (expmod 2 2 3)
+       (expmod 2 1 3)
+	(expmod 2 0 3)
+       (expmod 2 1 3)
+	(expmod 2 0 3)
+    (expmod 2 4 3)
+     (expmod 2 2 3)
+       (expmod 2 1 3)
+	(expmod 2 0 3)
+       (expmod 2 1 3)
+	(expmod 2 0 3)
+     (expmod 2 2 3)
+       (expmod 2 1 3)
+	(expmod 2 0 3)
+       (expmod 2 1 3)
+	(expmod 2 0 3)
+
+#+end_src
+
+Let $f(n)$ denote the number of operations performed for input $n$. For conveniece take $n=2^k$ for some $k$. Now on each step ~expmod~ is calculated twice with halfed input ~n/2~, so $f(n)=2f(n/2)=4f(n/4)=...=2^kf(1)=2^k=n$ (assuming $f(1)$ is constant). So the number of steps to calculate ~expmod~ for ~n~-th power is $\theta(n)$
+
+** Ex 1.27 - Ensure Carmichael numbers fool the Fermat test
+
+Carmichael number is a non-prime number $n$ such that for each $a < n$, $a^n \equiv a \pmod{n}$.
+
+Below is a procedure to test out some known Carmichael numbers:
+
+#+begin_src racket :noweb yes
+  <<fast-test>>
+
+  (define (fermat-vs-carmichael n)
+    (define (iter a)
+      (cond ((= a n) #t)
+	    ((not (eq? (expmod a n n) a)) #f)
+	    (else (iter (inc a)))))
+    (iter 2))
+
+  ;; ensure it fails for obviously composite non-Carmichael number
+  (fermat-vs-carmichael 562)
+
+  (fermat-vs-carmichael 561)
+  (fermat-vs-carmichael 1105)
+  (fermat-vs-carmichael 1729)
+  (fermat-vs-carmichael 2465)
+
+#+end_src
+
+#+RESULTS:
+: #f
+: #t
+: #t
+: #t
+: #t
+
+** Ex 1.28 - Implement the Miller-Rabin test
+*** Alternate form of the Fermat's Little Theorem:
+
+#+begin_quote
+If $n$ is a prime number and $a$ is any positive integer less than $n$ (so that $(a,n)=1$), then $a^{n-1} \equiv 1 \pmod{n}$.
+#+end_quote
+
+*** Miller-Rabin test
+Pick random $a \lt n$,  ~(expmod a (- n 1) n)~.
+
+When performing the squaring step in ~expmod~, check if a "nontrivial square root of 1 modulo n" is discovered (that is a number not equal to $1$ or $n-1$, whose square is equal to $1\mod{n}$. It is possible to prove that if such a nontrivial square root of 1 exists, then $n$ is not prime.
+
+It is also possible to prove that if n is an odd number that is not prime, then for at least half the numbers $a < n$, computing $a^{n-1}$ in that way will reveal a nontrivial square root of 1 module n).
+
+#+begin_src racket :noweb yes
+  #lang sicp
+
+  (define (square x) (* x x))
+
+  (define (expmod-mr base exp m)
+    (define (mr-check s)
+      (if (and (not (eq? s 1))
+	       (not (eq? s (- m 1)))
+	       (= 1 (remainder (square s) m)))
+	  0 ;; signal that nontrivial square root of 1 modulo n is found
+	  (remainder (square s) m)))
+
+    (cond ((zero? exp) 1)
+	  ((even? exp)
+	   (mr-check (expmod-mr base (/ exp 2) m)))
+	  (else
+	   (remainder (* base (expmod-mr base (dec exp) m))
+		      m))))
+
+  (define (miller-rabin-test n)
+    (define (try-it a)
+      (= (expmod-mr a (- n 1) n) 1))
+    (try-it (+ 1 (random (- n 1)))))
+
+  (define (fast-robust-prime? n count)
+    (cond ((zero? count) #t)
+	  ((miller-rabin-test n) (fast-robust-prime? n (dec count)))
+	  (else #f)))
+
+  (fast-robust-prime? 1729 5)
+#+end_src
+
+#+RESULTS:
+: #f

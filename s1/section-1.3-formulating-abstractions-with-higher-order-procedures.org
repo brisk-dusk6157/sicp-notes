@@ -1,0 +1,1279 @@
+#+options: num:nil
+* 1.3. Formulating Abstractions with Higher-Order Procedures
+
+** 1.3.1. Procedures as Arguments
+
+These three functions follow the same pattern, with different names, functions to compute the term and function that provides next value.
+#+begin_src racket
+  #lang sicp
+
+  (define (sum-integers a b)
+    (if (> a b)
+	0
+	(+ a (sum-integers (+ a 1) b))))
+
+  (define (sum-cubes a b)
+    (if (> a b)
+	0
+	(+ (cube a) (sum-cubes (+ a 1) b))))
+
+  (define (pi-sum a b)
+    (if (> a b)
+	0
+	(+ (/ 1.0 (* a (+ a 2))) (pi-sum (+ a 4) b))))
+#+end_src
+
+#+RESULTS:
+: /var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-78I2Fd/ob-racketUv7TkS.rkt:12:10: cube: unbound identifier
+:   in: cube
+:   location...:
+:    /var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-78I2Fd/ob-racketUv7TkS.rkt:12:10
+
+Here's the pattern extracted:
+#+begin_example racket
+  (define (<name> a b)
+    (if (> a b)
+        0
+	(+ (<term> a)
+	   (<name> (<next> a) b)))
+#+end_example
+
+And it's implementation in Scheme, ~term~ and ~next~ are parameters that expect functions:
+#+NAME: sum-hof
+#+begin_src racket
+  #lang sicp
+
+  (define (sum term a next b)
+    (if (> a b)
+	0
+	(+ (term a)
+	   (sum term (next a) next b))))
+#+end_src
+
+#+RESULTS: sum-hof
+
+#+begin_src racket :noweb yes :exports both :cache yes
+  <<sum-hof>>
+  (define (cube x) (* x x x))
+
+  (define (sum-cubes a b)
+    (sum cube a inc b))
+
+  (sum-cubes 1 3)
+
+  (define (sum-integers a b)
+    (sum identity a inc b))
+
+  (sum-integers 1 10)
+
+  (define (pi-sum a b)
+    (define (pi-term x)
+      (/ 1.0 (* x (+ x 2))))
+    (define (pi-next x)
+      (+ x 4))
+    (sum pi-term a pi-next b))
+
+  (* 8 (pi-sum 1 1000))
+
+  (define (integral f a b dx)
+    (define (add-dx x) (+ x dx))
+    (* (sum f (+ a (/ dx 2.0)) add-dx b)
+       dx))
+
+  (define (f x) (/ 1 x))
+
+  (integral f 1 2.718 0.001)
+  (integral cube 0 1 0.0001)
+  (integral cube 1 100 0.001)
+  (integral cube 1 1000 0.001)
+#+end_src
+
+#+RESULTS[da53bb6289facc19d2990e804c467683068a6b72]:
+: 36
+: 55
+: 3.139592655589783
+: 0.9998962797024742
+: 0.24999999874993412
+: 24999999.74877359
+: 249999999988.77032
+
+*** Exercise 1.29 - Simpson's Rule
+
+$$ \int\limits_a^b f(x) \approx \frac{h}{3}[y_0 + 4y_1 + 2y_2 + 4y_3 + 2y_4 + ... + 2y_{n-2} + 4y_{n-1} + y_n] $$
+
+where $h = (b-a)/n$ for some even integer $n$, and $y_k = f(a+kh)$.
+
+#+begin_src racket :noweb yes :exports both :cache yes
+  <<sum-hof>>
+
+  (define (simpson-rule f a b n)
+    (define h (/ (- b a) n))
+    (define (y k) (f (+ a (* k h))))
+    (define (term k)
+      (cond ((or (= k 0) (= k n))
+	     (y k))
+	    ((even? k)
+	     (* 2 (y k)))
+	    (else
+	     (* 4 (y k)))))
+    (* (/ h 3.0) (sum term 0 inc n)))
+
+  (define (f x) (/ 1 x))
+  (define (cube x) (* x x x))
+  (simpson-rule f 1 2.718 100)
+  (simpson-rule cube 0 1 100)
+  (simpson-rule cube 0 1 1000)
+  (simpson-rule cube 1 100 1000)
+  (simpson-rule cube 1 1000 1000)
+#+end_src
+
+#+RESULTS[44529fa7419046eb41f6879cf6e2f6cf54ddfa3d]:
+: 0.9998963185775426
+: 0.25
+: 0.25
+: 24999999.75
+: 249999999999.75
+
+Simpson rule provides more precise integral estimation.
+
+*** Exercise 1.30 - Linear recursion -> iteration
+#+begin_src racket :exports both :cache yes
+  #lang sicp
+
+  (define (sum-iter term a next b)
+    (define (iter cur acc)
+      (if (> cur b)
+	  acc
+	  (iter (next cur) (+ acc (term cur)))))
+    (iter a 0))
+
+  (sum-iter identity 1 inc 10)
+#+end_src
+
+#+RESULTS[8f8b3ca453ba467636b6a87cb8d71108c1563202]:
+: 55
+
+*** Exercise 1.31 - ~product~ higher order function
+
+**** DONE Implement ~product~ 
+
+**** DONE Implement ~factorial~ using ~product~
+
+**** DONE Compute approximation of $\pi$
+
+John Wallis formula to approximate $\pi$:
+$$ \frac{\pi}{4} = \frac{2*4*4*6*6*8...}{3*3*5*5*7*7...} $$
+
+**** DONE Write both recursive and iterative versions
+
+#+begin_src racket :exports both :cache yes
+  #lang sicp
+
+  (define (product term a next b)
+    (if (> a b)
+	1
+	(* (term a) (product term (next a) next b))))
+
+  (define (product-iter term a next b)
+    (define (iter cur acc)
+      (if (> cur b)
+	  acc
+	  (iter (next cur) (* (term cur) acc))))
+    (iter a 1))
+
+  (define (factorial n)
+    (product-iter identity 1 inc n))
+
+  (factorial 5)
+
+  (define (pi-approx k)
+    (define (num i) (* 2 (floor (/ (+ i 2) 2))))
+    (define (denom i) (+ (* 2 (floor (/ (+ i 1) 2))) 1))
+    (define (term i) (* 1.0 (/ (num i) (denom i))))
+    (product-iter term 1 inc k))
+
+  (define (pi-approx-2 k)
+    (define (num i) (* 2 (floor (/ (+ i 2) 2))))
+    (define (denom i) (+ (* 2 (floor (/ (+ i 1) 2))) 1))
+    (/ (product-iter num 1 inc k)
+       (product-iter denom 1 inc k)))
+
+  (* 4.0 (pi-approx 100000000))
+#+end_src
+
+#+RESULTS[e2f148b8ddc05e173ebd9a86704c7041e84090a0]:
+: 120
+: 3.1415926692944294
+
+Note: calculation using the integer ratios is much slower than converting to floats as we go (Scheme supports long arithmetic and will use it for calculations).
+
+*** Exercise 1.32 - generalize ~sum~ and ~product~ into ~accumulate~ 
+
+**** DONE Show that ~sum~ and ~product~ are special cases of ~accumulate~
+
+~(accumulate combiner null-value term a next b)~
+
+Here are the ~sum~ and ~product~ recursive implementations:
+#+begin_src racket
+  (define (product term a next b)
+    (if (> a b)
+	1
+	(* (term a) (product term (next a) next b))))
+
+
+  (define (sum term a next b)
+    (if (> a b)
+	0
+	(+ (term a)
+	   (sum term (next a) next b))))
+#+end_src
+
+#+RESULTS:
+
+Here common pattern is extracted:
+#+begin_example racket
+  (define (<name> term a next b)
+  (if (> a b)
+      <null-value>
+      (<combine> (term a)
+		 (<name> term (next a) next b))
+#+end_example
+
+Both ~sum~ and ~product~ follow this pattern and so are the special cases of suggested ~accumulate~ function.
+
+**** DONE Write ~accumulate~
+
+#+name: accumulate
+#+begin_src racket :exports both :cache yes
+  #lang sicp
+
+  (define (accumulate combiner null-value term a next b)
+    (if (> a b)
+	null-value
+	(combiner (term a)
+		  (accumulate combiner null-value term (next a) next b))))
+
+  (define (accumulate-iter combiner null-value term a next b)
+    (define (iter x acc)
+      (if (> x b)
+	  acc
+	  (iter (next x)
+		(combiner (term x)
+			  acc))))
+    (iter a null-value))
+
+  (define (sum term a next b)
+    (accumulate-iter + 0 term a next b))
+
+  (define (product term a next b)
+    (accumulate-iter * 1 term a next b))
+
+  (sum identity 1 inc 10)
+  (product identity 1 inc 6)
+#+end_src
+
+#+RESULTS[9a850c77ce79350071d8c6843cb4b3b0e3c0252b]: accumulate
+: 55
+: 720
+
+**** DONE Implement ~sum~ and ~product~ in terms of ~accumulate~
+
+**** DONE Write both recursive and iterative versions
+
+*** Exercise 1.33 - ~filtered-accumulate~
+
+**** DONE Implement ~filtered-accumulate~
+**** DONE Show how to express...
+***** DONE the sum of the squares of the primes in the interval $[a,b)$
+***** DONE the product of the positive integers $i<n$ with $(i, n)=1$
+
+**** Implementation
+
+#+name: filtered-accumulate
+#+begin_src racket :exports both :cache yes
+  #lang sicp
+
+
+  (define (square x) (* x x))
+
+  (define (filtered-accumulate combiner null-value predicate term a next b)
+    (define (iter x acc)
+      (cond ((> x b) acc)
+	    ((predicate x)
+	     (iter (next x)
+		   (combiner acc (term x))))
+	    (else
+	     (iter (next x)
+		   acc))))
+    (iter a null-value))
+
+
+  (define (prime? n)
+
+    (define (expmod b e m)
+      (cond ((zero? e) 1)
+	    ((even? e)
+	     (remainder (square (expmod b (/ e 2) m))
+			m))
+	    (else
+	     (remainder (* b (expmod b (- e 1) m))
+			m))))
+
+    (define (fermat-test n)
+      (define (try-it a)
+	(= (expmod a n n) a))
+      (try-it (+ 1 (random (- n 1)))))
+
+    (define (iter-fermat-test count)
+      (cond ((zero? count) #t)
+	    ((fermat-test n) (iter-fermat-test (dec count)))
+	    (else #f)))
+    (iter-fermat-test 5))
+
+  (define (gcd a b)
+    (if (zero? b)
+	a
+	(gcd b (remainder a b))))
+
+
+  (define (sum-prime-squares a b)
+    (filtered-accumulate + 0 prime? square a inc b))
+
+  ;; 2^2 + 3^2 + 5^2 + 7^2 = 87
+  (sum-prime-squares 2 10)
+
+  (define (product-coprimes-and-lt-n n)
+    (define (coprime? x)
+      (= (gcd n x) 1))
+    (filtered-accumulate * 1 coprime? identity 2 inc n))
+
+  ;;3*7*9 = 189
+  (product-coprimes-and-lt-n 10)
+#+end_src
+
+#+RESULTS[c3f68339b604ab176bdb4fdbbab0db9249cd8323]: filtered-accumulate
+: 87
+: 189
+
+** 1.3.2. Constructing Procedures Using ~lambda~
+
+Argument for ~lambdas~ is "seems terribly awkward" (p.62):
+
+#+begin_quote
+In using ~sum~ as in section 1.3.1, it seems terribly awkward to have to define trivial procedures such as ~pi-term~ and ~pi-next~ just so we can use them as arguments to our higher-order procedure.
+#+end_quote
+
+#+begin_src racket :noweb yes :exports both :cache yes
+  <<accumulate>>
+
+  (define (pi-sum a b)
+    (sum (lambda (x) (/ 1.0 (* x (+ x 2))))
+	 a
+	 (lambda (x) (+ x 4))
+	 b))
+
+  (define (integral f a b dx)
+    (* (sum f
+	    (+ a (/ dx 2.0))
+	    (lambda (x) (+ x dx))
+	    b)
+       dx))
+
+  (integral (lambda (x) (/ 1 x)) 1 2.718 0.001)
+#+end_src
+
+#+RESULTS[a9c5790823951ec04f8a0e0116023870e8c4bbbb]:
+: 55
+: 720
+: 0.9998962797024724
+
+*** Using ~let~ to create local variables
+
+#+begin_src racket
+  (define (f x y)
+    (let ((a (+ 1 (* x y)))
+	  (b (- 1 y)))
+      (+ (* x (square a))
+	 (* y b)
+	 (* a b))))
+#+end_src
+
+#+RESULTS:
+: /var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-KuOKlL/ob-racketwXtHnF.rkt:6:13: square: unbound identifier
+:   in: square
+:   location...:
+:    /var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-KuOKlL/ob-racketwXtHnF.rkt:6:13
+
+
+*** Exercise 1.34 - (f f)
+
+#+begin_src racket :exports both :cache yes
+  #lang sicp
+
+  (define (square x) (* x x))
+
+  (define (f g)
+    (g 2))
+
+  (f square)
+  (f (lambda (x) (+ 4 x)))
+  (f f)
+#+end_src
+
+#+RESULTS[09111eb706020c4451b5b82667fde399bdc38157]:
+: application: not a procedure;
+:  expected a procedure that can be applied to arguments
+:   given: 2
+:   context...:
+:    body of "/var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-Feglcv/ob-racketa7cf5P.rkt"
+: 4
+: 6
+
+** 1.3.3. Procedures as General Methods
+
+#+begin_src racket :exports both :cache yes
+  #lang sicp
+
+  (define (close-enough? x y)
+    (< (abs (- x y)) 0.0001))
+
+  (define (average a b) (/ (+ a b) 2))
+
+  (define (search f neg-point pos-point)
+    (let ((midpoint (average neg-point pos-point)))
+      (if (close-enough? neg-point pos-point)
+	  midpoint
+	  (let ((test-value (f midpoint)))
+	    (cond ((positive? test-value)
+		   (search f neg-point midpoint))
+		  ((negative? test-value)
+		   (search f midpoint pos-point))
+		  (else midpoint))))))
+
+  (define (half-interval-method f a b)
+    (let ((a-value (f a))
+	  (b-value (f b)))
+      (cond ((and (negative? a-value) (positive? b-value))
+	     (search f a b))
+	    ((and (negative? b-value) (positive? a-value))
+	     (search f b a))
+	    (else
+	     (error "Values are not of opposite sign" a b)))))
+
+  (half-interval-method (lambda (x) (* x x x)) 1 2)
+#+end_src
+
+#+RESULTS[991d871342025e323426c3a31d9c94e91bbbb209]:
+: Values are not of opposite sign 1 2
+:   context...:
+:    body of "/var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-D5Pbj3/ob-racketQkbnoU.rkt"
+
+*** Finding fixed points of functions
+
+#+begin_src racket :exports both :cache yes
+  #lang sicp
+  
+  (define tolerance 0.000001)
+  (define (average a b) (/ (+ a b) 2))
+
+  (define (fixed-point f first-guess)
+    (define (close-enough? v1 v2)
+      (< (abs (- v1 v2)) tolerance))
+
+    (define (try guess)
+      (let ((next (f guess)))
+	(if (close-enough? guess next)
+	    next
+	    (try next))))
+    (try first-guess))
+
+  (fixed-point cos 1.0)
+
+  (define (sqrt x)
+    (fixed-point (lambda (y) (average y (/ x y)))
+		 1.0))
+  (sqrt 2.0)
+#+end_src
+
+#+RESULTS[85aa951f7a7828563f5c4ea7c3781ac827f0802a]:
+: 0.7390855263619245
+: 1.414213562373095
+
+*** Exercise 1.35 - $\phi$ is a fixed point of of $x \mapsto 1 + 1/x$
+
+#+begin_src racket :exports both :cache yes
+  #lang sicp
+
+  (define (fixed-point f x0)
+
+    (define (close-enough? x1 x2)
+      (< (abs (- x1 x2)) 0.00001))
+
+    (define (try x1)
+      (let ((x2 (f x1)))
+	(if (close-enough? x1 x2)
+	    x2
+	    (try x2))))
+
+    (try x0))
+
+  (define (sqrt x)
+    ;; find such y, that [y^2 = x] <=>  [y = x/y] <=> [y + y = y + x/y] <=> [y = (y+x/y)/2]
+    (fixed-point (lambda (y) (/ (+ y
+				   (/ x y))
+				2))
+		 1))
+
+  (sqrt 2.0)
+
+  (define fp (fixed-point (lambda (x) (+ 1 (/ 1 x)))
+			  1.0))
+  fp
+  
+  ;; look, they are very close:
+  (abs (- fp
+	  (/ (+ 1 (sqrt 5.0))
+	     2)))
+#+end_src
+
+#+RESULTS[0c3542355ce5e39cfec4c6111acd709b5e2c246f]:
+: 1.4142135623746899
+: 1.6180327868852458
+: 1.2018647432832097e-6
+
+
+*** Exercise 1.36 - Solve $x^x = 1000$
+**** DONE MOdify ~fixed-point~ to display the sequence of approximations
+#+begin_src racket :exports both :cache yes
+  #lang sicp
+
+  (define (fixed-point f x0)
+
+    (define (close-enough? x1 x2)
+      (< (abs (- x1 x2)) 0.00001))
+
+    (define (try x1)
+      (let ((x2 (f x1)))
+	(display x2) (newline)
+	(if (close-enough? x1 x2)
+	    x2
+	    (try x2))))
+
+    (display x0) (newline)
+    (try x0))
+
+  ;; (define (sqrt x)
+  ;;   (fixed-point (lambda (y) (/ (+ y
+  ;; 				     (/ x y))
+  ;; 				  2))
+  ;; 		   1))
+  ;; 
+  ;; (sqrt 2.0)
+
+  (fixed-point
+   (lambda (x)
+     (/ (log 1000) (log x)))
+   1.01)
+
+  (fixed-point
+   (lambda (x)
+     (/ (+ x
+	   (/ (log 1000) (log x)))
+	2))
+   1.01)
+
+#+end_src
+
+#+RESULTS[29ed2b75732ebfb9bbdf3c6c5af38990bc1ee291]:
+#+begin_example
+1.01
+694.2236776762827
+1.055780612460517
+127.26055743910173
+1.4253854739914937
+19.489083462500002
+2.3259574873698248
+8.18326648626343
+3.2861346035282715
+5.806241667198841
+3.92724075378532
+5.049760968410063
+4.2657819856380215
+4.76191492154257
+4.426204339358592
+4.64373670252144
+4.498644193048986
+4.593606360935328
+4.530669621326673
+4.572038912567034
+4.544697660392501
+4.5627029678822515
+4.550817635030553
+4.558650925618256
+4.5534829030241575
+4.5568901976417955
+4.554642750539031
+4.556124726000178
+4.555147315191813
+4.555791866477423
+4.555366782622978
+4.5556471112691534
+4.5554622370513895
+4.555584156970991
+4.555503752547114
+4.555556777541618
+4.555521808450369
+4.555544869871394
+4.555529661276244
+4.5555396910529815
+4.555533076598918
+4.555533076598918
+1.01
+347.61683883814135
+174.39871477317138
+87.86853920133174
+44.70594066829248
+23.261860055041023
+12.728508854591553
+7.721993845962085
+5.550700917830408
+4.790537371352316
+4.599905313618908
+4.563253309499359
+4.5568546876839555
+4.555760420225574
+4.555573969263438
+4.555542220132647
+4.5555368144275885
+4.5555368144275885
+#+end_example
+
+Wow! It takes 34 iterations to converge without average dampoing and only 9 with, if started from $2.0$.
+
+
+*** Exercise 1.37 - Finite continued fraction
+**** DONE Write ~cont-frac~ procedure
+**** DONE Write both iterative and recursive process
+#+name: cont-frac
+#+begin_src racket :exports code :cache yes
+  #lang sicp
+
+  (define (cont-frac-rec n d k)
+    (define (rec i)
+      (if (= i k)
+	  (/ (n i) (d i))
+	  (/ (n i) (+ (d i) (rec (inc i))))))
+    (rec 1))
+
+  (define (cont-frac n d k)
+    (define (iter i so-far)
+      (if (zero? i)
+	  so-far
+	  (iter (dec i)
+		(/ (n i) (+ (d i) so-far)))))
+    (iter k 0))
+#+end_src
+
+#+RESULTS[99d6ea54198ed8461a5073bf6a3217fc823d3dec]: cont-frac
+
+**** DONE Test $1/\phi$ approximation
+**** DONE How many iterations needed for approximation to be accurate to 4 decimal places
+#+begin_src racket :exports both :cache yes :noweb yes
+  <<cont-frac>>
+
+  (define (f k)
+    (cont-frac
+     (lambda (i) 1.0)
+     (lambda (i) 1.0)
+     k))
+
+  (define (f2 k)
+    (cont-frac-rec
+     (lambda (i) 1.0)
+     (lambda (i) 1.0)
+     k))
+
+  (define phi-recip 0.6180339887498948)
+
+  (define (find-k k)
+    (let ((r (f k)))
+      (if (< (abs (- r phi-recip))
+	     0.00001)
+	  k
+	  (find-k (inc k)))))
+  phi-recip
+  (define k00001 (find-k 1))
+  k00001
+  (f k00001)
+  (f2 k00001)
+#+end_src
+
+#+RESULTS[ec053fe64e390f2d389b614ca1b70858770db045]:
+: 0.6180339887498948
+: 12
+: 0.6180257510729613
+: 0.6180257510729613
+
+*** Exercise 1.38 - Euler's continued fraction approximation for $e - 2$
+
+#+begin_src racket :noweb yes :exports both :cache yes
+  <<cont-frac>>
+
+  (define (e-2-approx k)
+    (cont-frac (lambda (i) 1.0)
+	       (lambda (i)
+		 (let ((v (if (= (remainder i 3) 2)
+			      (* 2.0
+				 (+ 1
+				    (floor (/ i 3))))
+			      1.0)))
+		   v)
+		 )
+	       k))
+
+  (define e (+ 2 (e-2-approx 10)))
+  e
+#+end_src
+
+#+RESULTS[457ef2a4669dc26fbfab14afdb60392ecaab438d]:
+: 2.7182817182817183
+
+*** DONE Exercise 1.39 - Lambert's continued fraction approximation for $\tan{x}$
+
+While it's possible to use existing ~cont-frac~ with carefully chosen ~n~ and ~d~,
+this solution implements everything from scratch with a different idea:
+
+~(expand step k)~ function applies ~step~ for ~k~ iterations counting down.
+For each iteration ~i~ it calls ~(step i expanded)~ where ~expanded~ is the
+intermediary result of expansion from ~k~ to ~i+1~ inclusive.
+
+~tan-cf~ then can be implemented with ~expand~.
+
+#+begin_src racket :exports both :cache yes
+  #lang sicp
+
+  ;; reimlemented just for practice
+  (define (square x) (* x x))
+  (define (pow b p)
+    (cond ((zero? p) 1)
+	  ((even? p) (square (pow b (/ p 2))))
+	  (else (* b (pow b (- p 1))))))
+
+  (define (expand step k)
+    (define (iter i expanded)
+      (if (zero? i)
+	  expanded
+	  (iter (dec i) (step i expanded))))
+    (iter k 0))
+
+  (define (tan-cf x k)
+    (define (bounded x b)
+      (if (> x b) b x))
+    (define (n i)
+      (pow x (bounded i 2)))
+    (define (d i)
+      (- (* 2 i) 1))
+    (define (step i so-far)
+      (/ (n i) (- (d i) so-far)))
+    (expand step k))
+
+  (define PI 3.141592653589793)
+  (tan-cf (/ PI 4) 10)
+  (tan-cf (/ PI 3) 10)
+  (tan-cf (/ PI 6) 10)
+  (tan-cf (/ (* 3 PI) 4) 10)
+  (tan-cf (/ (* 99 PI) 200) 10)
+  (display "----") (newline)
+  (tan-cf (/ PI 4) 5)
+  (tan-cf (/ PI 3) 5)
+  (tan-cf (/ PI 6) 5)
+  (tan-cf (/ (* 3 PI) 4) 5)
+  (tan-cf (/ (* 99 PI) 200) 5)
+
+#+end_src
+
+#+RESULTS[6b84aeb48ab64b9cdd8a0da80ad8638848a34e84]:
+#+begin_example
+1.0
+1.732050807568877
+0.5773502691896257
+-1.0000000000111287
+63.656741162867455
+----
+0.999999986526355
+1.7320501979592633
+0.5773502690823613
+-1.0014725253285737
+63.61463501121894
+#+end_example
+
+And results are incredibly close to the real values, after only $10$ iterations.
+
+** 1.3.4. Procedures as Returned Values
+
+Average dumping is a useful general technique in itself.
+
+#+begin_src racket :exports both :cache yes
+  #lang sicp
+  (define tolerance 0.00001)
+  (define (fixed-point f first-guess)
+    (define (close-enough? v1 v2)
+      (< (abs (- v1 v2)) tolerance))
+
+    (define (try guess)
+      (let ((next (f guess)))
+	(if (close-enough? guess next)
+	    next
+	    (try next))))
+    (try first-guess))
+
+
+  (define (average a b) (/ (+ a b) 2))
+  (define (square x) (* x x))
+  (define (average-damp f)
+    (lambda (x) (average x (f x))))
+
+  ((average-damp square) 10)
+
+  (define (sqrt x)
+    (fixed-point (average-damp (lambda (y) (/ x y)))
+		 1.0))
+
+  (define (cube-root x)
+    (fixed-point (average-damp (lambda (y) (/ x (square y))))
+		 1.0))
+
+  (sqrt 2)
+  (cube-root 2)
+#+end_src
+
+#+RESULTS[bebf0c35c4348e02a2b4bb7c9f7aae6a3e85e44f]:
+: 55
+: 1.4142135623746899
+: 1.259923236422975
+
+*** Newton's method
+
+If $x \mapsto g(x)$ is a differentiable function, then a solution of the equation $g(x) = 0$ is a fixed point of the function $x \mapsto f(x)$, where $$ f(x) = x - \frac{g(x)}{Dg(x)} $$ and $Dg(x)$ is the derivative of $g$ evaluated at $x$.
+
+Newton's method is the use of the fixed-point method to approximate a solution of the equation by finding the fixed point of $f$.
+
+"Derivative" transforms a function into another function. If $g$ is a function and $dx$ is a small number, the the derivative $Dg$ of $g$ is the function whose value at any number x is given by $$ Dg(x) = \frac{g(x+dx) - g(x)}{dx} $$
+
+#+begin_src racket :exports both :cache yes
+  #lang sicp
+
+  (define dx 0.00001)
+  (define tolerance 0.00001)
+  (define (square x) (* x x))
+
+  (define (fixed-point f first-guess)
+    (define (close-enough? v1 v2)
+      (< (abs (- v1 v2)) tolerance))
+
+    (define (try guess)
+      (let ((next (f guess)))
+	(if (close-enough? guess next)
+	    next
+	    (try next))))
+    (try first-guess))
+
+  (define (deriv g)
+    (lambda (x)
+      (/ (- (g (+ x dx)) (g x))
+	 dx)))
+
+  (define (newton-transform g)
+    (lambda (x)
+      (- x (/ (g x) ((deriv g) x)))))
+
+  (define (newtons-method g guess)
+    (fixed-point (newton-transform g) guess))
+
+  (define (sqrt x)
+    (newtons-method (lambda (y) (- (square y) x))
+		    1.0))
+
+  (define (cube-root x)
+    (newtons-method (lambda (y) (- (* y y y) x))
+		    1.0))
+
+  (sqrt 2)
+  (cube-root 2)
+#+end_src
+
+
+#+RESULTS[0f4ece1ad3881b85019650b9997589d4b89e0b1e]:
+: 1.4142135623822438
+: 1.259921049894875
+
+Here's the relevant bit of Newton transformation where fixed point is located:
+#+begin_center
+#+attr_html: :width 100%
+[[./images/newton_transformation_sqrt.png]]
+#+end_center
+
+*** Abstractions and first-class procedures
+
+#+begin_src racket
+  #lang sicp
+
+  (define (fixed-point-of-transform g transform guess)
+    (fixed-point (transform g) guess))
+
+
+  ;; finding sqrt with average damping
+  (define (sqrt-a x)
+    (fixed-point-of-transform (lambda (y) (/ x y))
+			      average-damp
+			      1.0))
+
+  ;; finding sqrt with Newton's transform
+  (define (sqrt-n x)
+    (fixed-point-of-transform (lambda (y) (- (square y) x))
+			      newton-transform
+			      1.0))
+#+end_src
+
+
+*** Exercise 1.40
+
+Define a procedure ~cubic~ that can be used together with the ~newtons-method~ procedures in expressions of the form ~(newtons-method (cubic a b c) 1)~ to approximate zeros of the cubic $x^3+ax^2+c$
+
+#+begin_src racket
+  #lang sicp
+
+  (define dx 0.00001)
+  (define tolerance 0.00001)
+
+  (define (fixed-point f x0)
+    (define (try x1)
+      (let ((x2 (f x1)))
+	(if (< (abs (- x2 x1)) tolerance)
+	    x2
+	    (try x2))))
+    (try x0))
+
+  (define (deriv g)
+    (lambda (x) (/ (- (g (+ x dx))
+		      (g x))
+		   dx)))
+
+  (define (newton-transform g)
+    (lambda (x) (- x (/ (g x) ((deriv g) x)))))
+
+  (define (newton-method g guess)
+    (fixed-point (newton-transform g) guess))
+
+  (define (cubic a b c)
+    (lambda (x)
+      (+ (* x x x)
+	 (* a x x)
+	 (* b x)
+	 c)))
+
+  (newton-method (cubic 1 1 1) 1.0)
+  (newton-method (cubic 2 3 1) 1.0)
+  (newton-method (cubic 3 -2 -1) 1.0)
+  (newton-method (cubic 3 -2 -1) -1.0)
+
+#+end_src
+
+#+RESULTS:
+: -0.9999999999997796
+: -0.4301597090015873
+: 0.8342431843175564
+: -0.3433795689472251
+
+And the corresponding (cubic a b c) graphs (for independent validation):
+#+attr_html: :width 100%
+[[./images/cubic.1.1.1.png]]
+#+attr_html: :width 100%
+[[./images/cubic.2.3.1.png]]
+#+attr_html: :width 100%
+[[./images/cubic.3.-2.-1.png]]
+
+
+*** TODO Exercise 1.41
+
+Define a procedure ~double~ that takes a procedure of one argument as argument and returns a procedure that applies the original procedure twice.
+
+#+begin_src racket :exports both :cache yes
+  #lang sicp
+
+  (define (double f)
+    (lambda (a)
+      ;; (display (list "first" a)) (newline)
+      (let ((r (f a)))
+	;; (display (list "second" r)) (newline)
+	(let ((s (f r)))
+	  ;; (display (list "result" s)) (newline)
+	  s))))
+  (define (inc x) (+ 1 x))
+
+  ((double inc) 5)
+  (((double double) inc) 5)
+  (((double (double double)) inc) 5)
+#+end_src
+
+#+RESULTS[6b12d373be538199e69ed6f10e0595785fefb46a]:
+: 7
+: 9
+: 21
+
+**** TODO I don't know why it returns 21
+
+
+*** Exercise 1.42 - ~compose~
+
+Let $f$ and $g$ be two one-argument functions. The /composition/ $f$ after $g$ is defined to be the function $x \mapsto f(g(x))$. Define a procedure ~compose~ that implements composition.
+
+#+begin_src racket :exports both :cache yes
+  #lang sicp
+  (define (square x) (* x x))
+  (define (inc x) (+ 1 x))
+  (define (compose f g) (lambda (x) (f (g x))))
+  ((compose square inc) 6)
+#+end_src
+
+#+RESULTS[203588ec11691425b17a7b2cf8e8dc9dd556d4d9]:
+: 49
+
+
+*** Exercise 1.43 - ~repeated~
+
+If $f$ is a numerical function and $n$ is a positive integer, then we can form the $n$th repeated application of $f$, which is defined to be the function whose value at $x$ is $f(f(...(f(x))...))$.
+...say no more
+
+#+begin_src racket :exports both :cache yes
+  #lang sicp
+
+  (define (square x) (* x x))
+  (define (inc x) (+ 1 x))
+  (define (compose f g) (lambda (x) (f (g x))))
+  (define (repeated f n)
+    (if (= 1 n)
+	f
+	(compose f (repeated f (dec n)))))
+
+  ((repeated inc 5) 10)
+  ((repeated square 2) 5)
+#+end_src
+
+#+RESULTS[5f5d6fc4fe033166ecf576ed91edf071b1ca8888]:
+: 15
+: 625
+
+
+*** Exercise 1.44 - /smoothing/
+If $f$ is a function and $dx$ is some small number, then the smoothed version of $f$ is the function whose value at a point $x$ is the average of $f(x-dx)$, $f(x)$, $f(x+dx)$.
+
+**** DONE ~smooth~ procedure
+Write a procedure ~smooth~ that takes as input a procedure that computes $f$ and returns a procedure that computes the smoothed $f$.
+
+#+name: smoothing
+#+begin_src racket :exports both :cache yes
+  #lang sicp
+  (define dx 0.001)
+
+  (define (smooth f)
+    (lambda (x) (/ (+ (f (- x dx))
+		      (f x)
+		      (f (+ x dx)))
+		   3)))
+  (define (square x) (* x x))
+  (define (f x) (+ (* 3 x x x)
+			  (* -2 x x)
+			  (* -7 x)
+			  (* 2)))
+  (f 10.0)
+  ((smooth f) 10.0)
+#+end_src
+
+#+RESULTS[6e174d0e4f6e87a70e7c591f7fecbb5d887c19d1]:
+: 2732.0
+: 2732.0000586666665
+
+**** DONE n-fold smoothed function
+
+#+begin_src racket :exports both :cache yes
+  #lang sicp
+  (define dx 0.001)
+  (define (compose f g) (lambda (x) (f (g x))))
+  (define (repeated f n)
+    (if (= 1 n)
+	f
+	(compose f (repeated f (dec n)))))
+
+  (define (smooth f)
+    (lambda (x) (/ (+ (f (- x dx))
+		      (f x)
+		      (f (+ x dx)))
+		   3)))
+
+  (define (n-fold-smooth f n) ((repeated smooth n) f))
+  (define (square x) (* x x))
+  (define (f x) (+ (* 3 x x x)
+			  (* -2 x x)
+			  (* -7 x)
+			  (* 2)))
+
+  (define f-sm1 (smooth f))
+  (define f-sm10 ((repeated smooth 10) f))
+  (f 10.0)
+  (f-sm1 10.0)
+  (f-sm10 10.0)
+#+end_src
+
+#+RESULTS[1c75d5cc2aeb5e54ed6cd44ad7358b11d3e9448e]:
+: 2732.0
+: 2732.0000586666665
+: 2732.0005866666656
+
+*** Exercise 1.45 - Computing $n$th root
+
+**** DONE Experiment 
+Do some experiments to determine how many average damps are required to compute $n$th roots as a fixed-point search based upen repeated average damping of $y \mapsto x/y^{n-1}$
+**** DONE Implement a procedure for computing $n$th roots
+
+#+begin_src racket :exports both :cache yes
+  #lang sicp
+
+  (define tolerance 0.00000001)
+  (define (square x) (* x x))
+  (define (pow b p)
+    (cond ((zero? p) 1)
+	  ((even? p)
+	   (square (pow b (/ p 2))))
+	  (else
+	   (* b (pow b (- p 1))))))
+  (define (average a b) (/ (+ a b) 2))
+
+  (define (fixed-point f x0)
+    (define (close-enough? x1 x2)
+      (< (abs (- x1 x2))
+	 tolerance))
+    (define (try x1)
+      (let ((x2 (f x1)))
+	(if (close-enough? x1 x2)
+	    x2
+	    (try x2))))
+    (try x0))
+
+  (define (average-damp f)
+    (lambda (x) (average x (f x))))
+
+  (define (compose f g) (lambda (x) (f (g x))))
+  (define (repeat f n)
+    (if (zero? n)
+	identity
+	(compose f (repeat f (dec n)))))
+
+  (define (nth-root x n)
+    (let ((damp (repeat average-damp (- n 1)))
+	  (f (lambda (y) (/ x (pow y (- n 1))))))
+      (fixed-point (damp f) 1.0)))
+
+  (nth-root (pow 3 1) 1)
+  (nth-root (pow 3 2) 2)
+  (nth-root (pow 3 3) 3)
+  (nth-root (pow 3 4) 4)
+  (nth-root (pow 3 5) 5)
+  (nth-root (pow 3 6) 6)
+  (nth-root (pow 3 18) 18)
+  (nth-root (pow 10 18) 18)
+  (nth-root (pow 1000 3) 3)
+  (nth-root (pow 1.03 18) 18)
+
+#+end_src
+
+#+RESULTS[a7c66162eabb0d4107b29b643e30f31d1057d62d]:
+#+begin_example
+3
+3.0
+3.000000001429855
+3.000000009802587
+3.000000020418132
+3.0000000391355606
+3.00007281692885
+10.000072807330206
+1000.0000000020669
+1.0299272458208741
+#+end_example
+
+
+*** Exercise 1.46 - iterative improvement abstraction
+
+**** DONE ~iterative-improve~
+Write a procedure ~iterative-improve~ that takes two procedures as arguments: a method for telling whether a guess is good enough and a method for improving a guess. ~iterative-improve~ should return a procedure that takes a guess as argument and keeps improving the guess until it is good enough.
+**** DONE ~sqrt~ as ~iterative-improve~
+**** DONE ~fixed-point~ as ~iterative-improve~
+
+#+begin_src racket :exports both :cache yes
+  #lang sicp
+
+  (define (iterative-improve good-enough? improve)
+    (define (step guess0)
+      (let ((guess1 (improve guess0)))
+	(if (good-enough? guess1 guess0)
+	    guess1
+	    (step guess1))))
+    step)
+
+  ;; sanity check
+  ((iterative-improve (lambda (guess prev-guess) (zero? guess))
+
+		      (lambda (guess) (dec guess)))
+   10)
+
+  ;; implementing sqrt with iterative-improve
+  (define (sqrt x)
+    ((iterative-improve
+      (lambda (x1 x0)
+	(< (abs (- x1 x0)) 0.00001))
+      (lambda (y)
+	(/ (+ y
+	      (/ x y))
+	   2)))
+     1.0))
+
+  (sqrt 2)
+  (sqrt 100)
+
+
+  ;; implementing fixed-point with iterative-improve
+  (define (fixed-point f x0)
+    ((iterative-improve
+      (lambda (x2 x1) (< (abs (- x2 x1))
+			 0.00001))
+      (lambda (x) (f x)))
+     x0))
+
+  ;; testing the new fixed-point
+  (define dx 0.00001)
+
+  (define (square x) (* x x))
+
+  (define (deriv f)
+    (lambda (x)
+      (/ (- (f (+ x dx)) (f x))
+	 dx)))
+
+  (define (newton-transform f)
+    (lambda (x)
+      (- x
+	 (/ (f x)
+	    ((deriv f) x)))))
+
+  (define (sqrt-fp x)
+    (fixed-point (newton-transform (lambda (y) (- x (square y))))
+		 1.0))
+
+  (sqrt-fp 2)
+#+end_src
+
+#+RESULTS[1b2f13279b326a75428dec712d230e7e5333c3cd]:
+: 0
+: 1.4142135623746899
+: 10.0
+: 1.4142135623822438

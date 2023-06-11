@@ -1,0 +1,2648 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2023-06-11 Sun 17:31 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2.2 Hierarchical Data and the Closure Property</title>
+<meta name="author" content="LMG" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">2.2 Hierarchical Data and the Closure Property</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org95f34d3">Introduction</a></li>
+<li><a href="#orga056a9a">2.2.1 Representing Sequences</a>
+<ul>
+<li><a href="#orgbdc5b99">List Operations</a>
+<ul>
+<li><a href="#orgb332744"><code>list-ref</code> - <code>cdr</code>-ing down the list</a></li>
+<li><a href="#org718c6b8"><code>length</code> - <code>null?</code> and <code>cdr</code>-ing down the whole list</a></li>
+<li><a href="#org799daec"><code>append</code> - "<code>cons</code> up" an answer list while <code>cdr</code>-ing down a list</a></li>
+<li><a href="#org2aeb434">Exercise 2.17 - <code>last-pair</code></a></li>
+<li><a href="#orgabd3bd2">Exercise 2.18 - <code>reverse</code></a></li>
+<li><a href="#org8d04ccd"><span class="todo TODO">TODO</span> Exercise 2.19 - Maturing change-counting program</a></li>
+<li><a href="#orgbb5c131">Exercise 2.20 - dotted-tail notation for procedures taking arbitrary number of arguments</a></li>
+</ul>
+</li>
+<li><a href="#orgde9f716">Mapping over lists</a>
+<ul>
+<li><a href="#orgab4763a">Exercise 2.21 - <code>map</code> practice</a></li>
+<li><a href="#org8fcaa53">Exercise 2.22 - Iterative process reverses the list</a></li>
+<li><a href="#orgc186469">Exercise 2.23 - <code>for-each</code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org2c20710">2.2.2 Hierarchical Structures</a>
+<ul>
+<li><a href="#org6c2a6be">Exercise 2.24 - practice with nested lists</a></li>
+<li><a href="#orgd3a40ca">Exercise 2.25 - practice picking elements</a></li>
+<li><a href="#orgcfe55f5">Exercise 2.26 - Distinguish <code>append</code>, <code>cons</code> and <code>list</code></a></li>
+<li><a href="#org0fefa21">Exercise 2.27 - <code>deep-reverse</code></a></li>
+<li><a href="#org475abe1">Exercise 2.28 - <code>fringe</code> (unpack a tree)</a></li>
+<li><a href="#org41ba6e9">Exercise 2.29</a></li>
+<li><a href="#org96a6cdb">Mapping over trees</a>
+<ul>
+<li><a href="#orgd233bbd">Exercise 2.30 - <code>square-tree</code></a></li>
+<li><a href="#org47a46f7">Exercise 2.31 - <code>tree-map</code></a></li>
+<li><a href="#org91fc700">Exercise 2.32 - Subsets of a set</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org8b42bd8">2.2.3 Sequences as Conventional Interfaces</a>
+<ul>
+<li><a href="#orgca7c707">Sequence Operations</a>
+<ul>
+<li><a href="#orgcbbd3c4">Exercise 2.33 - <code>accumulate</code> practice</a></li>
+<li><a href="#org4df7ed2">Exercise 2.34 - polynomial evaluation using Horner's rule</a></li>
+<li><a href="#org98c3836">Exercise 2.35 - <code>count-leave</code> as an accumulation</a></li>
+<li><a href="#orgd3ab0a4">Exercise 2.36 - <code>accumulate-n</code></a></li>
+<li><a href="#org8404291">Exercise 2.37 - matrix operations</a></li>
+<li><a href="#orgabfdcb0">Exercise 2.38 - <code>fold-left</code></a></li>
+<li><a href="#org821a4de">Exercise 2.39 - <code>reverse</code> in terms of folds</a></li>
+</ul>
+</li>
+<li><a href="#org8225d81">Nested Mappings</a>
+<ul>
+<li><a href="#org20fe81b">prime sum pairs - <code>flatmap</code> and nested <code>map</code></a></li>
+<li><a href="#org2954ca9">Permutations</a></li>
+<li><a href="#orgebd3907">Exercise 2.40 - <code>unique-pairs</code></a></li>
+<li><a href="#org67fd7d3">Exercise 2.41 - triples of given sum</a></li>
+<li><a href="#org58a3c4b">Exercise 2.42 - eight-queens puzzle</a></li>
+<li><a href="#orgeef5244">Exercise 2.43 - Deoptimized queens</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org3676901">2.2.4 Example: A Picture Language</a>
+<ul>
+<li><a href="#orgd5fcbed">The picture language</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org95f34d3" class="outline-2">
+<h2 id="org95f34d3">Introduction</h2>
+<div class="outline-text-2" id="text-org95f34d3">
+<p>
+<code>cons</code> can be used to combine pairs. As a consequence, pairs provide a universal building block from which we can construct all sorts of data structures.
+</p>
+
+<p>
+<i>Closure property</i> of <code>cons</code> - the ability to create pairs whose elements are pairs.
+In general, closure property is satisfied by a certain data operation, if the result of the operation can be again used in the same operation.
+Closure permits us to create <i>hierarchical</i> structures.
+</p>
+
+<p>
+(Using procedures as parameters and return values is a closure too)
+</p>
+</div>
+</div>
+
+<div id="outline-container-orga056a9a" class="outline-2">
+<h2 id="orga056a9a">2.2.1 Representing Sequences</h2>
+<div class="outline-text-2" id="text-orga056a9a">
+<p>
+<i>Sequence</i> is an ordered collection of data objects.
+</p>
+
+<p>
+There are many ways to represent sequence using pairs. One obvious way is to chain pairs in such a way that for each pair, <code>car</code> is an element in the sequence, and <code>cdr</code> is the next pair in the chain.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(cons 1
+      (cons (2
+	     (cons 3
+		   (cons 4 nil)))))
+</pre>
+</div>
+
+<pre class="example">
+application: not a procedure;
+ expected a procedure that can be applied to arguments
+  given: 2
+  context...:
+   /var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-XhKK50/ob-racketlhu7N6.rkt:4:0
+   body of "/var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-XhKK50/ob-racketlhu7N6.rkt"
+</pre>
+
+
+<p>
+This sequence of pairs is called a <i>list</i>. Scheme provies <code>list</code> to help construct lists.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define xs (list 1 2 3 4))
+(car xs)
+(cadddr xs)
+(cons 10 xs)
+(cons 10 nil)
+
+</pre>
+</div>
+
+<pre class="example">
+1
+4
+(10 1 2 3 4)
+(10)
+</pre>
+
+
+<p>
+The value of <code>nil</code> can be thought of as a sequence of elements, the <i>empty list</i>.
+</p>
+</div>
+
+<div id="outline-container-orgbdc5b99" class="outline-3">
+<h3 id="orgbdc5b99">List Operations</h3>
+<div class="outline-text-3" id="text-orgbdc5b99">
+</div>
+<div id="outline-container-orgb332744" class="outline-4">
+<h4 id="orgb332744"><code>list-ref</code> - <code>cdr</code>-ing down the list</h4>
+<div class="outline-text-4" id="text-orgb332744">
+<p>
+Given a list and a number <code>n</code>, <code>list-ref</code> returns <code>n</code>-th element of the list, starting from <code>0</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (list-ref xs n)
+  (if (zero? n)
+      (car xs)
+      (list-ref (cdr xs) (- n 1))))
+
+(list-ref (list 1 4 9 16 25) 3)
+</pre>
+</div>
+
+<pre class="example">
+16
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org718c6b8" class="outline-4">
+<h4 id="org718c6b8"><code>length</code> - <code>null?</code> and <code>cdr</code>-ing down the whole list</h4>
+<div class="outline-text-4" id="text-org718c6b8">
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (length xs)
+  (if (null? xs)
+      0
+      (+ 1 (length (cdr xs)))))
+
+(define (ilength items)
+  (define (iter xs acc)
+    (if (null? xs)
+	acc
+	(iter (cdr xs) (inc acc))))
+  (iter items 0))
+
+(length (list 1 3 5 7 9))
+(ilength (list 1 3 5 7 9))
+</pre>
+</div>
+
+<pre class="example">
+5
+5
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org799daec" class="outline-4">
+<h4 id="org799daec"><code>append</code> - "<code>cons</code> up" an answer list while <code>cdr</code>-ing down a list</h4>
+<div class="outline-text-4" id="text-org799daec">
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (append xs ys)
+  (if (null? xs)
+      ys
+      (cons (car xs) (append (cdr xs) ys))))
+
+
+(append (list 1 2 3 4) (list 2 3 4 5))
+</pre>
+</div>
+
+<pre class="example">
+(1 2 3 4 2 3 4 5)
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org2aeb434" class="outline-4">
+<h4 id="org2aeb434">Exercise 2.17 - <code>last-pair</code></h4>
+<div class="outline-text-4" id="text-org2aeb434">
+<p>
+Define a procedure <code>last-pair</code> that returns the list that contains only the last element of a given (nonempty) list:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (last-pair xs)
+  (cond ((null? xs) nil)
+	((null? (cdr xs)) xs)
+	(else (last-pair (cdr xs)))))
+
+
+(last-pair nil)
+(last-pair (list 1))
+(last-pair (list 1 2))
+(last-pair (list 1 2 3 4 5 6))
+</pre>
+</div>
+
+<pre class="example">
+()
+(1)
+(2)
+(6)
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgabd3bd2" class="outline-4">
+<h4 id="orgabd3bd2">Exercise 2.18 - <code>reverse</code></h4>
+<div class="outline-text-4" id="text-orgabd3bd2">
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (reverse items)
+  (define (iter xs acc)
+    (if (null? xs)
+	acc
+	(iter (cdr xs) (cons (car xs) acc))))
+  (iter items nil))
+
+(reverse (list 1 2 3 4))
+(reverse nil)
+(reverse (list 1))
+</pre>
+</div>
+
+<pre class="example">
+(4 3 2 1)
+()
+(1)
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org8d04ccd" class="outline-4">
+<h4 id="org8d04ccd"><span class="todo TODO">TODO</span> Exercise 2.19 - Maturing change-counting program</h4>
+<div class="outline-text-4" id="text-org8d04ccd">
+<p>
+Operations <code>first-denomination</code>, <code>except-first-denomination</code>, <code>no-more?</code> have simple counterparts in standard list operations - <code>car</code>, <code>cdr</code>, <code>null?</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (reverse items)
+  (define (iter xs acc)
+    (if (null? xs)
+	acc
+	(iter (cdr xs) (cons (car xs) acc))))
+  (iter items nil))
+
+(define us-coins (list 50 25 10 5 1))
+
+(define uk-coins (list 100 50 20 10 5 2 1 0.5))
+
+(define (no-more? xs) (null? xs))
+
+(define (except-first-denomination coin-values) (cdr coin-values))
+
+(define (first-denomination coin-values) (car coin-values))
+
+(define (cc amount coin-values)
+  (cond ((= amount 0) 1)
+	((or (&lt; amount 0) (no-more? coin-values)) 0)
+	(else
+	 (+ (cc amount
+		(except-first-denomination coin-values))
+	    (cc (- amount
+		   (first-denomination coin-values))
+		coin-values)))))
+
+
+(cc 100 us-coins)
+(cc 100 (reverse us-coins))
+(cc 83 us-coins)
+(cc 83 (reverse us-coins))
+(cc 100 uk-coins)
+(cc 100 (reverse uk-coins))
+</pre>
+</div>
+
+<pre class="example">
+292
+292
+159
+159
+104561
+104561
+</pre>
+</div>
+
+<ul class="org-ul">
+<li><a id="orgfe0eb53"></a><span class="todo TODO">TODO</span> Does the order of the list affect the answer?<br />
+<div class="outline-text-5" id="text-orgfe0eb53">
+<p>
+A few quick experiments show that no, order of the list does not affect the answer.
+And why should it? The recursive definition does not depend on the order of the coins.
+</p>
+</div>
+</li>
+</ul>
+</div>
+
+<div id="outline-container-orgbb5c131" class="outline-4">
+<h4 id="orgbb5c131">Exercise 2.20 - dotted-tail notation for procedures taking arbitrary number of arguments</h4>
+<div class="outline-text-4" id="text-orgbb5c131">
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (same-parity x . xs)
+  (define (recur items)
+    (cond ((null? items)
+	   nil)
+	  ((= (remainder x 2)
+	      (remainder (car items) 2))
+	   (cons (car items)
+		 (recur (cdr items))))
+	  (else
+	   (recur (cdr items)))))
+  (cons x (recur xs)))
+
+(same-parity 1 2 3 4 5 6 7)
+(same-parity 2 3 4 5 6 7 8)
+(same-parity 2 3 3 3 3 3)
+</pre>
+</div>
+
+<pre class="example">
+(1 3 5 7)
+(2 4 6 8)
+(2)
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgde9f716" class="outline-3">
+<h3 id="orgde9f716">Mapping over lists</h3>
+<div class="outline-text-3" id="text-orgde9f716">
+<p>
+One useful operation is to apply transformation to every item in a list and generate the list of results.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (scale-list items factor)
+  (if (null? items)
+      nil
+      (cons (* (car items) factor)
+	    (scale-list (cdr items) factor))))
+
+(scale-list (list 1 2 3 4) 10)
+</pre>
+</div>
+
+<pre class="example">
+(10 20 30 40)
+</pre>
+
+
+<p>
+We can abstract this general idea and capture it in a higher order procedure called <code>map</code>. <code>map</code> takes a procedure of one argument and a list, and returns a list of the results of applying a procedure to each element in the list.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="orgc98e5b4">#lang sicp
+
+(define (map f xs)
+  (if (null? xs)
+      nil
+      (cons (f (car xs))
+	    (map f (cdr xs)))))
+
+(map abs (list 1 2 3 -4))
+(map (lambda (x) (* x x))
+     (list -1 -2 -3 -4))
+
+(define (scale-list items factor)
+  (map (lambda (x) (* x factor))
+       items))
+
+(scale-list (list 1 2 3 4) 10)
+</pre>
+</div>
+
+<pre class="example">
+(1 2 3 4)
+(1 4 9 16)
+(10 20 30 40)
+</pre>
+
+
+<p>
+Map is important because it captures a common pattern, but also because it establishes a higher level of abstraction in dealing with lists.
+Defining <code>scale-list</code> in terms of <code>map</code> suppresses the level of detail found in the straightforward recursive implementation.
+In effect <code>map</code> establishes an abstraction barrier that separates the usage of the pattern from its implementation
+</p>
+
+<p>
+(Note: by establishing this level of abstraction <code>map</code> allows for parallel implementation of element-by-element transformation.)
+</p>
+</div>
+
+<div id="outline-container-orgab4763a" class="outline-4">
+<h4 id="orgab4763a">Exercise 2.21 - <code>map</code> practice</h4>
+<div class="outline-text-4" id="text-orgab4763a">
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (square x) (* x x))
+
+(define (square-list-1 items)
+  (if (null? items)
+      nil
+      (cons (square (car items)) (square-list-1 (cdr items)))))
+
+(define (square-list-2 items)
+  (map square items))
+
+(square-list-1 (list 1 2 3 4))
+(square-list-2 (list 1 2 3 4))
+</pre>
+</div>
+
+<pre class="example">
+(1 4 9 16)
+(1 4 9 16)
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-org8fcaa53" class="outline-4">
+<h4 id="org8fcaa53">Exercise 2.22 - Iterative process reverses the list</h4>
+<div class="outline-text-4" id="text-org8fcaa53">
+<p>
+It's in reverse order because in iteration step it <code>cons</code>-es square to the already computed list, which is formed from a prefix of input - later element goes before every earlier:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+(define (square x) (* x x))
+
+(define (square-list items)
+  (define (iter things answer)
+    (if (null? things)
+	answer
+	(iter (cdr things)
+	      (cons (square (car things))
+		    answer))))
+  (iter items nil))
+
+;; (iter '(1 2 3 4) '())
+;; (iter '(2 3 4) '(1))
+;; (iter '(3 4) '(4 1))
+;; (iter '(4) '(9 4 1))
+;; (iter '() '(16 9 4 1))
+
+(square-list (list 1 2 3 4))
+</pre>
+</div>
+
+<pre class="example">
+(16 9 4 1)
+</pre>
+
+
+<p>
+In the second version, <code>answer</code> is a pair, and <code>(square (car things))</code> is a number. <code>cons</code>-ing first with the second does not produce a valid list:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+(define (square x) (* x x))
+
+(define (square-list items)
+  (define (iter things answer)
+    (if (null? things)
+	answer
+	(iter (cdr things)
+	      (cons answer
+		    (square (car things))))))
+  (iter items nil))
+
+
+(square-list (list 1 2 3 4))
+</pre>
+</div>
+
+<pre class="example">
+((((() . 1) . 4) . 9) . 16)
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgc186469" class="outline-4">
+<h4 id="orgc186469">Exercise 2.23 - <code>for-each</code></h4>
+<div class="outline-text-4" id="text-orgc186469">
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (for-each f items)
+  (define (iter xs)
+    (cond ((null? xs) #t)
+	  (else
+	   (f (car xs))
+	   (iter (cdr xs)))))
+  (iter items))
+
+(for-each (lambda (x) (display x)(newline)) (list 1 2 3 4))
+</pre>
+</div>
+
+<pre class="example">
+1
+2
+3
+4
+#t
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2c20710" class="outline-2">
+<h2 id="org2c20710">2.2.2 Hierarchical Structures</h2>
+<div class="outline-text-2" id="text-org2c20710">
+<p>
+<code>(list (list 1 2) 3 4)</code> can be interpreted as a tree.
+</p>
+
+<p>
+<code>cond</code> cases sequencing matter:  (not (pair? nil)) is #t
+</p>
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define x (cons (list 1 2) (list 3 4)))
+
+(define (count-leaves x)
+  (cond ((null? x) 0)
+	((not (pair? x)) 1)
+	(else
+	 (+ (count-leaves (car x))
+	    (count-leaves (cdr x))))))
+
+(length x)
+(count-leaves x)
+(count-leaves (list x x))
+
+(list 1 (list 2 (list 3 4)))
+</pre>
+</div>
+
+<pre class="example">
+3
+4
+8
+(1 (2 (3 4)))
+</pre>
+</div>
+
+<div id="outline-container-org6c2a6be" class="outline-3">
+<h3 id="org6c2a6be">Exercise 2.24 - practice with nested lists</h3>
+<div class="outline-text-3" id="text-org6c2a6be">
+<p>
+<code>(list 1 (list 2 (list 3 4)))</code>
+</p>
+
+<p>
+Observe that <code>(cons x y) != (list x y) = (cons x (cons y nil))</code>.
+If y is a list, then <code>(cons 2 (list 3 4)) = (cons 2 (cons (list 3 4) nil)) = (cons 2 (cons (cons 3 (cons 4 nil)) nil))</code>, not <code>(cons 2 (cons 3 (cons 4 nil)))</code>.
+</p>
+
+<p>
+The interpreter will print:
+</p>
+<pre class="example" id="org31b6df6">
+(1 (2 (3 4)))
+</pre>
+
+<p>
+The box-and-pointer diagram (work this out on paper, but the nice <a href="https://docs.racket-lang.org/sdraw/index.html">sdraw</a> package for racket rendered this for the org):
+</p>
+
+<div id="orge0e01e9" class="figure">
+<p><img src="./images/box-and-pointer-list.png" alt="box-and-pointer-list.png" width="50%" />
+</p>
+</div>
+
+<p>
+The tree interpretation:
+</p>
+<pre class="example" id="org546c7f6">
+   o
+  / \
+ /   \
+1     o
+     / \
+    /   \
+   2     o
+        / \
+       /   \
+      3     4
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgd3a40ca" class="outline-3">
+<h3 id="orgd3a40ca">Exercise 2.25 - practice picking elements</h3>
+<div class="outline-text-3" id="text-orgd3a40ca">
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define a (list 1 3 (list 5 7) 9))
+(define b (list (list 7)))
+(define c (list 1 (list 2 (list 3 (list 4 (list 5 (list 6 7)))))))
+
+a
+b
+c
+
+(car (cdr (car (cdr (cdr a)))))
+
+(car (car b))
+
+(car (cdr (car (cdr (car (cdr (car (cdr (car (cdr (car (cdr c))))))))))))
+(cadr (cadr (cadr (cadr (cadr (cadr c))))))
+</pre>
+</div>
+
+<pre class="example">
+(1 3 (5 7) 9)
+((7))
+(1 (2 (3 (4 (5 (6 7))))))
+7
+7
+7
+7
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgcfe55f5" class="outline-3">
+<h3 id="orgcfe55f5">Exercise 2.26 - Distinguish <code>append</code>, <code>cons</code> and <code>list</code></h3>
+<div class="outline-text-3" id="text-orgcfe55f5">
+<p>
+Prediction:
+</p>
+<ul class="org-ul">
+<li>V <code>(append x y) =&gt; (1 2 3 4 5 6)</code></li>
+<li>X <code>(cons x y) =&gt; ((1 2 3) . (4 5 6))</code>
+<ul class="org-ul">
+<li>if the second element to cons is a list, it will produce a new list with <code>car</code> being first element of cons, and <code>cdr</code> being the second element of cons</li>
+</ul></li>
+<li>V <code>(list x y) =&gt; ((1 2 3) (4 5 6))</code></li>
+</ul>
+
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define x (list 1 2 3))
+(define y (list 4 5 6))
+
+(append x y)
+(cons x y)
+(list x y)
+</pre>
+</div>
+
+<pre class="example">
+(1 2 3 4 5 6)
+((1 2 3) 4 5 6)
+((1 2 3) (4 5 6))
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org0fefa21" class="outline-3">
+<h3 id="org0fefa21">Exercise 2.27 - <code>deep-reverse</code></h3>
+<div class="outline-text-3" id="text-org0fefa21">
+<p>
+Procedure <code>deep-reverse</code> takes a list as an argument, and returns a list with the same leaves elements as the input list, but every list element in reversed order.
+The logic is as follows. For any given argument, it can be either a leave or a list, possibly empty. If it is an empty list or a leave, just return it. If it's a non-empty list, then reverse it, and apply <code>deep-reverse</code> to both its <code>car</code> and <code>cdr</code>, and <code>cons</code> the results.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (reverse items)
+  (define (iter xs acc)
+    (if (null? xs)
+	acc
+	(iter (cdr xs) (cons (car xs) acc))))
+  (iter items nil))
+
+(define (deep-reverse x)
+  (cond ((or (not (pair? x)) (null? x)) x)
+	(else
+	 (let ((r (reverse x)))
+	   (cons (deep-reverse (car r))
+		 (deep-reverse (cdr r)))))))
+
+(reverse (list (list 1 2) (list 3 4)))
+(deep-reverse (list (list 1 2) (list 3 4)))
+(deep-reverse (list (list (list 11 12) (list 21 22)) (list 3 4)))
+</pre>
+</div>
+
+<pre class="example">
+((3 4) (1 2))
+((4 3) (2 1))
+((4 3) ((22 21) (12 11)))
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org475abe1" class="outline-3">
+<h3 id="org475abe1">Exercise 2.28 - <code>fringe</code> (unpack a tree)</h3>
+<div class="outline-text-3" id="text-org475abe1">
+<p>
+<code>fringe</code> takes a tree and returns a list of the leaves of the tree arranged in the left-to-right order.
+The recursive plan is similar to that of <code>count-leaves</code>, but with accumulating a list instead of a number:
+If the argument is an empty list, return it; if a leave, wrap it in a singleton list and return; if a non-empty list, <code>fringe</code> both <code>car</code> and <code>cdr</code>, and <code>append</code> the results.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (fringe x)
+  "Takes a list representation of a tree, returns a list with all leaves ordered left-to-right."
+  (cond ((null? x) nil)
+	((not (pair? x)) (list x))
+	(else (append (fringe (car x))
+		      (fringe (cdr x))))))
+
+(define x (list (list 1 2) (list 3 4)))
+(fringe x)
+(fringe (list (list 1 2) (list 3 4) (list (list 5 6 7) (list 8 9) (list 10 11))))
+</pre>
+</div>
+
+<pre class="example">
+(1 2 3 4)
+(1 2 3 4 5 6 7 8 9 10 11)
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org41ba6e9" class="outline-3">
+<h3 id="org41ba6e9">Exercise 2.29</h3>
+<div class="outline-text-3" id="text-org41ba6e9">
+<p>
+A binary mobile consists of two branches, a left branch and a right branch. Each branch is a rod of a certain length, from which hanges either a weight or another binary mobile.
+We can represent a binary mobile using compound data by constructing it from two branches:
+</p>
+
+<p>
+A branch is constructed from a <code>length</code> (a number) together with a <code>structure</code> (either a number for simple weight, or another mobile):
+</p>
+
+<p>
+Here are constructors and selectors:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket" id="org053ecc8">(define (make-mobile left right)
+  (list left right))
+
+(define (left-branch m)
+  (car m))
+
+(define (right-branch m)
+  (cadr m))
+
+(define (make-branch length structure)
+  (list length structure))
+
+(define (branch-length b)
+  (car b))
+
+(define (branch-structure b)
+  (cadr b))
+</pre>
+</div>
+
+<p>
+Implementation for <code>total-weight</code> and <code>mobile-balanced?</code>
+</p>
+<div class="org-src-container">
+<pre class="src src-racket" id="org2966230">(define (branch-complex? b)
+  (pair? (branch-structure b)))
+
+(define (branch-weight b)
+  (if (branch-complex? b)
+      (total-weight (branch-structure b))
+      (branch-structure b)))
+
+(define (branch-torque b)
+  (* (branch-weight b)
+     (branch-length b)))
+
+(define (total-weight m)
+  (+ (branch-weight (left-branch m))
+     (branch-weight (right-branch m))))
+
+(define (branch-balanced? b)
+  (if (branch-complex? b)
+      (mobile-balanced? (branch-structure b))
+      #t))
+
+(define (mobile-balanced? m)
+  (let ((l (left-branch m))
+	(r (right-branch m)))
+    (and (branch-balanced? l)
+	 (branch-balanced? r)
+	 (= (branch-torque l)
+	    (branch-torque r)))))
+</pre>
+</div>
+
+<pre class="example">
+/var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-hKyoaq/ob-racketLrZdGN.rkt:4:10: branch-structure: unbound identifier
+  in: branch-structure
+  location...:
+   /var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-hKyoaq/ob-racketLrZdGN.rkt:4:10
+</pre>
+
+
+<p>
+Run the examples:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+
+
+
+(define m1 (make-mobile
+	    (make-branch 1
+			 15)
+	    (make-branch 3
+			 (make-mobile
+			  (make-branch 1 5)
+			  (make-branch 1 5)))))
+
+(define m2 (make-mobile
+	    (make-branch 1
+			 18)
+	    (make-branch 1
+			 (make-mobile
+			  (make-branch 1 9)
+			  (make-branch 1
+				       (make-mobile
+					(make-branch 1 6)
+					(make-branch 2 3)))))))
+
+(total-weight m1)
+(mobile-balanced? m1)
+(mobile-balanced? m2)
+</pre>
+</div>
+
+<pre class="example">
+25
+#f
+#t
+</pre>
+
+
+<p>
+d. Checking if anything in program depends on representation. Updated constructors and selectors:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket" id="org68761ab">(define (make-mobile left right)
+  (cons left right))
+
+(define (left-branch m)
+  (car m))
+
+(define (right-branch m)
+  (cdr m))
+
+(define (make-branch length structure)
+  (cons length structure))
+
+(define (branch-length b)
+  (car b))
+
+(define (branch-structure b)
+  (cdr b))
+</pre>
+</div>
+
+<p>
+Run the examples:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+
+
+
+(define m1 (make-mobile
+	    (make-branch 1
+			 15)
+	    (make-branch 3
+			 (make-mobile
+			  (make-branch 1 5)
+			  (make-branch 1 5)))))
+
+(define m2 (make-mobile
+	    (make-branch 1
+			 18)
+	    (make-branch 1
+			 (make-mobile
+			  (make-branch 1 9)
+			  (make-branch 1
+				       (make-mobile
+					(make-branch 1 6)
+					(make-branch 2 3)))))))
+
+(total-weight m1)
+(mobile-balanced? m1)
+(mobile-balanced? m2)
+</pre>
+</div>
+
+<pre class="example">
+25
+#f
+#t
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org96a6cdb" class="outline-3">
+<h3 id="org96a6cdb">Mapping over trees</h3>
+<div class="outline-text-3" id="text-org96a6cdb">
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (scale-tree tree factor)
+  (cond ((null? tree) nil)
+	((not (pair? tree)) (* tree factor))
+	(else (cons (scale-tree (car tree) factor)
+		    (scale-tree (cdr tree) factor)))))
+
+(scale-tree (list (list 1 2) (list (list 2 3 4) (list 6 7)))
+	    10)
+
+(define (scale-tree-map tree factor)
+  (map (lambda (sub-tree)
+	 (if (pair? sub-tree)
+	     (scale-tree-map sub-tree factor)
+	     (* sub-tree factor)))
+       tree))
+</pre>
+</div>
+
+<pre class="example">
+((10 20) ((20 30 40) (60 70)))
+</pre>
+</div>
+
+<div id="outline-container-orgd233bbd" class="outline-4">
+<h4 id="orgd233bbd">Exercise 2.30 - <code>square-tree</code></h4>
+<div class="outline-text-4" id="text-orgd233bbd">
+<p>
+Define a procedure <code>square-tree</code> a) directly b) with <code>map</code>
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (square x) (* x x))
+(define (square-tree-a tree)
+  (cond ((null? tree) nil)
+	((not (pair? tree)) (square tree))
+	(else
+	 (cons (square-tree-a (car tree))
+	       (square-tree-a (cdr tree))))))
+
+(define (square-tree-b tree)
+  (map (lambda (x)
+	 (if (not (pair? x))
+	     (square x)
+	     (square-tree-b x)))
+       tree))    
+
+(square-tree-a
+ (list 1
+       (list 2 (list 3 4) 5)
+       (list 6 7)))
+(square-tree-b
+ (list 1
+       (list 2 (list 3 4) 5)
+       (list 6 7)))
+</pre>
+</div>
+
+<pre class="example">
+(1 (4 (9 16) 25) (36 49))
+(1 (4 (9 16) 25) (36 49))
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org47a46f7" class="outline-4">
+<h4 id="org47a46f7">Exercise 2.31 - <code>tree-map</code></h4>
+<div class="outline-text-4" id="text-org47a46f7">
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (tree-map f tree)
+  (map (lambda (x)
+	 (if (not (pair? x))
+	     (f x)
+	     (tree-map f x)))
+       tree))
+
+(define (square x) (* x x))
+(define (square-tree tree) (tree-map square tree))
+
+(square-tree (list 1 2 (list 3 4 5 (list 6 7)) (list 8 (list 9))))
+</pre>
+</div>
+
+<pre class="example">
+(1 4 (9 16 25 (36 49)) (64 (81)))
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org91fc700" class="outline-4">
+<h4 id="org91fc700">Exercise 2.32 - Subsets of a set</h4>
+<div class="outline-text-4" id="text-org91fc700">
+<p>
+We can represent a set as a list of distinct element, and a set of subsets of the set with a list of lists.
+</p>
+
+<p>
+The recursive plan is as follows:
+If the set is empty, then the set of subsets has one element - an empty set.
+Otherwise, every subset of the set either contain the first element or it doesn't. Compute the set of subsets of the set without the first element, and use it to construct another set of subsets of the set, each having the first element.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (subsets s)
+  (if (null? s)
+      (list nil)
+      (let ((rest (subsets (cdr s)))
+	    (first (car s)))
+	(append rest
+		(map (lambda (x) (cons first x))
+		     rest)))))
+(subsets (list 1 2 3))
+</pre>
+</div>
+
+<pre class="example">
+(() (3) (2) (2 3) (1) (1 3) (1 2) (1 2 3))
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8b42bd8" class="outline-2">
+<h2 id="org8b42bd8">2.2.3 Sequences as Conventional Interfaces</h2>
+<div class="outline-text-2" id="text-org8b42bd8">
+<p>
+Introduces the <i>conventional interfaces</i> design principle.
+</p>
+
+<p>
+These two procedures are superficially not having much in common:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (sum-odd-squares tree)
+  (cond ((null? tree) 0)
+	((not (pair? tree))
+	 (if (odd? tree) (square tree) 0))
+	(else (+ (sum-odd-squares (car tree))
+		 (sum-odd-squares (cdr tree))))))
+
+(define (even-fibs n)
+  (define (next k)
+    (if (&gt; k n)
+	nil
+	(let ((f (fib k)))
+	  (if (even? f)
+	      (cons f (next (+ k 1)))
+	      (next (+ k 1))))))
+  (next 0))
+</pre>
+</div>
+
+<pre class="example">
+/var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-HDLngB/ob-racketRqtiiR.rkt:7:26: square: unbound identifier
+  in: square
+  location...:
+   /var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-HDLngB/ob-racketRqtiiR.rkt:7:26
+</pre>
+
+
+<p>
+A more abstract description of the two computations reveal a great deal of similarity:
+</p>
+
+<p>
+<code>(sum-odd-squares tree)</code>:
+</p>
+<ul class="org-ul">
+<li>enumerate all leaves of the tree</li>
+<li>filter, selecting only odd leaves</li>
+<li>square those</li>
+<li>accumulate the result using + starting with 0</li>
+</ul>
+
+<p>
+<code>(even-fibs n)</code>:
+</p>
+<ul class="org-ul">
+<li>enumerate the integers from 0 to n;</li>
+<li>compute the Fibonacci number for each integer</li>
+<li>filter, selecting only even numbers</li>
+<li>accumulate the result using <code>cons</code> start with an empty list</li>
+</ul>
+
+<p>
+In signal-processing style, we could have each of these steps in separate procedures.
+</p>
+
+<p>
+With recursive definition, these steps are spread across different parts of the program - these recursive procedures decompose computation in a different way.
+</p>
+</div>
+
+<div id="outline-container-orgca7c707" class="outline-3">
+<h3 id="orgca7c707">Sequence Operations</h3>
+<div class="outline-text-3" id="text-orgca7c707">
+<p>
+If we represent signals as lists, then we can use list operations to implement the processing at each of the stages.
+</p>
+
+<p>
+Mapping stage:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket">
+(map (lambda (x) (* x x)) (list 1 2 3 4 5))
+</pre>
+</div>
+
+<pre class="example">
+'(1 4 9 16 25)
+</pre>
+
+
+<p>
+Filter stage:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket" id="org19fa5a9">(define (filter predicate sequence)
+  (cond ((null? sequence) nil)
+	((predicate (car sequence))
+	 (cons (car sequence)
+	       (filter predicate (cdr sequence))))
+	(else (filter predicate (cdr sequence)))))
+</pre>
+</div>
+
+<p>
+Accumulation stage:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket" id="orga9efe8b">(define (accumulate op initial sequence)
+  (if (null? sequence)
+      initial
+      (op (car sequence)
+	  (accumulate op initial (cdr sequence)))))
+</pre>
+</div>
+
+<pre class="example">
+15
+120
+</pre>
+
+
+<p>
+Enumeration for the two procecdures:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket" id="org083e78b">(define (enumerate-interval low high)
+  (if (&gt; low high)
+      nil
+      (cons low (enumerate-interval (inc low) high))))
+
+(define (enumerate-tree tree)
+  (cond ((null? tree) nil)
+	((not (pair? tree))
+	 (list tree))
+	(else
+	 (append (enumerate-tree (car tree))
+		 (enumerate-tree (cdr tree))))))
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+(define (filter predicate sequence)
+  (cond ((null? sequence) nil)
+	((predicate (car sequence))
+	 (cons (car sequence)
+	       (filter predicate (cdr sequence))))
+	(else (filter predicate (cdr sequence)))))
+(define (accumulate op initial sequence)
+  (if (null? sequence)
+      initial
+      (op (car sequence)
+	  (accumulate op initial (cdr sequence)))))
+(define (enumerate-interval low high)
+  (if (&gt; low high)
+      nil
+      (cons low (enumerate-interval (inc low) high))))
+
+(define (enumerate-tree tree)
+  (cond ((null? tree) nil)
+	((not (pair? tree))
+	 (list tree))
+	(else
+	 (append (enumerate-tree (car tree))
+		 (enumerate-tree (cdr tree))))))
+(enumerate-interval 2 10)
+(enumerate-tree (list (list 1 2) (list (list 3 4) 5)))
+(accumulate + 0 (list 1 2 3 4 5))
+(accumulate * 1 (list 1 2 3 4 5))
+(filter odd? (list 1 2 3 4 5))
+</pre>
+</div>
+
+<pre class="example">
+(2 3 4 5 6 7 8 9 10)
+(1 2 3 4 5)
+15
+120
+(1 3 5)
+</pre>
+
+
+<p>
+Now we can reformulate <code>sum-odd-square</code> and <code>even-fibs</code> in the signal-processing style.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+(define (filter predicate sequence)
+  (cond ((null? sequence) nil)
+	((predicate (car sequence))
+	 (cons (car sequence)
+	       (filter predicate (cdr sequence))))
+	(else (filter predicate (cdr sequence)))))
+(define (accumulate op initial sequence)
+  (if (null? sequence)
+      initial
+      (op (car sequence)
+	  (accumulate op initial (cdr sequence)))))
+(define (enumerate-interval low high)
+  (if (&gt; low high)
+      nil
+      (cons low (enumerate-interval (inc low) high))))
+
+(define (enumerate-tree tree)
+  (cond ((null? tree) nil)
+	((not (pair? tree))
+	 (list tree))
+	(else
+	 (append (enumerate-tree (car tree))
+		 (enumerate-tree (cdr tree))))))
+(define (square x) (* x x))
+
+(define (sum-odd-squares tree)
+  (accumulate +
+	      0
+	      (map square
+		   (filter odd?
+			   (enumerate-tree tree)))))
+
+(define (fib-rec n)
+  (if (or (= n 0) (= n 1))
+      n
+      (+ (fib-rec (- n 1))
+	 (fib-rec (- n 2)))))
+
+(define (fib n)
+  (define (iter a b counter)
+    (if (= counter 0)
+	a
+	(iter b (+ a b) (dec counter))))
+  (iter 0 1 n))
+
+(define (even-fibs n)
+  (accumulate cons nil (filter even? (map fib (enumerate-interval 1 n)))))
+
+(sum-odd-squares (list (list 1 2 3) (list 2 4)))
+(even-fibs 10)
+
+(fib-rec 3)
+(fib 3)
+</pre>
+</div>
+
+<pre class="example">
+10
+(2 8 34)
+2
+2
+</pre>
+
+
+<p>
+Expressing programs using sequence operators helps to make modular designs, where program is consturcted from relatively independent pieces.
+</p>
+
+<p>
+Example of signal processing style operations reuse:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+(define (filter predicate sequence)
+  (cond ((null? sequence) nil)
+	((predicate (car sequence))
+	 (cons (car sequence)
+	       (filter predicate (cdr sequence))))
+	(else (filter predicate (cdr sequence)))))
+(define (accumulate op initial sequence)
+  (if (null? sequence)
+      initial
+      (op (car sequence)
+	  (accumulate op initial (cdr sequence)))))
+(define (enumerate-interval low high)
+  (if (&gt; low high)
+      nil
+      (cons low (enumerate-interval (inc low) high))))
+
+(define (enumerate-tree tree)
+  (cond ((null? tree) nil)
+	((not (pair? tree))
+	 (list tree))
+	(else
+	 (append (enumerate-tree (car tree))
+		 (enumerate-tree (cdr tree))))))
+(define (square x) (* x x))
+(define (fib n)
+  (define (iter a b c)
+    (if (zero? c)
+	a
+	(iter b (+ a b) (dec c))))
+  (iter 0 1 n))
+
+(define (list-fib-squares n)
+  (accumulate cons
+	      nil
+	      (map square
+		   (map fib
+			(enumerate-interval 0 n)))))
+
+(define (product-of-squares-of-odd-elements sequence)
+  (accumulate *
+	      1
+	      (map square
+		   (filter odd?
+			   sequence))))
+
+(list-fib-squares 10)
+(product-of-squares-of-odd-elements (list 1 2 3 4 5))
+</pre>
+</div>
+
+<pre class="example">
+(0 1 1 4 9 25 64 169 441 1156 3025)
+225
+</pre>
+
+
+<p>
+Again, these conventional sequence operations form an abstraction barrier for dealing with sequences - underlying implementation can be changed and the user code will stay intact.
+</p>
+</div>
+
+<div id="outline-container-orgcbbd3c4" class="outline-4">
+<h4 id="orgcbbd3c4">Exercise 2.33 - <code>accumulate</code> practice</h4>
+<div class="outline-text-4" id="text-orgcbbd3c4">
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+
+
+(define (map p sequence)
+  (accumulate (lambda (x y)
+		(cons (p x)
+		      y))
+	      nil
+	      sequence))
+
+(define (append seq1 seq2)
+  (accumulate cons seq2 seq1))
+
+(define (length sequence)
+  (accumulate (lambda (x y) (inc y)) 0 sequence))
+
+(map odd? (list 1 2 3 4 5))
+(append (list 1 2 3) (list 4 5))
+(length (list 1 2 3 4))
+</pre>
+</div>
+
+<pre class="example">
+(#t #f #t #f #t)
+(1 2 3 4 5)
+4
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org4df7ed2" class="outline-4">
+<h4 id="org4df7ed2">Exercise 2.34 - polynomial evaluation using Horner's rule</h4>
+<div class="outline-text-4" id="text-org4df7ed2">
+<p>
+Evaluate \[ a_nx^n+a_{n-1}x^n+...+a_0 \]
+</p>
+
+<p>
+using \[ (...(a_nx+a_{n-1})x+...+a_1)x+a_0 \]
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+
+
+(define (horner-eval x coefficient-sequence)
+  (accumulate (lambda (this-coeff higher-terms)
+		(+ this-coeff
+		   (* x higher-terms)))
+	      0
+	      coefficient-sequence))
+
+(horner-eval 2 (list 1 3 0 5 0 1))
+</pre>
+</div>
+
+<pre class="example">
+79
+</pre>
+
+
+<p>
+Check it's actually correct (in maxima):
+</p>
+<div class="org-src-container">
+<pre class="src src-maxima">display(subst([x=2], x^5 + 5*x^3 + 3*x + 1));
+</pre>
+</div>
+
+<pre class="example">
+                5      3
+subst([x = 2], x  + 5 x  + 3 x + 1) = 79
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org98c3836" class="outline-4">
+<h4 id="org98c3836">Exercise 2.35 - <code>count-leave</code> as an accumulation</h4>
+<div class="outline-text-4" id="text-org98c3836">
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+
+
+(define (count-leaves-r x)
+  (cond ((null? x) 0)
+	((not (pair? x)) 1)
+	(else
+	 (+ (count-leaves-r (car x))
+	    (count-leaves-r (cdr x))))))
+
+
+;; ;; naked (length (enumerate-tree x))
+
+;; (define (count-leaves x)
+;;   (accumulate +
+;; 	      0
+;; 	      (map (lambda (x) 1) (enumerate-tree x))))
+
+;; map op launches recursion
+(define (count-leaves x)
+  (accumulate +
+	      0
+	      (map (lambda (el)
+		     (cond ((not (pair? el)) 1)
+			   (else (count-leaves el))))
+		   x)))
+
+;; accumulate op launches recursion - feels bad because "mapping" logic is mixed with the "accumulation" logic
+(define (count-leaves-1 x)
+  (accumulate (lambda (el acc)
+		(cond ((not (pair? el)) (inc acc))
+		      (else
+		       (+ (count-leaves-1 el)
+			  ))))
+	      0
+	      (map identity x)))
+
+(count-leaves (list 1 2 (list 3 4) (list 4 5)))
+</pre>
+</div>
+
+<pre class="example">
+6
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgd3ab0a4" class="outline-4">
+<h4 id="orgd3ab0a4">Exercise 2.36 - <code>accumulate-n</code></h4>
+<div class="outline-text-4" id="text-orgd3ab0a4">
+<p>
+Like <code>accumulate</code>, but takes <code>op</code>, <code>init</code> and <code>seqs</code>, a list of lists of same length say <code>l</code>, and returns a list of length <code>l</code> where first element is <code>op</code> applied to first elements of lists in <code>seqs</code>, second to second and so on.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (accumulate op init seq)
+  (if (null? seq)
+      init
+      (op (car seq)
+	  (accumulate op init (cdr seq)))))
+
+(define (zip seqs)
+  (if (null? (car seqs))
+      nil
+      (cons (map car seqs)
+	    (zip (map cdr seqs)))))
+
+(define (accumulate-n-2 op init seqs)
+  (map
+   (lambda (z)
+	    (accumulate op init z))
+   (zip seqs)))
+
+
+(define (accumulate-n op init seqs)
+  (if (null? (car seqs))
+      nil
+      (cons (accumulate op init (map car seqs))
+	    (accumulate-n op init (map cdr seqs)))))
+
+(accumulate-n
+ +
+ 0
+ (list (list 1 2 3)
+       (list 4 5 6)
+       (list 7 8 9)
+       (list 10 11 12)))
+
+(accumulate-n-2
+ +
+ 0
+ (list (list 1 2 3)
+       (list 4 5 6)
+       (list 7 8 9)
+       (list 10 11 12)))
+</pre>
+</div>
+
+<pre class="example">
+(22 26 30)
+(22 26 30)
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org8404291" class="outline-4">
+<h4 id="org8404291">Exercise 2.37 - matrix operations</h4>
+<div class="outline-text-4" id="text-org8404291">
+<p>
+Represent vector as a sequence of numbers, and matrix as sequence of row vectors.
+</p>
+
+<p>
+E.g. the matrix \(\begin{bmatrix}
+1 & 2 & 3 & 4\\
+4 & 5 & 6 & 6\\
+6 & 7 & 8 & 9
+\end{bmatrix}\) can be represente as the sequence <code>((1 2 3 4) (4 5 6 6) (6 7 8 9))</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (accumulate op init seq)
+  (if (null? seq)
+      init
+      (op (car seq)
+	  (accumulate op init (cdr seq)))))
+
+(define (accumulate-n op init seqs)
+  (if (null? (car seqs))
+      init
+      (cons (accumulate op init (map car seqs))
+	    (accumulate-n op init (map cdr seqs)))))
+
+(define (dot-product v w)
+  (accumulate + 0 (map * v w)))
+
+(dot-product (list 1 2 3) (list 4 5 6))
+
+(define (matrix-*-vector m v)
+  (map (lambda (r) (dot-product v r)) m))
+
+(matrix-*-vector (list (list 4 5 6) (list 1 3 5))
+		 (list 1 2 3))
+
+(define (transpose m)
+  (accumulate-n cons nil m))
+
+(define (matrix-*-matrix m n)
+  (let ((cols (transpose n)))
+    (map (lambda (mrow)
+	   (matrix-*-vector cols mrow))
+	 m)))
+
+(matrix-*-matrix (list (list 4 5 6) (list 1 3 5))
+		 (list (list 1 2) (list 2 4) (list 8 6)))
+</pre>
+</div>
+
+<pre class="example">
+32
+(32 22)
+((62 64) (47 44))
+</pre>
+
+
+<p>
+Check with maxima:
+</p>
+<div class="org-src-container">
+<pre class="src src-maxima">v: [1, 2, 3]$
+w: [4, 5, 6]$
+display(v . w);
+
+m: matrix([4,5,6], [1,3,5])$
+display(m . v);
+
+n: matrix([1,2], [2,4], [8,6])$
+display(m . n);
+</pre>
+</div>
+<pre class="example">
+    [1, 2, 3] . [4, 5, 6] = 32
+ [ 4  5  6 ]               [ 32 ]
+ [         ] . [1, 2, 3] = [    ]
+ [ 1  3  5 ]               [ 22 ]
+              [ 1  2 ]
+[ 4  5  6 ]   [      ]   [ 62  64 ]
+[         ] . [ 2  4 ] = [        ]
+[ 1  3  5 ]   [      ]   [ 47  44 ]
+              [ 8  6 ]
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgabfdcb0" class="outline-4">
+<h4 id="orgabfdcb0">Exercise 2.38 - <code>fold-left</code></h4>
+<div class="outline-text-4" id="text-orgabfdcb0">
+<div class="org-src-container">
+<pre class="src src-racket" id="org8494541">(define (fold-right op initial seq)
+  (if (null? seq)
+      initial
+      (op (car seq)
+	  (fold-right op initial (cdr seq)))))
+
+(define (fold-left op initial seq)
+  (define (iter result rest)
+    (if (null? rest)
+	result
+	(iter (op result (car rest))
+	      (cdr rest))))
+  (iter initial seq))
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+
+
+(fold-right / 1 (list 1 2 3)) ;; 3/2
+(fold-left / 1 (list 1 2 3)) ;; 1/6
+
+(fold-right list nil (list 1 2 3)) ;; (1 (2 (3 nil)))
+(fold-left list nil (list 1 2 3)) ;; (((nil 1) 2) 3)
+
+(fold-right + 0 (list 1 2 3)) ;; 3/2
+(fold-left + 0 (list 1 2 3)) ;; 1/6
+
+</pre>
+</div>
+
+<pre class="example">
+3/2
+1/6
+(1 (2 (3 ())))
+(((() 1) 2) 3)
+6
+6
+</pre>
+
+
+<p>
+For <code>fold-right</code> and <code>fold-left</code> to produce identical results, the <code>op</code> should be commutative.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org821a4de" class="outline-4">
+<h4 id="org821a4de">Exercise 2.39 - <code>reverse</code> in terms of folds</h4>
+<div class="outline-text-4" id="text-org821a4de">
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+
+
+(define (reverse1 seq)
+  (fold-right (lambda (x y)  ;; y is the reversed part of seq right of x, so x should be inserted in the end
+		(append y (list x)))
+	      nil
+	      seq))
+
+(define (reverse2 seq)
+  (fold-left (lambda (x y) (cons y x))  ;; x is the reversed part of seq left of y, so y should be inserted at the beginning
+	     nil
+	     seq))
+
+(reverse1 (list 1 2 3))
+(reverse2 (list 1 2 3))
+</pre>
+</div>
+
+<pre class="example">
+(3 2 1)
+(3 2 1)
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8225d81" class="outline-3">
+<h3 id="org8225d81">Nested Mappings</h3>
+<div class="outline-text-3" id="text-org8225d81">
+</div>
+<div id="outline-container-org20fe81b" class="outline-4">
+<h4 id="org20fe81b">prime sum pairs - <code>flatmap</code> and nested <code>map</code></h4>
+<div class="outline-text-4" id="text-org20fe81b">
+<p>
+Consider the problem: Given a positive integer \(n\), find all ordered pairs of distinct positive integers \(i\) and \(j\) where \(1 \le j \lt i \le n\), such that \(i + j\) is prime.
+</p>
+
+<p>
+For example:
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">i</td>
+<td class="org-right">2</td>
+<td class="org-right">3</td>
+<td class="org-right">4</td>
+<td class="org-right">4</td>
+<td class="org-right">5</td>
+<td class="org-right">6</td>
+<td class="org-right">6</td>
+</tr>
+
+<tr>
+<td class="org-left">j</td>
+<td class="org-right">1</td>
+<td class="org-right">2</td>
+<td class="org-right">1</td>
+<td class="org-right">3</td>
+<td class="org-right">2</td>
+<td class="org-right">1</td>
+<td class="org-right">5</td>
+</tr>
+
+<tr>
+<td class="org-left">i+j</td>
+<td class="org-right">3</td>
+<td class="org-right">5</td>
+<td class="org-right">5</td>
+<td class="org-right">7</td>
+<td class="org-right">7</td>
+<td class="org-right">7</td>
+<td class="org-right">11</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>
+Solution approach: for each integer \(i \le n\) enumerate integers \(j < i\), and for each such \(i\), \(j\) generate pair <code>(i j)</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+
+
+(define n 6)
+
+;; (enumerate-interval 1 6)
+;; (map (lambda (i)
+;;        (map (lambda (j)
+;;               (list i j))
+;;             (enumerate-interval 1 (- i 1))))
+;;      (enumerate-interval 1 6))
+
+;; for each i, generate a list of lists of pairs with i and j&lt;i, and then join lists
+;; (accumulate append
+;; 	    nil
+;; 	    (map (lambda (i)
+;; 		   (map (lambda (j) (list i j))
+;; 			(enumerate-interval 1 (- i 1))))
+;; 		 (enumerate-interval 1 n)))
+
+(define (flatmap proc seq)
+  (accumulate append nil (map proc seq)))
+
+(define (prime? n)
+  (define (square x) (* x x))
+  (define (iter d)
+    (cond ((&gt; (square d) n)
+	   #t)
+	  ((zero? (remainder n d))
+	   #f)
+	  (else
+	   (iter (inc d)))))
+  (iter 2))
+
+(define (prime-sum? pair)
+  (prime? (+ (car pair) (cadr pair))))
+
+(define (make-pair-sum pair)
+  (list (car pair)
+	(cadr pair)
+	(+ (car pair) (cadr pair))))
+
+
+(define (prime-sum-pairs n)
+  (map make-pair-sum
+       (filter prime-sum?
+	       (flatmap (lambda (i)
+			  (map (lambda (j) (list i j))
+			       (enumerate-interval 1 (- i 1))))
+			(enumerate-interval 1 n)))))
+
+(prime-sum-pairs 6)
+</pre>
+</div>
+
+<pre class="example">
+((2 1 3) (3 2 5) (4 1 5) (4 3 7) (5 2 7) (6 1 7) (6 5 11))
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org2954ca9" class="outline-4">
+<h4 id="org2954ca9">Permutations</h4>
+<div class="outline-text-4" id="text-org2954ca9">
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (filter predicate seq)
+  (cond ((null? seq) nil)
+	((predicate (car seq))
+	 (cons (car seq)
+	       (filter predicate (cdr seq))))
+	(else
+	 (filter predicate (cdr seq)))))
+
+(define (accumulate op initial seq)
+  (if (null? seq)
+      initial
+      (op (car seq)
+	  (accumulate op initial (cdr seq)))))
+
+(define (flatmap proc seq)
+  (accumulate append nil (map proc seq)))
+
+(define (remove seq item)
+  "remove all occurences of item in seq"
+  (filter (lambda (x)
+	    (not (= x item)))
+	  seq))
+
+(define (excluding s x)
+  "remove the first occurence of x in s"
+  (cond ((null? s) nil)
+	((= x (car s))
+	 (cdr s))
+	(else
+	 (cons (car s)
+	       (excluding (cdr s) x)))))
+
+(define (permutations s)
+  (if (null? s)
+      (list nil)
+      (flatmap (lambda (x)
+		 (map (lambda (p)
+			(cons x p))
+		      (permutations (remove s x))))
+	       s)))
+
+(permutations (list 1 2 3))
+</pre>
+</div>
+
+<pre class="example">
+((1 2 3) (1 3 2) (2 1 3) (2 3 1) (3 1 2) (3 2 1))
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgebd3907" class="outline-4">
+<h4 id="orgebd3907">Exercise 2.40 - <code>unique-pairs</code></h4>
+<div class="outline-text-4" id="text-orgebd3907">
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+
+(define (flatmap proc seq)
+  (accumulate append nil (map proc seq)))
+
+(define (unique-pairs n)
+  "Generates a sequence of pairs (i j) such that 1 &lt;= i &lt; j &lt;= n"
+  (flatmap (lambda (i)
+	     (map (lambda (j)
+		    (list i j))
+		  (enumerate-interval 1 (- i 1))))
+	   (enumerate-interval 1 n)))
+
+(define (pair-with-sum p)
+  (list (car p)
+	(cadr p)
+	(+ (car p) (cadr p))))
+
+(define (prime? n)
+  (define (iter d)
+    (cond ((&gt; (* d d) n) #t)
+	  ((zero? (remainder n d)) #f)
+	  (else
+	   (iter (inc d)))))
+  (iter 2))
+
+(define (prime-sum? p)
+  (prime? (+ (car p) (cadr p))))
+
+(define (prime-sum-pairs n)
+  (map pair-with-sum
+       (filter prime-sum?
+	       (unique-pairs n))))
+
+(prime-sum-pairs 6)
+</pre>
+</div>
+
+<pre class="example">
+((2 1 3) (3 2 5) (4 1 5) (4 3 7) (5 2 7) (6 1 7) (6 5 11))
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org67fd7d3" class="outline-4">
+<h4 id="org67fd7d3">Exercise 2.41 - triples of given sum</h4>
+<div class="outline-text-4" id="text-org67fd7d3">
+<p>
+Write a procedure to find all ordered triples of distinct positive integers <code>i, j, k</code> less than or equal to a given integer <code>n</code> that sum to a given integer <code>s</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+
+
+(define (flatmap proc seq) (accumulate append nil (map proc seq)))
+
+(define (enumerate-k-tuples k n)
+  (if (zero? k)
+      (list nil)
+      (flatmap (lambda (x)
+		 (map (lambda (t) (cons x t))
+		      (enumerate-k-tuples (dec k) n)))
+	       (enumerate-interval 1 n))))
+
+(define (sum xs) (accumulate + 0 xs))
+
+(define (distinct3? t)
+  (and (not (= (car t) (cadr t)))
+       (not (= (car t) (caddr t)))
+       (not (= (cadr t) (caddr t))))) 
+
+(define (triples-of-sum n s)
+  (filter (lambda (t)
+	    (= (sum t) s))
+	  (filter distinct3?
+		  (enumerate-k-tuples 3 n))))
+
+(triples-of-sum 10 8)
+</pre>
+</div>
+
+<pre class="example">
+((1 2 5) (1 3 4) (1 4 3) (1 5 2) (2 1 5) (2 5 1) (3 1 4) (3 4 1) (4 1 3) (4 3 1) (5 1 2) (5 2 1))
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org58a3c4b" class="outline-4">
+<h4 id="org58a3c4b">Exercise 2.42 - eight-queens puzzle</h4>
+<div class="outline-text-4" id="text-org58a3c4b">
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+
+(define (flatmap op seq) (accumulate append nil (map op seq)))
+(define (contains? haystack needle)
+  (cond ((null? haystack) #f)
+	((= needle (car haystack)) #t)
+	(else (contains? (cdr haystack) needle))))
+
+(define empty-board nil)
+
+(define (make-pos r c) (cons r c))
+(define (row-pos p) (car p))
+(define (col-pos p) (cdr p))
+
+(define (put-queen board r c)
+  (cons (make-pos r c) board))
+
+(define (safe? queens c)
+  "#t &lt;=&gt; the queen in the column c is not attacked by any other of queens."
+  (define (iter queens attacked c-queen-row)
+    (cond ((null? queens)
+	   (not (contains? attacked c-queen-row)))
+	  ((= c (col-pos (car queens)))
+	   (iter (cdr queens)
+		 attacked
+		 (row-pos (car queens))))
+	  (else
+	   (iter (cdr queens)
+		 (let ((q-row (row-pos (car queens)))
+		       (distance (- c (col-pos (car queens)))))
+		   (append (list (- q-row distance)
+				 q-row
+				 (+ q-row distance))
+			   attacked))
+		 c-queen-row))))
+  (iter queens nil -999999))
+
+(define (queens board-size)
+  (define (queen-cols k)
+    "Returns a list of boards with safely placed queens in the first k columns."
+    (if (zero? k)
+	(list empty-board)
+	(filter (lambda (queens)
+		  (safe? queens k))
+		(flatmap (lambda (queens)
+			   (map (lambda (row)
+				  (put-queen queens row k))
+				(enumerate-interval 1 board-size)))
+			 (queen-cols (- k 1))))))
+  (queen-cols board-size))
+
+(queens 4)
+(length (queens 10))
+(length (queens 9))
+(length (queens 8))
+(length (queens 7))
+(length (queens 6))
+(length (queens 5))
+</pre>
+</div>
+
+<pre class="example">
+(((3 . 4) (1 . 3) (4 . 2) (2 . 1)) ((2 . 4) (4 . 3) (1 . 2) (3 . 1)))
+724
+352
+92
+40
+4
+10
+</pre>
+
+
+<div class="org-src-container">
+<pre class="src src-python">
+empty_board = ()
+
+def with_pos(board, r, c):
+    return ((r, c),) + board
+
+def safe(queens, c):
+    c_queen_row = None
+    attacked_rows_in_c = []
+    for q in queens:
+	qr, qc = q
+	if qc == c:
+	   c_queen_row = qr
+	else:
+	    distance = c - qc
+	    attacked_rows_in_c.extend([
+		qr - distance,
+		qr,
+		qr + distance
+	    ])
+    return c_queen_row not in attacked_rows_in_c
+
+def queens(board_size):
+    def queen_cols(k):
+	"Returns a list of boards with queens safely placed in first k columns"
+	if k == 0:
+	    return [empty_board]
+	results = []
+	for board in queen_cols(k-1):
+	    for row in range(1, board_size+1):
+		new_board = with_pos(board, row, k)
+		if safe(new_board, k):
+		    results.append(new_board)
+	return results
+
+    return queen_cols(board_size)
+
+return queens(4)
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">(3 4)</td>
+<td class="org-left">(1 3)</td>
+<td class="org-left">(4 2)</td>
+<td class="org-left">(2 1)</td>
+</tr>
+
+<tr>
+<td class="org-left">(2 4)</td>
+<td class="org-left">(4 3)</td>
+<td class="org-left">(1 2)</td>
+<td class="org-left">(3 1)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-orgeef5244" class="outline-4">
+<h4 id="orgeef5244">Exercise 2.43 - Deoptimized queens</h4>
+<div class="outline-text-4" id="text-orgeef5244">
+<div class="org-src-container">
+<pre class="src src-racket">(flatmap
+ (lambda (new-row)
+   (map (lambda (rest-of-queens)
+	  (adjoin-position new-row k rest-of-queens))
+	(queen-cols (- k 1))))
+ (enumerate-interval 1 board-size))
+</pre>
+</div>
+
+<pre class="example">
+/var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-1zia2E/ob-racketLiFO1U.rkt:3:1: flatmap: unbound identifier
+  in: flatmap
+  location...:
+   /var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-1zia2E/ob-racketLiFO1U.rkt:3:1
+</pre>
+
+
+<p>
+Problem is that for each call of <code>(queen-cols k)</code>, there are <code>board-size</code> calls to <code>(queen-cols k)</code>. Given that there <code>board-size</code> levels of recursion, let \(n =\) <code>board-size</code>, there are \(n^n\) call in total, while original version contains \(n\) calls.
+</p>
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+
+(define (flatmap op seq) (accumulate append nil (map op seq)))
+(define (contains? haystack needle)
+  (cond ((null? haystack) #f)
+	((= needle (car haystack)) #t)
+	(else (contains? (cdr haystack) needle))))
+
+(define empty-board nil)
+
+(define (make-pos r c) (cons r c))
+(define (row-pos p) (car p))
+(define (col-pos p) (cdr p))
+
+(define (put-queen board r c)
+  (cons (make-pos r c) board))
+
+(define (safe? queens c)
+  "#t &lt;=&gt; the queen in the column c is not attacked by any other of queens."
+  (define (iter queens attacked c-queen-row)
+    (cond ((null? queens)
+	   (not (contains? attacked c-queen-row)))
+	  ((= c (col-pos (car queens)))
+	   (iter (cdr queens)
+		 attacked
+		 (row-pos (car queens))))
+	  (else
+	   (iter (cdr queens)
+		 (let ((q-row (row-pos (car queens)))
+		       (distance (- c (col-pos (car queens)))))
+		   (append (list (- q-row distance)
+				 q-row
+				 (+ q-row distance))
+			   attacked))
+		 c-queen-row))))
+  (iter queens nil -999999))
+
+(define (queens board-size)
+  (define (queen-cols k)
+    "Returns a list of boards with safely placed queens in the first k columns."
+    (if (zero? k)
+	(list empty-board)
+	(filter (lambda (queens)
+		  (safe? queens k))
+		(flatmap (lambda (queens)
+			   (map (lambda (row)
+				  (put-queen queens row k))
+				(enumerate-interval 1 board-size)))
+			 (queen-cols (- k 1))))))
+  (queen-cols board-size))
+
+(define (queens-deoptimized board-size)
+  (define (queen-cols k)
+    "Returns a list of boards with safely placed queens in the first k columns."
+    (if (zero? k)
+	(list empty-board)
+	(filter (lambda (queens)
+		  (safe? queens k))
+		(flatmap
+		 (lambda (new-row)
+		   (map (lambda (rest-of-queens)
+			  (put-queen rest-of-queens new-row k))
+			(queen-cols (- k 1))))
+		 (enumerate-interval 1 board-size)))))
+  (queen-cols board-size))
+
+(define (measure f . args)
+  (let ((start (* 1.0 (runtime))))
+    (apply f args)
+    (- (runtime) start)))
+
+(define (pow b p)
+  (define (square x) (* x x))
+  (cond ((zero? p) 1)
+	((even? p) (square (pow b (/ p 2))))
+	(else (* b (pow b (- p 1))))))
+
+(/ (log (/ (measure queens-deoptimized 9) (measure queens 9)))
+   (log 9))
+(/ (log (/ (measure queens-deoptimized 8) (measure queens 8)))
+   (log 8))
+(/ (log (/ (measure queens-deoptimized 7) (measure queens 7)))
+   (log 7))
+(/ (log (/ (measure queens-deoptimized 6) (measure queens 6)))
+   (log 6))
+
+</pre>
+</div>
+
+<pre class="example">
+3.989833040411312
+3.455462871043414
+2.964135395540165
+2.3038839284458783
+</pre>
+</div>
+
+
+<ul class="org-ul">
+<li><a id="orga79e618"></a><span class="todo TODO">TODO</span> Estimate how long it will take Louis's program to solve the eight-queens puzzle<br /></li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3676901" class="outline-2">
+<h2 id="org3676901">2.2.4 Example: A Picture Language</h2>
+<div class="outline-text-2" id="text-org3676901">
+</div>
+<div id="outline-container-orgd5fcbed" class="outline-3">
+<h3 id="orgd5fcbed">The picture language</h3>
+<div class="outline-text-3" id="text-orgd5fcbed">
+<p>
+Recap: language is described in terms of primitives, means of combination and means of abstraction.
+</p>
+
+<p>
+<i>Painter</i> is the only kind of element. A painter draws an image that is shifted and scaled to fit within a designated parallelogram-shaped frame. The actual shape of the drawing depends on the frameof which has its own target.
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: LMG</p>
+<p class="date">Created: 2023-06-11 Sun 17:31</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

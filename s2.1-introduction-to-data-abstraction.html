@@ -1,0 +1,1803 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2023-06-11 Sun 17:24 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2.1 Introduction to data abstraction</title>
+<meta name="author" content="LMG" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">2.1 Introduction to data abstraction</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org53f726e">Intro</a></li>
+<li><a href="#org36d95fd">2.1 Introduction to Data Abstraction</a>
+<ul>
+<li><a href="#org374b7c9">2.1.1 Example: Arithmetic Operations for Rational Numbers</a>
+<ul>
+<li><a href="#orga8438d6">Pairs</a></li>
+<li><a href="#org81139aa">Representing rational numbers</a></li>
+</ul>
+</li>
+<li><a href="#org9514708">2.1.2 Abstraction Barriers</a>
+<ul>
+<li><a href="#org1d86751">Exercise 2.2 - Representation for line segments in a plane</a></li>
+<li><a href="#org303011b">Exercise 2.3 - Representation for rectangles in a plane</a></li>
+</ul>
+</li>
+<li><a href="#org4dcf1e0">2.1.3 What Is Meant by Data?</a>
+<ul>
+<li><a href="#org868eb1b">Exercise 2.4 - alternative procedural representation for pairs</a></li>
+<li><a href="#orgab507f0">Exercise 2.5 - Pair of nonnegative integers using only numbers and arithmetic operations</a></li>
+<li><a href="#org8b319d2">Exercise 2.6 - Church numerals</a></li>
+</ul>
+</li>
+<li><a href="#org65acd09">2.1.4 Extended Exercise: Interval Arithmetic</a>
+<ul>
+<li><a href="#orgd129157">Introduce interval arithmetic</a></li>
+<li><a href="#orgc3601c2">Some operations implementation</a></li>
+<li><a href="#orga9b62b3">Exercise 2.7 - Constructor and selectors</a></li>
+<li><a href="#org58f3bbb">Exercise 2.8 - Difference of intervals</a></li>
+<li><a href="#org8ed40ba">Exercise 2.9 - The width of an interval</a></li>
+<li><a href="#org06ddeb9">Exercise 2.10 - Divide by interval spanning zero</a></li>
+<li><a href="#org72a18db">Exercise 2.11 - Optimize <code>mul-interval</code></a></li>
+<li><a href="#orgd7cfa66">Alternate constructors</a></li>
+<li><a href="#orgfba6247">Exercise 2.12 - Center-percentage interface</a></li>
+<li><a href="#org80b7078">Exercise 2.13 - Approximate product tolerance when percentages are small</a></li>
+<li><a href="#org3f74a60">Different results for algebraically equivalent expressions</a></li>
+<li><a href="#org70268a3"><span class="todo TODO">TODO</span> Exercise 2.14 - Demonstrate the bug</a></li>
+<li><a href="#org9092b1c"><span class="todo TODO">TODO</span> Exercise 2.15</a></li>
+<li><a href="#org3da999a"><span class="todo TODO">TODO</span> Exercise 2.16</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org53f726e" class="outline-2">
+<h2 id="org53f726e">Intro</h2>
+<div class="outline-text-2" id="text-org53f726e">
+<p>
+Why do we want compound data in a programming language?
+</p>
+<ul class="org-ul">
+<li>to elevate the conceptual level at which we can design our programs
+<ul class="org-ul">
+<li>thanks to "glueing" pieces of data together into a <i>compound data object</i>, which can be manipulated as single conceptual unit</li>
+</ul></li>
+<li>to increase the modularity of our designs
+<ul class="org-ul">
+<li><i>data abstraction</i> is a general technique that helps to separate the way data objects are <i>represented</i> from the way data objects are <i>used</i> by the program</li>
+</ul></li>
+<li>to enhance the expressive power of our language
+<ul class="org-ul">
+<li>lets the program to manipulate with data objects without knowing its representation.</li>
+</ul></li>
+</ul>
+
+<p>
+Abstraction is a technique for coping with complexity, and we will see how data abstractions enables us to erect suitable <i>abstraction barriers</i> between different parts of a program.
+</p>
+
+<p>
+A programming language should provide some kind of "glue":
+</p>
+<ul class="org-ul">
+<li>There are many possible kinds of glue</li>
+<li>we will discover how to form compound data using no special "data" operations, only procedures</li>
+<li>we will explore some convential techniques for representing sequences and trees</li>
+<li><i>closure</i> - glue should allow us to combine into data objects not only primitive data objects, but compound data objects as well</li>
+<li>compound data objects can serve as <i>conventional interfaces</i> for combining program modules in mix-and-match ways.</li>
+</ul>
+
+
+<p>
+<i>Symbolic expressions</i> - data whose elementary parts can be arbitrary symbols rathen than only numbers.
+</p>
+<ul class="org-ul">
+<li>we explore various alternatives for representing sets of objects</li>
+<li>there are many ways in which a given data structure can be represented in terms of simpler objects</li>
+<li>choice of representation can have significant impact on the time and space requirements of processes</li>
+</ul>
+
+<p>
+There is a problem of working with data that may be represented differently by different parts of a program.
+</p>
+<ul class="org-ul">
+<li>for that, <i>generic operations</i> must handle different types of data.</li>
+<li>maintaining modularity in the presence of generic operations is more difficult and require more powerful abstractions
+<ul class="org-ul">
+<li><i>data-directed programming</i> is a technique that allows individual data representations to be designed in isolation and then combined <i>additively</i> (without modification).</li>
+</ul></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org36d95fd" class="outline-2">
+<h2 id="org36d95fd">2.1 Introduction to Data Abstraction</h2>
+<div class="outline-text-2" id="text-org36d95fd">
+<p>
+<i>data abstraction</i> is a methodology that enables us to isolate how a compound data object is used from the details of how it is constructed from more primitive data objects.
+</p>
+
+<p>
+Basic idea is to structure the programs so that they operate on "abstract data", i.e. rely only on properties of data objects that are needed for computation. At the same time, a "concrete" data representation is defined independent of the program that use the data. The interface between these two parts will be a set of procedures, <i>selectors</i> and <i>constructors</i>, that implement abstract data in terms of the concrete representation.
+</p>
+</div>
+
+
+<div id="outline-container-org374b7c9" class="outline-3">
+<h3 id="org374b7c9">2.1.1 Example: Arithmetic Operations for Rational Numbers</h3>
+<div class="outline-text-3" id="text-org374b7c9">
+<p>
+Using some <i>wishful thinking</i>, assume these selectors and constructors are available:
+</p>
+<ul class="org-ul">
+<li><code>(make-rat &lt;n&gt; &lt;d&gt;)</code> returns the rational number whose numerator is integer <code>&lt;n&gt;</code> and denominator is integer <code>&lt;d&gt;</code></li>
+<li><code>(numer &lt;x&gt;)</code> returns the numerator of the rational number <code>&lt;x&gt;</code></li>
+<li><code>(denom &lt;x&gt;)</code> returns the denominator of the rational number <code>&lt;x&gt;</code></li>
+</ul>
+
+<p>
+Now even without implementation, we could then add, subtract, multiply, divide, and test equality:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="org365fe1f">(define (add-rat x y)
+  (make-rat (+ (* (numer x) (denom y))
+	       (* (numer y) (denom x)))
+	    (* (denom x) (denom y))))
+
+(define (sub-rat x y)
+  (make-rat (- (* (numer x) (denom y))
+	       (* (numer y) (denom x)))
+	    (* (denom x) (denom y))))
+
+(define (mul-rat x y)
+  (make-rat (* (numer x) (numer y))
+	    (* (denom x) (denom y))))
+
+(define (div-rat x y)
+  (make-rat (* (numer x) (denom y))
+	    (* (denom x) (numer y))))
+
+(define (equal-rat? x y)
+  (= (* (numer x) (denom y))
+     (* (denom x) (numer y))))
+</pre>
+</div>
+
+<p>
+To define <code>make-rat</code>, <code>numer</code>, and <code>denom</code>, we need some glue.
+</p>
+</div>
+
+<div id="outline-container-orga8438d6" class="outline-4">
+<h4 id="orga8438d6">Pairs</h4>
+<div class="outline-text-4" id="text-orga8438d6">
+<p>
+Compound structure called a <i>pair</i> can be constructed with the <code>cons</code> procedure. <code>car</code> and <code>cdr</code> can be used to extract first and second element of the pair respectively.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define x (cons 1 2))
+(car x)
+(cdr x)
+</pre>
+</div>
+
+<pre class="example">
+1
+2
+</pre>
+
+
+<p>
+Data objects constructed from paris are called <i>list-structured</i> data.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org81139aa" class="outline-4">
+<h4 id="org81139aa">Representing rational numbers</h4>
+<div class="outline-text-4" id="text-org81139aa">
+<div class="org-src-container">
+<pre class="src src-racket" id="org2cae6e4">#lang sicp
+(define (gcd a b)
+  (if (zero? b)
+      a
+      (gcd b (remainder a b))))
+(define (make-rat n d)
+  (let ((norm-d (if (&lt; d 0) (- d) d))
+	(norm-n (if (&lt; d 0) (- n) n))
+	(c (gcd (abs n) (abs d))))
+    (cons (/ norm-n c) (/ norm-d c))))
+(define (numer x) (car x))
+(define (denom x) (cdr x))
+(define (print-rat x)
+  (newline)
+  (display (numer x))
+  (display "/")
+  (display (denom x)))
+
+(define (add-rat x y)
+  (make-rat (+ (* (numer x) (denom y))
+	       (* (numer y) (denom x)))
+	    (* (denom x) (denom y))))
+
+(define (sub-rat x y)
+  (make-rat (- (* (numer x) (denom y))
+	       (* (numer y) (denom x)))
+	    (* (denom x) (denom y))))
+
+(define (mul-rat x y)
+  (make-rat (* (numer x) (numer y))
+	    (* (denom x) (denom y))))
+
+(define (div-rat x y)
+  (make-rat (* (numer x) (denom y))
+	    (* (denom x) (numer y))))
+
+(define (equal-rat? x y)
+  (= (* (numer x) (denom y))
+     (* (denom x) (numer y))))
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+(define (gcd a b)
+  (if (zero? b)
+      a
+      (gcd b (remainder a b))))
+(define (make-rat n d)
+  (let ((norm-d (if (&lt; d 0) (- d) d))
+	(norm-n (if (&lt; d 0) (- n) n))
+	(c (gcd (abs n) (abs d))))
+    (cons (/ norm-n c) (/ norm-d c))))
+(define (numer x) (car x))
+(define (denom x) (cdr x))
+(define (print-rat x)
+  (newline)
+  (display (numer x))
+  (display "/")
+  (display (denom x)))
+
+(define (add-rat x y)
+  (make-rat (+ (* (numer x) (denom y))
+	       (* (numer y) (denom x)))
+	    (* (denom x) (denom y))))
+
+(define (sub-rat x y)
+  (make-rat (- (* (numer x) (denom y))
+	       (* (numer y) (denom x)))
+	    (* (denom x) (denom y))))
+
+(define (mul-rat x y)
+  (make-rat (* (numer x) (numer y))
+	    (* (denom x) (denom y))))
+
+(define (div-rat x y)
+  (make-rat (* (numer x) (denom y))
+	    (* (denom x) (numer y))))
+
+(define (equal-rat? x y)
+  (= (* (numer x) (denom y))
+     (* (denom x) (numer y))))
+
+(define one-half (make-rat 1 2))
+(print-rat one-half)
+
+(define one-third (make-rat 1 3))
+
+(print-rat (add-rat one-half one-third))
+(print-rat (mul-rat one-half one-third))
+(print-rat (add-rat one-third one-third))
+
+(define neg-one-third (make-rat 1 -3))
+(define neg-one-half (make-rat -1 2))
+
+(print-rat (add-rat one-half neg-one-half))
+(print-rat (mul-rat one-half neg-one-third))
+(print-rat (mul-rat neg-one-third neg-one-third))
+</pre>
+</div>
+
+<pre class="example">
+
+1/2
+5/6
+1/6
+2/3
+0/1
+-1/6
+1/9
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9514708" class="outline-3">
+<h3 id="org9514708">2.1.2 Abstraction Barriers</h3>
+<div class="outline-text-3" id="text-org9514708">
+<p>
+<i>Abstraction barriers</i> isolate different "levels" of the system.
+At each level, the barrier separates the programs that use the data abstraction from the programs that implement the data abstraction.
+Procedures at each level are the interfaces that define the abstraction barriers and connect the different levels.
+</p>
+
+<p>
+Advantages:
+</p>
+<ul class="org-ul">
+<li>programs are easier to maintain and modify - if dependence on the representation is confined by design to a very few program modules.</li>
+<li>allows flexibility to consider alterante implementations</li>
+</ul>
+</div>
+
+<div id="outline-container-org1d86751" class="outline-4">
+<h4 id="org1d86751">Exercise 2.2 - Representation for line segments in a plane</h4>
+<div class="outline-text-4" id="text-org1d86751">
+<p>
+Each segment is represented as a pair of points: a starting point and an endpoing point.
+Forthermore, a point can be represented as a pair of numbers: the \(x\) and \(y\) coordinates.
+</p>
+</div>
+
+<ul class="org-ul">
+<li><a id="orga921341"></a>Define a constructor <code>make-segment</code> and selectors <code>start-segment</code> and <code>end-segment</code><br />
+<div class="outline-text-5" id="text-orga921341">
+<p>
+These define the representation of segments in terms of points.
+</p>
+</div>
+</li>
+
+<li><a id="org8516a8c"></a>Define a constructor <code>make-point</code> and selectors <code>x-point</code> and <code>y-point</code><br />
+<div class="outline-text-5" id="text-org8516a8c">
+<p>
+These define the representation of points in terms of numbers
+</p>
+</div>
+</li>
+
+<li><a id="org321f256"></a>Define a procedure <code>midpoint-segment</code><br />
+<div class="outline-text-5" id="text-org321f256">
+<p>
+<code>midpoint-segment</code> takes a line segment as argument and returns its midpoint.
+Midpoint - the point whose coordinates are the average of the coordinates of the endpoints.
+</p>
+
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (make-segment start-point end-point)
+  (cons start-point end-point))
+
+(define (start-segment segment)
+  (car segment))
+
+(define (end-segment segment)
+  (cdr segment))
+
+(define (make-point x y)
+  (cons x y))
+
+(define (x-point point)
+  (car point))
+
+(define (y-point point)
+  (cdr point))
+
+(define (midpoint-segment segment)
+  (define (average a b) (/ (+ a b) 2))
+  (make-point (average (x-point (start-segment segment))
+		       (x-point (end-segment segment)))
+	      (average (y-point (start-segment segment))
+		       (y-point (end-segment segment)))))
+
+(define (print-point p)
+  (newline)
+  (display "(")
+  (display (x-point p))
+  (display ",")
+  (display (y-point p))
+  (display ")"))
+
+(define segment1 (make-segment (make-point 0 0)
+			       (make-point 1 4)))
+(print-point (midpoint-segment segment1))
+(define segment2 (make-segment (make-point 1 1)
+			       (make-point 10 10)))
+(print-point (midpoint-segment segment2))
+(define segment3 (make-segment (make-point 1 -1)
+			       (make-point -10 10)))
+(print-point (midpoint-segment segment3))
+</pre>
+</div>
+
+<pre class="example">
+
+(1/2,2)
+(11/2,11/2)
+(-9/2,9/2)
+</pre>
+</div>
+</li>
+</ul>
+</div>
+
+<div id="outline-container-org303011b" class="outline-4">
+<h4 id="org303011b">Exercise 2.3 - Representation for rectangles in a plane</h4>
+<div class="outline-text-4" id="text-org303011b">
+</div>
+<ul class="org-ul">
+<li><a id="orgd2c1841"></a>Implement a representation for rectangles in a plane<br />
+<div class="outline-text-5" id="text-orgd2c1841">
+<p>
+A rectangle is a quadrilateral with four right angles.
+If we restrict rectangles only to those with sides parallel to axis, it can be represented using two points of any diagonal. Procedure <code>make-rectangle</code> accepts two end point of a diagonal and returns a rectangle.
+</p>
+
+<p>
+Given that for both <code>perimeter</code> and <code>area</code> we need to know only two perpendicular sides, a <code>side-rectangle</code> procedure accepting a rectangle <code>r</code> and an arbitrary side number <code>i</code>, and returning a segment representing a side. One important detail, is to define <code>side-rectangle</code> in a way to return perpendicular sides for any <code>i</code> and <code>i+1</code> sides.
+</p>
+
+<p>
+For <code>perimeter</code> and <code>area</code> only two perpendicular sides is needed, so I did not bother with calculating sides 3 and 4.
+</p>
+
+<p>
+First rectangles implementation:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket" id="orgca0b816">
+(define (make-rectangle p1 p2)
+  "Given two end points of a diagonal, returns a rectangle with sides perpendicular to axes."
+  (cons p1 p2))
+
+(define (side-rectangle r i)
+  "Returns a segment representation of side i. For any side i, i+1 is guaranteed to be perpendicular. Side 1 is arbitrary."
+  (let ((diag-p1 (car r))
+	(diag-p2 (cdr r)))
+    (cond ((&gt; i 4) (side-rectangle r (+ 1 (remainder i 4))))
+	  ((= i 1) (make-segment diag-p1
+				 (make-point (x-point diag-p1) (y-point diag-p2))))
+	  ((= i 2) (make-segment (make-point (x-point diag-p1) (y-point diag-p2))
+				 diag-p2))
+	  (else (error "Not implemented")))))
+
+
+
+(define r1 (make-rectangle (make-point 0 0)
+			   (make-point 1 1)))
+(define r2 (make-rectangle (make-point -2 -2)
+			   (make-point 1 1)))
+(perimeter r1)
+(area r1)
+
+(perimeter r2)
+(area r2)
+
+</pre>
+</div>
+
+<pre class="example">
+4
+1
+12
+9
+</pre>
+</div>
+</li>
+
+
+<li><a id="org7ade161"></a>Create procedures for perimeter and area of a given rectangle<br />
+<div class="outline-text-5" id="text-org7ade161">
+<p>
+Acknowledging this is an exercise, I wonder if perimeter and area would be better if defined as dependent on the internal representation of rectangle, and to not bother with adding abstraction barriers to make such thin "levels"? This way you don't have too much design to worry about.
+</p>
+
+<p>
+With <code>side-rectangle</code> as part of rectangle interface, the code to compute perimeter and area is as follows:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket" id="orgb116bfb">(define (perimeter r)
+  (* 2
+     (+ (length-segment (side-rectangle r 1))
+	(length-segment (side-rectangle r 2)))))
+
+(define (area r)
+  (* (length-segment (side-rectangle r 1))
+     (length-segment (side-rectangle r 2))))
+</pre>
+</div>
+
+<p>
+The segment interface is extended with <code>length-segment</code> procedure:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket" id="orged3b85d">(define (length-segment s)
+  (define (square x) (* x x))
+  (sqrt (+ (square (- (x-point (start-segment s))
+		      (x-point (end-segment s))))
+	   (square (- (y-point (start-segment s))
+		      (y-point (end-segment s)))))))
+</pre>
+</div>
+</div>
+</li>
+
+<li><a id="org8800d2c"></a>Implement a <i>different</i> representation for rectangles<br />
+<div class="outline-text-5" id="text-org8800d2c">
+<p>
+Can you design your system with suitable abstraction barriers, so that the same perimeter and area procedures will work using either representation.
+</p>
+
+<p>
+As a second approach, I tried to lift the "sides parallel to axis" restriction, and considered several approaches to the design problem:
+</p>
+<ol class="org-ol">
+<li>represent as two perpendicular edges</li>
+<li>represent as 3 vertices</li>
+<li>represent as a diagonal and an vertex not no that diagonal</li>
+</ol>
+
+<p>
+All of them are a twist on 3-verices problem, but it was the easiest to "calculate" two perpendicular sides needed for <code>perimeter</code> and <code>area</code> with the approach #1 (just return the internal representation).
+</p>
+
+<p>
+The same procedure <code>side-rectangle</code> remains as a part of rectangle data abstraction, and <code>perimeter</code> and <code>area</code> are work appropriately using the new rectangle implementation.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="orgca3f49e">
+(define (make-rectangle s1 s2)
+  "Given two perpendicular sides, returns a rectangle."
+  (cons s1 s2))
+
+(define (side-rectangle r i)
+  "Returns a segment representation of side i. For any side i, i+1 is guaranteed to be perpendicular. Side 1 is arbitrary."
+  (let ((s1 (car r))
+	(s2 (cdr r)))
+    (cond ((&gt; i 4) (side-rectangle r (+ 1 (remainder i 4))))
+	  ((= i 1) s1)
+	  ((= i 2) s2)
+	  (else (error "Not implemented")))))
+
+(define r1 (make-rectangle (make-segment (make-point 0 0)
+					 (make-point 0 1))
+			   (make-segment (make-point 0 1)
+					 (make-point 1 1))))
+(define r2 (make-rectangle (make-segment (make-point -2 -2)
+					 (make-point -2 1))
+			   (make-segment (make-point -2 1)
+					 (make-point 1 1))))
+
+(perimeter r1)
+(area r1)
+
+(perimeter r2)
+(area r2)
+
+(define r3 (make-rectangle (make-segment (make-point 0 0)
+					 (make-point -3 3))
+			   (make-segment (make-point -3 3)
+					 (make-point 2 8))))
+(define r4 (make-rectangle (make-segment (make-point 0 0)
+					 (make-point 0 3))
+			   (make-segment (make-point 0 3)
+					 (make-point 4 3))))
+(perimeter r3)
+(area r3)
+
+(perimeter r4)
+(area r4)
+
+</pre>
+</div>
+
+<pre class="example">
+4
+1
+12
+9
+22.62741699796952
+30.0
+14
+12
+</pre>
+</div>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org4dcf1e0" class="outline-3">
+<h3 id="org4dcf1e0">2.1.3 What Is Meant by Data?</h3>
+<div class="outline-text-3" id="text-org4dcf1e0">
+<p>
+<i>Data</i> is defined by a collection of selectors and constructors, together with specified condition these procedures must fullfill for representation to be valid.
+</p>
+
+<p>
+For example, we have <code>cons</code>, <code>car</code>, and <code>cdr</code> procedures to manipulate with pairs. If <code>x</code> is defined to be <code>(cons a b)</code>, then <code>(car x)</code> must be <code>a</code>, and <code>(cdr x)</code> must be <code>b</code>.
+</p>
+
+<p>
+We can implement pair procedures with only procedures:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (-cons x y)
+  (define (dispatch m)
+    (cond ((= m 0) x)
+	  ((= m 1) y)
+	  (else (error "Argument not 0 or 1 --- CONS" m))))
+  dispatch)
+
+(define (-car p) (p 0))
+(define (-cdr p) (p 1))
+
+(define p (-cons 1 10))
+(-car p)
+(-cdr p)
+</pre>
+</div>
+
+<pre class="example">
+1
+10
+</pre>
+</div>
+
+<div id="outline-container-org868eb1b" class="outline-4">
+<h4 id="org868eb1b">Exercise 2.4 - alternative procedural representation for pairs</h4>
+<div class="outline-text-4" id="text-org868eb1b">
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (cons x y)
+  (lambda (m) (m x y)))
+
+(define (car z)
+  (z (lambda (p q) p)))
+
+(define (cdr z)
+  (z (lambda (p q) q)))
+
+(= 1 (car (cons 1 2)))
+(= 2 (cdr (cons 1 2)))
+
+;; (define z (cons 1 2))
+;; - (define z (lambda (m) (m 1 2)))
+;; (car z)
+;; - (car (lambda (m) (m 1 2)))
+;; -- ((lambda (m) (m 1 2)) (lambda (p q) p))
+;; --- ((lambda (p q) p) 1 2)
+;; ----1
+</pre>
+</div>
+
+<pre class="example">
+#t
+#t
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgab507f0" class="outline-4">
+<h4 id="orgab507f0">Exercise 2.5 - Pair of nonnegative integers using only numbers and arithmetic operations</h4>
+<div class="outline-text-4" id="text-orgab507f0">
+<p>
+Represent the pair \(a\) and \(b\) as the integer that is the product \(2^a * 3^b\)
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (pow b p)
+  (define (square x) (* x x))
+  (cond ((zero? p) 1)
+	((even? p)
+	 (square (pow b (/ p 2))))
+	(else
+	 (* b (pow b (- p 1))))))
+
+(define (cons a b)
+  (* (pow 2 a)
+     (pow 3 b)))
+
+(define (car p)
+  (cond ((= 1 p) 0)
+	((zero? (remainder p 3))
+	 (car (/ p 3)))
+	((zero? (remainder p 2))
+	 (inc (car (/ p 2))))))
+
+(define (cdr p)
+  (cond ((= 1 p) 0)
+	((zero? (remainder p 2))
+	 (cdr (/ p 2)))
+	((zero? (remainder p 3))
+	 (inc (cdr (/ p 3))))))
+
+(= 3 (car (cons 3 6)))
+(= 6 (cdr (cons 3 6)))
+</pre>
+</div>
+
+<pre class="example">
+#t
+#t
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org8b319d2" class="outline-4">
+<h4 id="org8b319d2">Exercise 2.6 - Church numerals</h4>
+<div class="outline-text-4" id="text-org8b319d2">
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define zero (lambda (f) (lambda (x) x)))
+(define (add-1 n)
+  (lambda (f) (lambda (x) (f ((n f) x)))))
+
+; (define one (add-1 zero))
+; (define one (add-1 (lambda (f) (lambda (x) x))))
+(define one
+  (lambda (f)
+    (lambda (x)
+      ; (f (((lambda (f) (lambda (x) x)) f) x)))))
+      (f x))))
+; (define two (add-1 one))
+; (define two (add-1 (lambda (f) (lambda (x) (f x)))))
+(define two
+  (lambda (f)
+    (lambda (x)
+      ; (f (((lambda (f) (lambda (x) (f x))) f) x)))))
+      (f (f x)))))
+
+;; (define (add n1 n2) ((n1 add-1) ((n2 add-1) zero)))
+(define (add n1 n2)
+  (lambda (f)
+    (lambda (x)
+      ((n1 f) ((n2 f) x)))))
+
+(define three (add two one))
+;; (((lambda (f) (lambda (x) (f (f x)))) add-1)  (((lambda (f) (lambda (x) (f x))) add-1) zero))
+;; ((lambda (x) (add-1 (add-1 x)))
+;;  ((lambda (x) (add-1 x)) zero))
+;; ((lambda (x) (add-1 (add-1 x)))
+;;  (add-1 zero))
+;; ((add-1 (add-1 (add-1 zero))))
+
+(define (twice n) (add n n))
+(define n5 (add three two))
+(define n20 (twice (twice n5)))
+(define n80 (twice (twice n20)))
+(define n320 (twice (twice n80)))
+(define n400 (add n320 n80))
+(define n420 (add n400 n20))
+((n420 inc) 0)
+</pre>
+</div>
+
+<pre class="example">
+420
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org65acd09" class="outline-3">
+<h3 id="org65acd09">2.1.4 Extended Exercise: Interval Arithmetic</h3>
+<div class="outline-text-3" id="text-org65acd09">
+</div>
+<div id="outline-container-orgd129157" class="outline-4">
+<h4 id="orgd129157">Introduce interval arithmetic</h4>
+<div class="outline-text-4" id="text-orgd129157">
+<p>
+&#x2026;ability to manipulate inexact quantities with known precision, so that when a computation is done with such approximate quantities result is a number with known precision.
+</p>
+
+<p>
+Compute the value of a parallel equivalent resistence \(R_p\) of two resistors \(R_1\) and \(R_2\):
+\[ R_p = \frac{1}{1/R_1 + 1/R_2} \]
+</p>
+
+<div class="org-src-container">
+<pre class="src src-maxima" id="org8cf2e0a">R_1: 6.8;
+R_1_tol: 0.1;
+R_1_min: R_1*(1-R_1_tol);
+R_1_max: R_1*(1+R_1_tol);
+
+R_2: 4.7;
+R_2_tol: 0.05;
+R_2_min: R_2*(1-R_2_tol);
+R_2_max: R_2*(1+R_2_tol);
+
+display(R_1_min, R_1_max);
+display(R_2_min, R_2_max);
+
+R_p(r1, r2) := 1/(1/r1 + 1/r2);
+
+R_p_min: R_p(R_1_min, R_2_min);
+R_p_max: R_p(R_1_max, R_2_max);
+display(R_p_min, R_p_max);
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">R<sub>1</sub><sub>min</sub></td>
+<td class="org-left">=</td>
+<td class="org-right">6.12</td>
+</tr>
+
+<tr>
+<td class="org-left">R<sub>1</sub><sub>max</sub></td>
+<td class="org-left">=</td>
+<td class="org-right">7.48</td>
+</tr>
+
+<tr>
+<td class="org-left">R<sub>2</sub><sub>min</sub></td>
+<td class="org-left">=</td>
+<td class="org-right">4.465</td>
+</tr>
+
+<tr>
+<td class="org-left">R<sub>2</sub><sub>max</sub></td>
+<td class="org-left">=</td>
+<td class="org-right">4.935</td>
+</tr>
+
+<tr>
+<td class="org-left">R<sub>p</sub><sub>min</sub></td>
+<td class="org-left">=</td>
+<td class="org-right">2.581558809636278</td>
+</tr>
+
+<tr>
+<td class="org-left">R<sub>p</sub><sub>max</sub></td>
+<td class="org-left">=</td>
+<td class="org-right">2.97332259363673</td>
+</tr>
+</tbody>
+</table>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">R<sub>1</sub><sub>min</sub></td>
+<td class="org-left">=</td>
+<td class="org-right">6.12</td>
+</tr>
+
+<tr>
+<td class="org-left">R<sub>1</sub><sub>max</sub></td>
+<td class="org-left">=</td>
+<td class="org-right">7.48</td>
+</tr>
+
+<tr>
+<td class="org-left">R<sub>2</sub><sub>min</sub></td>
+<td class="org-left">=</td>
+<td class="org-right">4.465</td>
+</tr>
+
+<tr>
+<td class="org-left">R<sub>2</sub><sub>max</sub></td>
+<td class="org-left">=</td>
+<td class="org-right">4.935</td>
+</tr>
+
+<tr>
+<td class="org-left">R<sub>p</sub><sub>min</sub></td>
+<td class="org-left">=</td>
+<td class="org-right">2.581558809636278</td>
+</tr>
+
+<tr>
+<td class="org-left">R<sub>p</sub><sub>max</sub></td>
+<td class="org-left">=</td>
+<td class="org-right">2.97332259363673</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+Idea is to implement "interval arithmetic" as a set of arithmetic operations for combining "intervals". The result of adding, subtracting, multiplyting and dividing two intervals is itself an interval, representing the range of results.
+</p>
+
+<p>
+Accept as a postulate the existence of an abstract object called an "interval" that has two endpoints: a lower bound and an upper bound. <code>make-interval</code> can be used to construct the interval given two endpoints.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgc3601c2" class="outline-4">
+<h4 id="orgc3601c2">Some operations implementation</h4>
+<div class="outline-text-4" id="text-orgc3601c2">
+<p>
+Add, multiply and divide operations:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket" id="org8e54c9d">(define (add-interval x y)
+  (make-interval (+ (lower-bound x) (lower-bound y))
+		 (+ (upper-bound x) (upper-bound y))))
+
+(define (mul-interval x y)
+  (let ((p1 (* (lower-bound x) (lower-bound y)))
+	(p2 (* (lower-bound x) (upper-bound y)))
+	(p3 (* (upper-bound x) (lower-bound y)))
+	(p4 (* (upper-bound x) (upper-bound y))))
+    (make-interval (min p1 p2 p3 p4)
+		   (max p1 p2 p3 p4))))
+
+(define (div-interval x y)
+  (if (and (&lt;= (lower-bound y) 0)
+	   (&gt;= (upper-bound y) 0))
+      (error "Undefined division by interval containing 0 -- div-interval" y)
+      (mul-interval x
+		    (make-interval (/ 1.0 (upper-bound y))
+				   (/ 1.0 (lower-bound y))))))
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga9b62b3" class="outline-4">
+<h4 id="orga9b62b3">Exercise 2.7 - Constructor and selectors</h4>
+<div class="outline-text-4" id="text-orga9b62b3">
+<div class="org-src-container">
+<pre class="src src-racket" id="org58cc720">(define (make-interval a b) (cons a b))
+
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="org5b7b046">(define (lower-bound i) (car i))
+(define (upper-bound i) (cdr i))
+
+</pre>
+</div>
+
+<p>
+And let's see what we've got already:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket" id="org57a8aa0">#lang sicp
+(define (make-interval a b) (cons a b))
+
+(define (lower-bound i) (car i))
+(define (upper-bound i) (cdr i))
+
+(define (add-interval x y)
+  (make-interval (+ (lower-bound x) (lower-bound y))
+		 (+ (upper-bound x) (upper-bound y))))
+
+(define (mul-interval x y)
+  (let ((p1 (* (lower-bound x) (lower-bound y)))
+	(p2 (* (lower-bound x) (upper-bound y)))
+	(p3 (* (upper-bound x) (lower-bound y)))
+	(p4 (* (upper-bound x) (upper-bound y))))
+    (make-interval (min p1 p2 p3 p4)
+		   (max p1 p2 p3 p4))))
+
+(define (div-interval x y)
+  (if (and (&lt;= (lower-bound y) 0)
+	   (&gt;= (upper-bound y) 0))
+      (error "Undefined division by interval containing 0 -- div-interval" y)
+      (mul-interval x
+		    (make-interval (/ 1.0 (upper-bound y))
+				   (/ 1.0 (lower-bound y))))))
+
+
+(define i1 (make-interval 1.5 2.5))
+(define i2 (make-interval 0.1 0.3))
+(add-interval i1 i2)
+(mul-interval i1 i2)
+(div-interval i1 i2)
+(div-interval i2 i1)
+</pre>
+</div>
+
+<pre class="example">
+(1.6 . 2.8)
+(0.15000000000000002 . 0.75)
+(5.0 . 25.0)
+(0.04000000000000001 . 0.19999999999999998)
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org58f3bbb" class="outline-4">
+<h4 id="org58f3bbb">Exercise 2.8 - Difference of intervals</h4>
+<div class="outline-text-4" id="text-org58f3bbb">
+<p>
+Lower bound of the difference of two intervals is the difference between the lower bound of the minuend and the upper bound of the subtrahend.
+Upper bound of the difference of two intervals is the difference between the upper bound of the minuend and the lower bound of the subtrahend.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="org6b15f76">(define (make-interval a b) (cons a b))
+
+(define (lower-bound i) (car i))
+(define (upper-bound i) (cdr i))
+
+(define (add-interval x y)
+  (make-interval (+ (lower-bound x) (lower-bound y))
+		 (+ (upper-bound x) (upper-bound y))))
+
+(define (mul-interval x y)
+  (let ((p1 (* (lower-bound x) (lower-bound y)))
+	(p2 (* (lower-bound x) (upper-bound y)))
+	(p3 (* (upper-bound x) (lower-bound y)))
+	(p4 (* (upper-bound x) (upper-bound y))))
+    (make-interval (min p1 p2 p3 p4)
+		   (max p1 p2 p3 p4))))
+
+(define (div-interval x y)
+  (if (and (&lt;= (lower-bound y) 0)
+	   (&gt;= (upper-bound y) 0))
+      (error "Undefined division by interval containing 0 -- div-interval" y)
+      (mul-interval x
+		    (make-interval (/ 1.0 (upper-bound y))
+				   (/ 1.0 (lower-bound y))))))
+
+(define (sub-interval x y)
+  (make-interval (- (lower-bound x) (upper-bound y))
+		 (- (upper-bound x) (lower-bound y))))
+</pre>
+</div>
+
+<p>
+And see how it looks like:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket" id="org76273bb">#lang sicp
+
+(define (make-interval a b) (cons a b))
+
+(define (lower-bound i) (car i))
+(define (upper-bound i) (cdr i))
+
+(define (add-interval x y)
+  (make-interval (+ (lower-bound x) (lower-bound y))
+		 (+ (upper-bound x) (upper-bound y))))
+
+(define (mul-interval x y)
+  (let ((p1 (* (lower-bound x) (lower-bound y)))
+	(p2 (* (lower-bound x) (upper-bound y)))
+	(p3 (* (upper-bound x) (lower-bound y)))
+	(p4 (* (upper-bound x) (upper-bound y))))
+    (make-interval (min p1 p2 p3 p4)
+		   (max p1 p2 p3 p4))))
+
+(define (div-interval x y)
+  (if (and (&lt;= (lower-bound y) 0)
+	   (&gt;= (upper-bound y) 0))
+      (error "Undefined division by interval containing 0 -- div-interval" y)
+      (mul-interval x
+		    (make-interval (/ 1.0 (upper-bound y))
+				   (/ 1.0 (lower-bound y))))))
+
+(define (sub-interval x y)
+  (make-interval (- (lower-bound x) (upper-bound y))
+		 (- (upper-bound x) (lower-bound y))))
+(define i1 (make-interval 1.5 2.5))
+(define i2 (make-interval 0.1 0.3))
+(sub-interval i1 i2)
+(sub-interval i2 i1)
+</pre>
+</div>
+
+<pre class="example">
+(1.2 . 2.4)
+(-2.4 . -1.2)
+</pre>
+
+
+<pre class="example">
+(1.2 . 2.4)
+(-2.4 . -1.2)
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org8ed40ba" class="outline-4">
+<h4 id="org8ed40ba">Exercise 2.9 - The width of an interval</h4>
+<div class="outline-text-4" id="text-org8ed40ba">
+<p>
+The <i>width</i> of an interval is half of the difference between its upper and lower bounds. The width is a measure of uncertainty of the number specified by the interval. For some arithmetic operations the width of the result of combining two intervals is a function only of the widths of the argument intervals, whereas for others the width of the combination is not a function of the width of the argument intervals.
+</p>
+
+<ol class="org-ol">
+<li>Show that the width of the sum (or difference) of two intervals depends only on the widths of term intervals added (or subtracted).
+<ul class="org-ul">
+<li>This shows that width of the sum is a function of widths of term intervals:
+\[ I_1 = [x_l, x_u], w_1 = \frac{x_u-x_l}{2} \]
+\[ I_2 = [y_l, y_u], w_2 = \frac{y_u-y_l}{2} \]
+\[ I_s = I_1 + I_2 = [x_l + y_l, x_u + y_u] \]
+\[ w_s = \frac{x_u+y_u-x_l-y_l}{2} = \frac{x_u-x_l}{2} + \frac{y_u-y_l}{2} = w_1 + w_2 \]</li>
+
+<li>Similar reasoning can be applied to show that the width of the difference is a function of the widths of term intervals.</li>
+</ul></li>
+
+<li>Give examles to show that this is not true for multiplication (or division).
+<ul class="org-ul">
+<li><p>
+Consider this example:
+\[ I_1 = [-1, 1], w_1 = \frac{2}{2} = 1 \]
+\[ I_2 = [-3, 2], w_2 = \frac{5}{2} \]
+\[ I_m = I_1 \times I_2 = [-1, 1] \times [-3, 2] = [1 * -3, -1 * -3] = [-3, 3] \]
+\[ w_m = \frac{6}{2} = 3 \]
+</p>
+
+<p>
+\[ J_1 = [1, 3], v_1 = \frac{2}{2} = 1 \]
+\[ J_2 = [0, 5], v_2 = \frac{5}{2} \]
+\[ J_m = J_1 \times J_2 = [1, 3] \times [0, 5] = [0 * 1, 5 * 3] = [0, 15] \]
+\[ v_m = \frac{15}{2}\]
+</p></li>
+<li>The pair of intervals \((I_1, I_2)\) has the same widths as the pair \((J_1, J_2)\), but the width of respective products differ, and so can not be a function of widths of term intervals</li>
+</ul></li>
+</ol>
+</div>
+</div>
+
+
+<div id="outline-container-org06ddeb9" class="outline-4">
+<h4 id="org06ddeb9">Exercise 2.10 - Divide by interval spanning zero</h4>
+<div class="outline-text-4" id="text-org06ddeb9">
+<p>
+It is not clear what it means to divide by an interval that spans zero. Modify code to check for this condition and to signal error if it occurs.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="orga377798">(define (div-interval x y)
+  (if (and (&lt;= (lower-bound y) 0)
+	   (&gt;= (upper-bound y) 0))
+      (error "Undefined division by interval containing 0 -- div-interval" y)
+      (mul-interval x
+		    (make-interval (/ 1.0 (upper-bound y))
+				   (/ 1.0 (lower-bound y))))))
+</pre>
+</div>
+
+<pre class="example">
+/var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-Vtoyle/ob-racket34STtA.rkt:4:16: lower-bound: unbound identifier
+  in: lower-bound
+  location...:
+   /var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-Vtoyle/ob-racket34STtA.rkt:4:16
+</pre>
+
+
+<p>
+See how it works:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket" id="org5035a52">#lang sicp
+
+
+
+(define j1 (make-interval 1 2))
+(define j2 (make-interval 1 2))
+(div-interval j1 j2)
+
+(define i1 (make-interval 1 2))
+(define i2 (make-interval -1 2))
+(div-interval i1 i2)
+
+</pre>
+</div>
+
+<pre class="example">
+Undefined division by interval containing 0 -- div-interval (-1 . 2)
+  context...:
+   body of "/var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-gqTov2/ob-racketgF8jkY.rkt"
+(0.5 . 2.0)
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-org72a18db" class="outline-4">
+<h4 id="org72a18db">Exercise 2.11 - Optimize <code>mul-interval</code></h4>
+<div class="outline-text-4" id="text-org72a18db">
+<p>
+By test the signs of the endpoints of the intervals, it is possible to break <code>mul-interval</code> into nine cases, only one of which requires more than two multiplications.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="org824ff48">(define (mul-interval-optimized x y)
+  (define (neg? a) (&lt; a 0))
+  (define (non-neg? a) (&gt;= a 0))
+  (let ((xl (lower-bound x))
+	(xu (upper-bound x))
+	(yl (lower-bound y))
+	(yu (upper-bound y)))
+    (cond ((neg? xu)
+	   (cond ((neg? yu)
+		  (make-interval (* xu yu) (* xl yl)))
+		 ((and (neg? yl) (non-neg? yu))
+		  (make-interval (* xl yu) (* xl yl)))
+		 ((non-neg? yu)
+		  (make-interval (* xl yu) (* xu yl)))))
+	  ((and (neg? xl) (non-neg? xu))
+	   (cond ((neg? yu)
+		  (make-interval (* xu yl) (* xl yl)))
+		 ((and (neg? yl) (non-neg? yu))
+		  (let ((l1 (* xl yu))
+			(l2 (* xu yl))
+			(u1 (* xl yl))
+			(u2 (* xu yu)))
+		    (make-interval (if (&lt; l1 l2) l1 l2)
+				   (if (&gt; u1 u2) u1 u2))))
+		 ((non-neg? yu)
+		  (make-interval (* xl yu)
+				 (* xu yu)))))
+	  ((non-neg? xl)
+	   (cond ((neg? yu)
+		  (make-interval (* xu yl)
+				 (* xl yu)))
+		 ((and (neg? yl) (non-neg? yu))
+		  (make-interval (* xu yl)
+				 (* xu yu)))
+		 ((non-neg? yu)
+		  (make-interval (* xl yl) (* xu yu))))))))
+</pre>
+</div>
+
+<pre class="example">
+/var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-7EYdr2/ob-racket3nqFaj.rkt:6:13: lower-bound: unbound identifier
+  in: lower-bound
+  location...:
+   /var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-7EYdr2/ob-racket3nqFaj.rkt:6:13
+</pre>
+
+
+<p>
+Validate compared to the simple method:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket" id="org5cbbd36">#lang sicp
+
+
+(define (equal-interval? x y) (and (= (lower-bound x) (lower-bound y))
+				   (= (upper-bound x) (upper-bound y))))
+
+(define (test i1 i2)
+  (let ((expected (mul-interval i1 i2))
+	(actual (mul-interval-optimized i1 i2)))
+    (if (not (equal-interval? actual expected))
+	(list "fail" i1 i2 "expected:" expected "actual:" actual)
+	"pass")))
+
+(test (make-interval -3 -2) (make-interval -5 -4))
+(test (make-interval -3 -2) (make-interval -5 4))
+(test (make-interval -3 -2) (make-interval 4 5))
+
+(test (make-interval -3 2) (make-interval -5 -4))
+(test (make-interval -3 2) (make-interval -5 4))
+(test (make-interval -3 10) (make-interval -5 12))
+(test (make-interval -3 2) (make-interval 4 5))
+
+(test (make-interval 2 3) (make-interval -5 -4))
+(test (make-interval 2 3) (make-interval -5 4))
+(test (make-interval 2 3) (make-interval 4 5))
+</pre>
+</div>
+
+<pre class="example" id="org83cd7ea">
+"pass"
+"pass"
+"pass"
+"pass"
+"pass"
+"pass"
+"pass"
+"pass"
+"pass"
+"pass"
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-orgd7cfa66" class="outline-4">
+<h4 id="orgd7cfa66">Alternate constructors</h4>
+<div class="outline-text-4" id="text-orgd7cfa66">
+<p>
+Program should with numbers represented as a center value and an additive tolerance, e.g. \(3.5 \pm 0.15\), not \([3.35, 3.65]\).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="org337aa73">(define (make-center-width c w)
+  (make-interval (- c w) (+ c w)))
+
+(define (center i)
+  (/ (+ (lower-bound i) (upper-bound i)) 2))
+
+(define (width i)
+  (/ (- (upper-bound i) (lower-bound i)) 2))
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgfba6247" class="outline-4">
+<h4 id="orgfba6247">Exercise 2.12 - Center-percentage interface</h4>
+<div class="outline-text-4" id="text-orgfba6247">
+<p>
+Define a constructor <code>make-center-percent</code> that takes a center and a percentage tolerance and produces the desired interval.
+Also define <code>percent</code> selector.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="orgf50c14e">(define (make-center-percent c p)
+  (let ((w (* c p 0.01)))
+    (make-interval (- c w) (+ c w))))
+
+(define (center i)
+  (/ (+ (lower-bound i) (upper-bound i)) 2))
+
+(define (width i)
+  (/ (- (upper-bound i) (lower-bound i)) 2))
+
+(define (percent i)
+  (* 100 (width i) (/ 1 (center i))))
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="orga4d17a2">#lang sicp
+
+
+(define i (make-center-percent 6.8 10))
+(center i)
+(percent i)
+(width i)
+i
+</pre>
+</div>
+
+<pre class="example">
+6.8
+9.999999999999996
+0.6799999999999997
+(6.12 . 7.4799999999999995)
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org80b7078" class="outline-4">
+<h4 id="org80b7078">Exercise 2.13 - Approximate product tolerance when percentages are small</h4>
+<div class="outline-text-4" id="text-org80b7078">
+<p>
+Assume all bounds are positive numbers, for simplicity.
+</p>
+
+<p>
+Consider the product of two intervals \(a \pm p\) and \(b \pm q\).
+</p>
+
+<p>
+Their corresponding interval representation is \([a(1-p), a(1+p)]\) and \([b(1-q), b(1+q)]\).
+</p>
+
+<p>
+As all bounds are assumed to be positive numbers, we can readily find the bounds of the product: \[[ab(1-p)(1-q), ab(1+p)(1+q)] = [ab(1 - (p+q) + pq), ab(1 + (p+q) + pq)\]
+</p>
+
+<p>
+If \(p\) and \(q\) are small, \(pq\) is very small, we can neglect it for the approximation, and then \[(a \pm p) \times (b \pm q) \approx (ab \pm (p+q))\]
+</p>
+</div>
+</div>
+
+<div id="outline-container-org3f74a60" class="outline-4">
+<h4 id="org3f74a60">Different results for algebraically equivalent expressions</h4>
+<div class="outline-text-4" id="text-org3f74a60">
+<div class="org-src-container">
+<pre class="src src-racket" id="org6a9a6e1">(define (par1 r1 r2)
+  (div-interval (mul-interval r1 r2)
+		(add-interval r1 r2)))
+
+(define (par2 r1 r2)
+  (let ((one (make-interval 1 1)))
+    (div-interval one
+		  (add-interval (div-interval one r1)
+				(div-interval one r2)))))
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org70268a3" class="outline-4">
+<h4 id="org70268a3"><span class="todo TODO">TODO</span> Exercise 2.14 - Demonstrate the bug</h4>
+<div class="outline-text-4" id="text-org70268a3">
+<div class="org-src-container">
+<pre class="src src-racket" id="orgb77f61e">#lang sicp
+
+
+
+
+(define (display-center-percent i)
+  (define (round2 x) (/ (round (* 1000 x)) 1000))
+  (display (round2 (center i)))
+  (display " ± ")
+  (display (round2 (percent i)))
+  (newline))
+
+(define i1 (make-center-percent 6.8 10))
+(define i2 (make-center-percent 6.8 7.5))
+(define i3 (make-center-percent 6.8 4))
+(define i4 (make-center-percent 6.8 2))
+
+(define i5 (make-center-percent 4.7 5))
+
+(newline)
+(display "div by self:") (newline)
+(display-center-percent (div-interval i1 i1))
+(display-center-percent (div-interval i2 i2))
+(display-center-percent (div-interval i3 i3))
+(display-center-percent (div-interval i4 i4))
+
+(newline)
+(display "mul by self:") (newline)
+(display-center-percent (mul-interval i1 i1))
+(display-center-percent (mul-interval i2 i2))
+(display-center-percent (mul-interval i3 i3))
+(display-center-percent (mul-interval i4 i4))
+
+(newline)
+(display "div by same:") (newline)
+(display-center-percent (div-interval i1 i5))
+(display-center-percent (div-interval i2 i5))
+(display-center-percent (div-interval i3 i5))
+(display-center-percent (div-interval i4 i5))
+
+(newline)
+(display "same divided:") (newline)
+(display-center-percent (div-interval i5 i1))
+(display-center-percent (div-interval i5 i2))
+(display-center-percent (div-interval i5 i3))
+(display-center-percent (div-interval i5 i4))
+
+(newline) (display "-------------------") (newline)
+
+
+(display "r1: ") (display-center-percent i4)
+(display "r2: ") (display-center-percent i5)
+
+(newline)
+(display "step-by-step par1") (newline)
+(display "mul: ") (display-center-percent (mul-interval i4 i5))
+(display "add: ") (display-center-percent (add-interval i4 i5))
+(display "div: ") (display-center-percent (par1 i4 i5))
+
+(newline)
+(display "step-by-step par2") (newline)
+(display "rec1: ") (display-center-percent (div-interval (make-interval 1 1) i4))
+(display "rec2: ") (display-center-percent (div-interval (make-interval 1 1) i5))
+(display "add: ") (display-center-percent (add-interval (div-interval (make-interval 1 1) i4)
+							(div-interval (make-interval 1 1) i5)))
+(display "rec: ") (display-center-percent (par2 i4 i5))
+
+(newline)
+(display "par examples:") (newline)
+(display-center-percent (par1 i4 i5))
+(display-center-percent (par2 i4 i5))
+
+
+</pre>
+</div>
+
+<pre class="example" id="orga194862">
+
+div by self:
+1.02 ± 19.802
+1.011 ± 14.916
+1.003 ± 7.987
+1.001 ± 3.998
+
+mul by self:
+46.702 ± 19.802
+46.5 ± 14.916
+46.314 ± 7.987
+46.258 ± 3.998
+
+div by same:
+1.458 ± 14.925
+1.456 ± 12.453
+1.453 ± 8.982
+1.452 ± 6.993
+
+same divided:
+0.702 ± 14.925
+0.698 ± 12.453
+0.694 ± 8.982
+0.692 ± 6.993
+
+-------------------
+r1: 6.8 ± 2.0
+r2: 4.7 ± 5.0
+
+step-by-step par1
+mul: 31.992 ± 6.993
+add: 11.5 ± 3.226
+div: 2.791 ± 10.196
+
+step-by-step par2
+rec1: 0.147 ± 2.0
+rec2: 0.213 ± 5.0
+add: 0.36 ± 3.775
+rec: 2.779 ± 3.775
+
+par examples:
+2.791 ± 10.196
+2.779 ± 3.775
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org9092b1c" class="outline-4">
+<h4 id="org9092b1c"><span class="todo TODO">TODO</span> Exercise 2.15</h4>
+</div>
+<div id="outline-container-org3da999a" class="outline-4">
+<h4 id="org3da999a"><span class="todo TODO">TODO</span> Exercise 2.16</h4>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: LMG</p>
+<p class="date">Created: 2023-06-11 Sun 17:24</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

@@ -1,0 +1,2155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2023-06-11 Sun 17:27 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2.3 Symbolic Data</title>
+<meta name="author" content="LMG" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">2.3 Symbolic Data</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org120243f">2.3.1 Quotation</a>
+<ul>
+<li>
+<ul>
+<li><a href="#org876c82c">Exercise 2.53 - quotation practice</a></li>
+<li><a href="#org2eb8903">Exercise 2.54 - <code>equal?</code> to compare lists</a></li>
+<li><a href="#org0d812dd">Exercise 2.55</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orga32ec55">2.3.2 example: symbolic differentiation</a>
+<ul>
+<li><a href="#orgd059c01">the differentiation program with abstract data</a></li>
+<li><a href="#orgbb822a8">Representing algebraic expression</a>
+<ul>
+<li><a href="#orgec1e688">Exercise 2.58a - constructors and selectors for the fully parenthesised infix notation</a></li>
+<li><a href="#orgfffebb7">Exercise 2.58a - constructors and selectors for the partially parenthesised infix notation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orgf74dcb9">2.3.3 Example: Representing Sets</a>
+<ul>
+<li><a href="#org912a58e">Sets as unordered lists</a>
+<ul>
+<li><a href="#org2de02fc">Exercise 2.59 - <code>union-set</code></a></li>
+<li><a href="#org24e4fca">Exercise 2.60 - <code>sets-interface-list-with-duplicates</code></a></li>
+</ul>
+</li>
+<li><a href="#org6c664ec">Sets as ordered lists</a></li>
+<li><a href="#org5318864">Sets as binary trees</a>
+<ul>
+<li><a href="#org228c819">Exercise 2.63 - <code>tree-&gt;list</code></a></li>
+<li><a href="#org33544bd">Exercise 2.64 - <code>list-&gt;tree</code></a></li>
+<li><a href="#org65b8a59">Exercise 2.65 - <code>union-set</code> and <code>intersection-set</code></a></li>
+</ul>
+</li>
+<li><a href="#org9f88424">Sets and information retrieval</a>
+<ul>
+<li><a href="#org2d9e6cc">Exercise 2.66 - <code>lookup</code> for the set representation based on binary tree</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org214b559">2.3.4 Example: Huffman Encoding Trees</a>
+<ul>
+<li><a href="#org8bc755a">Generating Huffman trees</a></li>
+<li><a href="#orgcdccb45">Representing Huffman trees</a></li>
+<li><a href="#org9e180fa">The decoding procedure</a></li>
+<li><a href="#orge10b4c9">Set of weighted-elements</a></li>
+<li><a href="#org2e47668">Exercise 2.67 - run <code>decode</code></a></li>
+<li><a href="#org34ec51e">Exercise 2.68 - <code>encode</code></a></li>
+<li><a href="#orgf831614">Exercise 2.69 - <code>generate-huffman-tree</code></a></li>
+<li><a href="#orgdb8189a">Exercise 2.70 - check it out</a></li>
+<li><a href="#org007e0fa">Exercise 2.71 - frequencies in geometric progression</a></li>
+<li><a href="#org3bab007">Exercise 2.72 - order of growth of <code>encode</code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<p>
+Extending the representation from numbers to also include arbitrary symbols.
+</p>
+
+<div id="outline-container-org120243f" class="outline-2">
+<h2 id="org120243f">2.3.1 Quotation</h2>
+<div class="outline-text-2" id="text-org120243f">
+<p>
+How to compound data using symbols? e.g. to obtain lists like
+<code>(a b c d)</code>
+<code>(23 45 17)</code>
+<code>((Norah 12) (Molly 9))</code>
+</p>
+
+<p>
+To manipulate symbols, we need the ability to <i>quote</i> a data object.
+<code>(list a b)</code> won't work as it will take <i>values</i> of <code>a</code> and <code>b</code>.
+</p>
+
+<p>
+"say your name aloud" vs "say 'your name' aloud".
+</p>
+
+<p>
+Scheme's way to quote is to place ' at the beginning of the object to be quoted:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket">(define a 1)
+(define b 2)
+(list a b)
+(list 'a 'b)
+(list 'a b)
+</pre>
+</div>
+
+<pre class="example">
+'(1 2)
+'(a b)
+'(a 2)
+</pre>
+
+
+<p>
+Quoting lists:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(car '(a b c))
+(cdr '(a b c))
+'()
+nil
+</pre>
+</div>
+
+<pre class="example">
+a
+(b c)
+()
+()
+</pre>
+
+
+<p>
+<code>eq?</code> can be used to check if two symbols are the same.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="org81cdc48">(define (memq item x)
+  (cond ((null? x) false)
+	((eq? item (car x)) x)
+	(else (memq item (cdr x)))))
+
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-racket">
+(memq 'apple '(pear banana prune))
+(memq 'apple '(pear apple banana apple))
+</pre>
+</div>
+
+<pre class="example">
+#f
+'(apple banana apple)
+</pre>
+</div>
+
+<div id="outline-container-org876c82c" class="outline-4">
+<h4 id="org876c82c">Exercise 2.53 - quotation practice</h4>
+<div class="outline-text-4" id="text-org876c82c">
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(list 'a 'b 'c)  ; =&gt; (a b c)
+(list (list 'george))  ; =&gt; ((george))
+(cdr '((x1 x2) (y1 y2)))  ; =&gt; ((y1 y2))
+(cadr '((x1 x2) (y1 y2)))  ; =&gt; (y1 y2)
+(pair? (car '(a short list)))  ; =&gt; false
+(memq 'red '((red shoes) (blue socks)))  ; =&gt; false
+(memq 'red '(red shoes blue socks))  ; =&gt; (red shoes blue socks)
+</pre>
+</div>
+
+<pre class="example">
+(a b c)
+((george))
+((y1 y2))
+(y1 y2)
+#f
+#f
+(red shoes blue socks)
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org2eb8903" class="outline-4">
+<h4 id="org2eb8903">Exercise 2.54 - <code>equal?</code> to compare lists</h4>
+<div class="outline-text-4" id="text-org2eb8903">
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (equal? a b)
+  (cond ((and (symbol? a) (symbol? b) (eq? a b))
+	 true)
+	((and (null? a) (null? b))
+	 true)
+	((and (list? a)
+	      (list? b)
+	      (not (null? a))
+	      (not (null? b))
+	      (equal? (car a) (car b))
+	      (equal? (cdr a) (cdr b)))
+	 true)
+	(else
+	 false)))
+
+(equal? 'a 'a)
+(equal? '(a b) '(a b))
+(equal? '(a b) '(a))
+(equal? '(this is a list) '(this is a list))
+(equal? '(this (is a) list) '(this is a list))
+</pre>
+</div>
+
+<pre class="example">
+#t
+#t
+#f
+#t
+#f
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org0d812dd" class="outline-4">
+<h4 id="org0d812dd">Exercise 2.55</h4>
+<div class="outline-text-4" id="text-org0d812dd">
+<p>
+<code>(car ''abracadabra)</code> is the same as <code>(car '(quote abracadabra))</code> and this should evaluate to <code>quote</code>.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga32ec55" class="outline-2">
+<h2 id="orga32ec55">2.3.2 example: symbolic differentiation</h2>
+<div class="outline-text-2" id="text-orga32ec55">
+<p>
+strategy of data abstraction - first define a differentiation algorithm that operates on abstract objects suchs as sums, products and variables, and only afterwards address the representation problem.
+</p>
+</div>
+
+<div id="outline-container-orgd059c01" class="outline-3">
+<h3 id="orgd059c01">the differentiation program with abstract data</h3>
+<div class="outline-text-3" id="text-orgd059c01">
+<p>
+we will consider a symbolic differentiation program that handle expressions involving addition and multiplication of two variables.
+</p>
+
+<p>
+differentiation of any such expression can be carried out following these reduction rules:
+</p>
+
+<p>
+\[\frac{dc}{dx} = 0\]
+where \(c\) is a constant or a variable different than \(x\)
+</p>
+
+<p>
+\[\frac{dx}{dx} = 1\]
+</p>
+
+<p>
+\[\frac{d(u+v)}{dx} = \frac{du}{dx}+\frac{dv}{dx}\]
+</p>
+
+<p>
+\[\frac{d(uv)}{dx} = u\left(\frac{dv}{dx}\right) + v\left(\frac{du}{dx}\right)\]
+</p>
+
+<p>
+assume the following are defined:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket" id="orge1aaf65">(define (deriv exp var)
+  (cond ((number? exp) 0)
+	((variable? exp)
+	 (if (same-variable? exp var) 1 0))
+	((sum? exp)
+	 (make-sum (deriv (addend exp) var)
+		   (deriv (augend exp) var)))
+	((product? exp)
+	 (make-sum (make-product
+		    (multiplier exp)
+		    (deriv (multiplicand exp) var))
+		   (make-product
+		    (deriv (multiplier exp) var)
+		    (multiplicand exp))))
+	; Exercise 2.56
+	((and (exponentiation? exp) (number? (exponent exp)))
+	 (make-product
+	  (exponent exp)
+	  (make-product
+	   (make-exponentiation (base exp) (- (exponent exp) 1))
+	   (deriv (base exp) var))))
+	(else
+	 (error "unknown expression type -- deriv" exp))))
+
+</pre>
+</div>
+
+<pre class="example">
+/var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-vnKy6L/ob-racketuB7lG2.rkt:5:10: variable?: unbound identifier
+  in: variable?
+  location...:
+   /var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-vnKy6L/ob-racketuB7lG2.rkt:5:10
+</pre>
+
+
+<div class="org-src-container">
+<pre class="src src-racket">(variable? e)
+(same-variable? v1 v2)
+(sum? e)
+(addend e)
+(augend e)
+(make-sum a1 a2)
+(product? e)
+(multiplier e)
+(multiplicand e)
+(make-product m1 m2)
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgbb822a8" class="outline-3">
+<h3 id="orgbb822a8">Representing algebraic expression</h3>
+<div class="outline-text-3" id="text-orgbb822a8">
+<p>
+Use parenthesised prefix notation (as in Lisp) to represent algebraic expressions:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="orge639e1d">(define (variable? x) (symbol? x))
+(define (same-variable? v1 v2) (and (variable? v1) (variable? v2) (eq? v1 v2)))
+
+(define (=number? exp num)
+  (and (number? exp) (= exp num)))
+
+; (define (make-sum a1 a2) (list '+ a1 a2))
+(define (make-sum a1 . as)
+  (cond
+    ((null? as)
+     a1)
+    ((null? (cdr as))
+     (let ((a2 (car as)))
+       (cond ((=number? a1 0) a2)
+	     ((=number? a2 0) a1)
+	     ((and (number? a1) (number? a2)) (+ a1 a2))
+	     (else (list '+ a1 a2)))))
+    (else
+     (make-sum a1
+	       (apply make-sum as)))))
+(define (sum? x) (and (pair? x) (eq? (car x) '+)))
+(define (addend s) (cadr s))
+(define (augend s)
+  (cond
+    ((= (length s) 2) 0)
+    ((= (length s) 3) (caddr s))
+    (else
+     (make-sum (caddr s)
+	       (apply make-sum (cdddr s))))))
+
+; (define (make-product m1 m2) (list '* m1 m2))
+(define (make-product m1 . ms)
+  (cond
+    ((= (length ms) 0) m1)
+    ((= (length ms) 1)
+     (let ((m2 (car ms)))
+       (cond ((or (=number? m1 0) (=number? m2 0)) 0)
+	     ((=number? m1 1) m2)
+	     ((=number? m2 1) m1)
+	     ((and (number? m1) (number? m2)) (* m1 m2))
+	     (else (list '* m1 m2)))))
+    (else
+     (make-product m1
+		   (apply make-product (cdr ms))))))
+(define (product? x) (and (pair? x) (eq? (car x) '*)))
+(define (multiplier p) (cadr p))
+(define (multiplicand p)
+  (cond ((= (length p) 2)
+	 1)
+	((= (length p) 3)
+	 (caddr p))
+	(else
+	 (make-product (caddr p)
+		       (apply make-product (cdddr p))))))
+
+; Exercise 2.56
+(define (make-exponentiation b e)
+  (cond ((=number? e 0) 1)
+	((=number? e 1) b)
+	(else (list '** b e))))
+(define (exponentiation? x) (and (pair? x) (eq? (car x) '**)))
+(define (base x) (cadr x))
+(define (exponent x) (caddr x))
+</pre>
+</div>
+
+<p>
+Examples
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+(define (deriv exp var)
+  (cond ((number? exp) 0)
+	((variable? exp)
+	 (if (same-variable? exp var) 1 0))
+	((sum? exp)
+	 (make-sum (deriv (addend exp) var)
+		   (deriv (augend exp) var)))
+	((product? exp)
+	 (make-sum (make-product
+		    (multiplier exp)
+		    (deriv (multiplicand exp) var))
+		   (make-product
+		    (deriv (multiplier exp) var)
+		    (multiplicand exp))))
+	; Exercise 2.56
+	((and (exponentiation? exp) (number? (exponent exp)))
+	 (make-product
+	  (exponent exp)
+	  (make-product
+	   (make-exponentiation (base exp) (- (exponent exp) 1))
+	   (deriv (base exp) var))))
+	(else
+	 (error "unknown expression type -- deriv" exp))))
+
+(define (variable? x) (symbol? x))
+(define (same-variable? v1 v2) (and (variable? v1) (variable? v2) (eq? v1 v2)))
+
+(define (=number? exp num)
+  (and (number? exp) (= exp num)))
+
+; (define (make-sum a1 a2) (list '+ a1 a2))
+(define (make-sum a1 . as)
+  (cond
+    ((null? as)
+     a1)
+    ((null? (cdr as))
+     (let ((a2 (car as)))
+       (cond ((=number? a1 0) a2)
+	     ((=number? a2 0) a1)
+	     ((and (number? a1) (number? a2)) (+ a1 a2))
+	     (else (list '+ a1 a2)))))
+    (else
+     (make-sum a1
+	       (apply make-sum as)))))
+(define (sum? x) (and (pair? x) (eq? (car x) '+)))
+(define (addend s) (cadr s))
+(define (augend s)
+  (cond
+    ((= (length s) 2) 0)
+    ((= (length s) 3) (caddr s))
+    (else
+     (make-sum (caddr s)
+	       (apply make-sum (cdddr s))))))
+
+; (define (make-product m1 m2) (list '* m1 m2))
+(define (make-product m1 . ms)
+  (cond
+    ((= (length ms) 0) m1)
+    ((= (length ms) 1)
+     (let ((m2 (car ms)))
+       (cond ((or (=number? m1 0) (=number? m2 0)) 0)
+	     ((=number? m1 1) m2)
+	     ((=number? m2 1) m1)
+	     ((and (number? m1) (number? m2)) (* m1 m2))
+	     (else (list '* m1 m2)))))
+    (else
+     (make-product m1
+		   (apply make-product (cdr ms))))))
+(define (product? x) (and (pair? x) (eq? (car x) '*)))
+(define (multiplier p) (cadr p))
+(define (multiplicand p)
+  (cond ((= (length p) 2)
+	 1)
+	((= (length p) 3)
+	 (caddr p))
+	(else
+	 (make-product (caddr p)
+		       (apply make-product (cdddr p))))))
+
+; Exercise 2.56
+(define (make-exponentiation b e)
+  (cond ((=number? e 0) 1)
+	((=number? e 1) b)
+	(else (list '** b e))))
+(define (exponentiation? x) (and (pair? x) (eq? (car x) '**)))
+(define (base x) (cadr x))
+(define (exponent x) (caddr x))
+
+(deriv '(+ x 3) 'x)
+(deriv '(* x y) 'x)
+(deriv '(* (* x y) (+ x 3)) 'x)
+
+; Exercise 2.56
+(deriv '(** x 2) 'x)
+(deriv '(** x 3) 'x)
+(deriv '(* 14 (** x 3)) 'x)
+
+; Exercise 2.57
+(deriv '(+ x x x) 'x)
+(deriv '(* x x x x) 'x)
+</pre>
+</div>
+
+<pre class="example">
+1
+y
+(+ (* x y) (* y (+ x 3)))
+(* 2 x)
+(* 3 (** x 2))
+(* 14 (* 3 (** x 2)))
+3
+(+ (* x (+ (* x (+ x x)) (* x x))) (* x (* x x)))
+</pre>
+</div>
+
+<div id="outline-container-orgec1e688" class="outline-4">
+<h4 id="orgec1e688">Exercise 2.58a - constructors and selectors for the fully parenthesised infix notation</h4>
+<div class="outline-text-4" id="text-orgec1e688">
+<p>
+Assume that + and * always take two arguments and that expressions are fully parenthesized
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="org7024ad5">(define (variable? x) (symbol? x))
+(define (same-variable? v1 v2)
+  (and (variable? v1)
+       (variable? v2)
+       (eq? v1 v2)))
+
+(define (=number? x n)
+  (and (number? x) (= x n)))
+
+(define (make-sum a1 a2)
+  (cond ((=number? a1 0) a2)
+	((=number? a2 0) a1)
+	((and (number? a1) (number? a2)) (+ a1 a2))
+	(else (list a1 '+ a2))))
+(define (sum? x) (and (pair? x) (eq? (cadr x) '+)))
+(define (addend s) (car s))
+(define (augend s) (caddr s))
+
+(define (make-product m1 m2)
+  (cond ((or (=number? m1 0) (=number? m2 0)) 0)
+	((=number? m1 1) m2)
+	((=number? m2 1) m1)
+	((and (number? m1) (number? m2)) (* m1 m2))
+	(else (list m1 '* m2))))
+(define (product? x) (and (pair? x) (eq? (cadr x) '*)))
+(define (multiplier p) (car p))
+(define (multiplicand p) (caddr p))
+
+
+(define (make-exponentiation b e)
+  (cond ((=number? e 0) 1)
+	((=number? e 1) b)
+	(else (list b '** e))))
+(define (exponentiation? x) (and (pair? x) (eq? (cadr x) '**)))
+(define (base x) (car x))
+(define (exponent x) (caddr x))
+</pre>
+</div>
+
+<p>
+Looks good:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+
+
+(deriv '(x + 3) 'x)
+(deriv '(x * y) 'x)
+(deriv '((x * y) * (x * 3)) 'x)
+(deriv '((x * y) * (x ** 3)) 'x)
+</pre>
+</div>
+
+<pre class="example">
+1
+y
+(((x * y) * 3) + (y * (x * 3)))
+(((x * y) * (3 * (x ** 2))) + (y * (x ** 3)))
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgfffebb7" class="outline-4">
+<h4 id="orgfffebb7">Exercise 2.58a - constructors and selectors for the partially parenthesised infix notation</h4>
+<div class="outline-text-4" id="text-orgfffebb7">
+<p>
+<code>(x + 3 * (x + y + 2))</code>
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket"><span class="linenr">  1: </span>  #lang sicp
+<span class="linenr">  2: </span>n
+<span class="linenr">  3: </span>  (define (filter pred xs)
+<span class="linenr">  4: </span>    (cond ((null? xs) nil)
+<span class="linenr">  5: </span>	((pred (car xs))
+<span class="linenr">  6: </span>	 (cons (car xs) (filter pred (cdr xs))))
+<span class="linenr">  7: </span>	(else
+<span class="linenr">  8: </span>	 (filter pred (cdr xs)))))
+<span class="linenr">  9: </span>
+<span class="linenr"> 10: </span>  (define (accumulate op init xs)
+<span class="linenr"> 11: </span>    (if (null? xs)
+<span class="linenr"> 12: </span>	init
+<span class="linenr"> 13: </span>	(op (car xs)
+<span class="linenr"> 14: </span>	  (accumulate op init (cdr xs)))))
+<span class="linenr"> 15: </span>
+<span class="linenr"> 16: </span>  (define (sum xs)
+<span class="linenr"> 17: </span>    (accumulate + 0 xs))
+<span class="linenr"> 18: </span>
+<span class="linenr"> 19: </span>  (define (multiply xs)
+<span class="linenr"> 20: </span>    (accumulate * 1 xs))
+<span class="linenr"> 21: </span>
+<span class="linenr"> 22: </span>  (define (=number? x n)
+<span class="linenr"> 23: </span>    (and (number? x) (= x n)))
+<span class="linenr"> 24: </span>
+<span class="linenr"> 25: </span>  (define (intersperce xs joint)
+<span class="linenr"> 26: </span>    (cond ((null? xs) nil)
+<span class="linenr"> 27: </span>	((null? (cdr xs)) xs)
+<span class="linenr"> 28: </span>	(else (append (list (car xs) joint)
+<span class="linenr"> 29: </span>		      (intersperce (cdr xs) joint)))))
+<span class="linenr"> 30: </span>
+<span class="linenr"> 31: </span>  (define (collect-numbers xs)
+<span class="linenr"> 32: </span>    (filter number? xs))
+<span class="linenr"> 33: </span>
+<span class="linenr"> 34: </span>  (define (collect-non-numbers xs)
+<span class="linenr"> 35: </span>    (filter (lambda (x) (not (number? x))) xs))
+<span class="linenr"> 36: </span>
+<span class="linenr"> 37: </span>  (define (split-at-sym xs s)
+<span class="linenr"> 38: </span>    (define (iter left right)
+<span class="linenr"> 39: </span>      (cond ((null? right)
+<span class="linenr"> 40: </span>	   (cons left right))
+<span class="linenr"> 41: </span>	  ((eq? (car right) s)
+<span class="linenr"> 42: </span>	   (cons left (cdr right)))
+<span class="linenr"> 43: </span>	  (else
+<span class="linenr"> 44: </span>	   (iter (append left (list (car right)))
+<span class="linenr"> 45: </span>		 (cdr right)))))
+<span class="linenr"> 46: </span>    (iter '() xs))
+<span class="linenr"> 47: </span>
+<span class="linenr"> 48: </span>  (define (parse-product expr)
+<span class="linenr"> 49: </span>    (split-at-sym expr '+))
+<span class="linenr"> 50: </span>
+<span class="linenr"> 51: </span>  (define (expand-single x)
+<span class="linenr"> 52: </span>    (cond ((not (pair? x)) x)
+<span class="linenr"> 53: </span>	((null? x) 0)
+<span class="linenr"> 54: </span>	((null? (cdr x)) (car x))
+<span class="linenr"> 55: </span>	(else x)))
+<span class="linenr"> 56: </span>
+<span class="linenr"> 57: </span>  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+<span class="linenr"> 58: </span>
+<span class="linenr"> 59: </span>
+<span class="linenr"> 60: </span>  (define (variable? x) (symbol? x))
+<span class="linenr"> 61: </span>  (define (same-variable? v1 v2)
+<span class="linenr"> 62: </span>    (and (variable? v1)
+<span class="linenr"> 63: </span>	 (variable? v2)
+<span class="linenr"> 64: </span>	 (eq? v1 v2)))
+<span class="linenr"> 65: </span>
+<span class="linenr"> 66: </span>  (define (make-sum . xs)
+<span class="linenr"> 67: </span>    (expand-single
+<span class="linenr"> 68: </span>     (cond ((null? xs) 0)
+<span class="linenr"> 69: </span>	 (else
+<span class="linenr"> 70: </span>	  (let ((c (sum (collect-numbers xs))))
+<span class="linenr"> 71: </span>	    (let ((terms (cond
+<span class="linenr"> 72: </span>			   ((zero? c)
+<span class="linenr"> 73: </span>			    (collect-non-numbers xs))
+<span class="linenr"> 74: </span>			   (else
+<span class="linenr"> 75: </span>			    (cons c (collect-non-numbers xs))))))
+<span class="linenr"> 76: </span>	      (intersperce terms '+)))))))
+<span class="linenr"> 77: </span>
+<span class="linenr"> 78: </span>  (define (sum? expr)
+<span class="linenr"> 79: </span>    (not (null? (filter (lambda (t) (eq? t '+))
+<span class="linenr"> 80: </span>		      expr))))
+<span class="linenr"> 81: </span>
+<span class="linenr"> 82: </span>  (define (addend expr)
+<span class="linenr"> 83: </span>    (expand-single
+<span class="linenr"> 84: </span>     (cond ((null? (cdr expr))
+<span class="linenr"> 85: </span>	  (car expr))
+<span class="linenr"> 86: </span>	 ((eq? (cadr expr)
+<span class="linenr"> 87: </span>	       '+)
+<span class="linenr"> 88: </span>	  (car expr))
+<span class="linenr"> 89: </span>	 ((eq? (cadr expr)
+<span class="linenr"> 90: </span>	       '*)
+<span class="linenr"> 91: </span>	  (car (parse-product expr)))
+<span class="linenr"> 92: </span>	 (else
+<span class="linenr"> 93: </span>	  (error "Unknown expression -- ADDEND" expr)))))
+<span class="linenr"> 94: </span>
+<span class="linenr"> 95: </span>  (define (augend expr)
+<span class="linenr"> 96: </span>    (expand-single (cond ((eq? (cadr expr)
+<span class="linenr"> 97: </span>	       '+)
+<span class="linenr"> 98: </span>	  (cddr expr))
+<span class="linenr"> 99: </span>	 ((eq? (cadr expr)
+<span class="linenr">100: </span>	       '*)
+<span class="linenr">101: </span>	  (cdr (parse-product expr)))
+<span class="linenr">102: </span>	 (else
+<span class="linenr">103: </span>	  (error "Unknown expression -- AUGEND" expr)))))
+<span class="linenr">104: </span>
+<span class="linenr">105: </span>  (define (make-product . xs)
+<span class="linenr">106: </span>    (expand-single
+<span class="linenr">107: </span>     (cond ((null? xs) 1)
+<span class="linenr">108: </span>	 (else
+<span class="linenr">109: </span>	  (let ((c (multiply (collect-numbers xs))))
+<span class="linenr">110: </span>	    (let ((terms (cond ((= 0 c)
+<span class="linenr">111: </span>				(list 0))
+<span class="linenr">112: </span>			       ((= 1 c)
+<span class="linenr">113: </span>				(collect-non-numbers xs))
+<span class="linenr">114: </span>			       (else
+<span class="linenr">115: </span>				(cons c (collect-non-numbers xs))))))
+<span class="linenr">116: </span>	      (intersperce terms '*)))))))
+<span class="linenr">117: </span>
+<span class="linenr">118: </span>  (define (product? expr)
+<span class="linenr">119: </span>    (and (&gt; (length expr) 1)
+<span class="linenr">120: </span>	 (null? (filter (lambda (t) (eq? t '+))
+<span class="linenr">121: </span>		      expr))))
+<span class="linenr">122: </span>
+<span class="linenr">123: </span>  (define (multiplier expr)
+<span class="linenr">124: </span>    (expand-single
+<span class="linenr">125: </span>     (cond ((null? (cdr expr))
+<span class="linenr">126: </span>	  (car expr))
+<span class="linenr">127: </span>	 ((eq? (cadr expr)
+<span class="linenr">128: </span>	       '*)
+<span class="linenr">129: </span>	  (car expr))
+<span class="linenr">130: </span>	 (else
+<span class="linenr">131: </span>	  expr))))
+<span class="linenr">132: </span>
+<span class="linenr">133: </span>  (define (multiplicand expr)
+<span class="linenr">134: </span>    (expand-single
+<span class="linenr">135: </span>     (cond ((eq? (cadr expr)
+<span class="linenr">136: </span>	       '*)
+<span class="linenr">137: </span>	  (expand-single (cddr expr)))
+<span class="linenr">138: </span>	 (else
+<span class="linenr">139: </span>	  (error "Unknown expression -- MULTIPLICAND" expr)))))
+<span class="linenr">140: </span>
+<span class="linenr">141: </span>  (define (make-exponentiation b e)
+<span class="linenr">142: </span>    (cond ((=number? e 0) 1)
+<span class="linenr">143: </span>	((=number? e 1) b)
+<span class="linenr">144: </span>	(else (list b '** e))))
+<span class="linenr">145: </span>  (define (exponentiation? x) (and (pair? x) (eq? (cadr x) '**)))
+<span class="linenr">146: </span>  (define (base x) (car x))
+<span class="linenr">147: </span>  (define (exponent x) (caddr x))  
+<span class="linenr">148: </span>  (define (deriv exp var)
+<span class="linenr">149: </span>    (cond ((number? exp) 0)
+<span class="linenr">150: </span>	((variable? exp)
+<span class="linenr">151: </span>	 (if (same-variable? exp var) 1 0))
+<span class="linenr">152: </span>	((sum? exp)
+<span class="linenr">153: </span>	 (make-sum (deriv (addend exp) var)
+<span class="linenr">154: </span>		   (deriv (augend exp) var)))
+<span class="linenr">155: </span>	((product? exp)
+<span class="linenr">156: </span>	 (make-sum (make-product
+<span class="linenr">157: </span>		    (multiplier exp)
+<span class="linenr">158: </span>		    (deriv (multiplicand exp) var))
+<span class="linenr">159: </span>		   (make-product
+<span class="linenr">160: </span>		    (deriv (multiplier exp) var)
+<span class="linenr">161: </span>		    (multiplicand exp))))
+<span class="linenr">162: </span>	; Exercise 2.56
+<span class="linenr">163: </span>	((and (exponentiation? exp) (number? (exponent exp)))
+<span class="linenr">164: </span>	 (make-product
+<span class="linenr">165: </span>	  (exponent exp)
+<span class="linenr">166: </span>	  (make-product
+<span class="linenr">167: </span>	   (make-exponentiation (base exp) (- (exponent exp) 1))
+<span class="linenr">168: </span>	   (deriv (base exp) var))))
+<span class="linenr">169: </span>	(else
+<span class="linenr">170: </span>	 (error "unknown expression type -- deriv" exp))))
+<span class="linenr">171: </span>
+<span class="linenr">172: </span>
+<span class="linenr">173: </span>  (deriv '(x + 3) 'x)
+<span class="linenr">174: </span>  (deriv '(x * y) 'x)
+<span class="linenr">175: </span>  (deriv '((x * y) * (3 * x)) 'x)
+<span class="linenr">176: </span>  (deriv '(x * y * 3 * x) 'x)
+<span class="linenr">177: </span>  (deriv '(x * (3 * y) * x) 'x)
+<span class="linenr">178: </span>
+</pre>
+</div>
+
+<pre class="example">
+/var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-lSuimp/ob-racketMsaYTW.rkt:3:0: n: unbound identifier
+  in: n
+  location...:
+   /var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-lSuimp/ob-racketMsaYTW.rkt:3:0
+</pre>
+
+
+<p>
+Derivative algorithm still works (exponentiation is not supported)! But the output is not obvious again 
+</p>
+
+<p>
+Notes
+</p>
+<ul class="org-ul">
+<li>this exercise need more time to design and test properly that I'm not willing to take in favor of broader coverage. I expect a lot of mistakes in this version</li>
+<li>parsing is designed after existing constructor/selectors interface</li>
+<li>precedence of * over + is implemented in addend</li>
+<li>collect constants in constructors into a single constant</li>
+<li>any of addend/augend/multiplier/multiplicand can be either (), (x), or (x1 # x2 # &#x2026;), this should be accounted for</li>
+<li>I don't know how to debug this - in this env debugging needs to happen beforehand, in a good design it seems</li>
+<li>For the results to be more intelligible, constructors should also expand nested terms of the same precedence e.g. <code>(x * (3 * y)</code> =&gt; <code>(3 * x * y)</code></li>
+<li>consider bringing user input expression to some standardized representation</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf74dcb9" class="outline-2">
+<h2 id="orgf74dcb9">2.3.3 Example: Representing Sets</h2>
+<div class="outline-text-2" id="text-orgf74dcb9">
+<p>
+Informally, a set is a collection of distinct objects.
+</p>
+
+<p>
+To give a more precise definition, use data abstraction:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket">union-set
+intersection-set
+element-of-set?
+adjoint-set
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org912a58e" class="outline-3">
+<h3 id="org912a58e">Sets as unordered lists</h3>
+<div class="outline-text-3" id="text-org912a58e">
+<p>
+Set is represented as a list where no element is presented more than once
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="orge23cee5">(define (element-of-set? x set)
+  (cond ((null? set) false)
+	((equal? x (car set)) true)
+	(else (element-of-set? x (cdr set)))))
+
+(define (adjoint-set x set)
+  (if (element-of-set? x set)
+      set
+      (cons x set)))
+
+;; element-of-set? has time complexity of O(n), and so intersection-set has O(n^2)
+(define (intersection-set set1 set2)
+  (cond ((or (null? set1) (null? set2)) '())
+	((element-of-set? (car set1) set2)
+	 (cons (car set1)
+	       (intersection-set (cdr set1) set2)))
+	(else
+	 (intersection-set (cdr set1) set2))))
+
+;; Exercise 2.59
+(define (union-set set1 set2)
+  (cond ((null? set1) set2)
+	((null? set2) set1)
+	((element-of-set? (car set1) set2)
+	 (union-set (cdr set1) set2))
+	(else
+	 (cons (car set1)
+	       (union-set (cdr set1) set2)))))
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org2de02fc" class="outline-4">
+<h4 id="org2de02fc">Exercise 2.59 - <code>union-set</code></h4>
+<div class="outline-text-4" id="text-org2de02fc">
+<p>
+<code>union-set</code> is similar in recursive structure to <code>intersection-set</code>:
+</p>
+<ul class="org-ul">
+<li>if either of sets is empty, the result is the other set</li>
+<li>if (car set1) is in set2, then don't include it again</li>
+<li>if (car set1) is not in set2, then it should be included in the result</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+
+
+(define s1 '(1 2 3 4))
+(define s2 '(2 4 5 6))
+(adjoint-set 4 s1)
+(adjoint-set 5 s1)
+(element-of-set? 4 s1)
+(element-of-set? 5 s1)
+(union-set s1 s2)
+(intersection-set s1 s2)
+</pre>
+</div>
+
+<pre class="example">
+(1 2 3 4)
+(5 1 2 3 4)
+#t
+#f
+(1 3 2 4 5 6)
+(2 4)
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org24e4fca" class="outline-4">
+<h4 id="org24e4fca">Exercise 2.60 - <code>sets-interface-list-with-duplicates</code></h4>
+<div class="outline-text-4" id="text-org24e4fca">
+<p>
+Suppose the set is represented using a list with duplicates.
+<code>element-of-set?</code> and <code>intersection-set</code> would be the same.
+<code>adjoint-set</code> and <code>union-set</code> are different however:
+</p>
+<ul class="org-ul">
+<li><code>adjoint-set</code> now does not have to respect "no duplicates" rule, can just <code>cons</code> a new list</li>
+<li>similarly <code>union-set</code> can be just a combination of two sets</li>
+</ul>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Operation</th>
+<th scope="col" class="org-left">Comment</th>
+<th scope="col" class="org-left">Complexity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left"><code>element-of-set?</code></td>
+<td class="org-left">Can remain the same</td>
+<td class="org-left">\(O(n*e)\), where \(e\) is the expected duplication</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>adjoint-set</code></td>
+<td class="org-left">No need to respect "no dupes" rule, <code>cons</code> new element</td>
+<td class="org-left">\(O(1)\)</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>intersection-set</code></td>
+<td class="org-left">Can remain the same</td>
+<td class="org-left">\(O(n*m)\), where \(n\) and \(m\) are the cardinality of two sets</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>union-set</code></td>
+<td class="org-left">No need to respect "no dupes" rule, <code>append</code> two sets</td>
+<td class="org-left">Whatever complexity of <code>append</code> is, likely \(O(n)\)</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+One interesting property of new <code>adjoint-set</code> is that most recent elements are close to the start of the list, meaning that applications that check <code>element-of-set?</code> for recent values need not check all \(n\) elements, and will have better average running time. Combined with constant running time of <code>adjoint-set</code> itself, the profile of applications that could benefit from the new representation is as follows:
+</p>
+<ul class="org-ul">
+<li>frequently calls <code>adjoint-set</code> (but not frequently enough to exhaust memory, although this may be addressed with occasional deduplication)</li>
+<li>frequently calls <code>element-of-set?</code> with recently added values</li>
+<li>may call <code>union-set</code>, with potential "optimization" to use the set with more recent values as the first argument to optimize future <code>element-of-set?</code> checks</li>
+<li>infrequent calls to <code>intersection-set</code>, as it remains of quadratic running time</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (element-of-set? x set)
+  (cond ((null? set) false)
+	((equal? (car set) x) true)
+	(else (element-of-set? x (cdr set)))))
+
+(define (adjoint-set x set)
+  (cons x set))
+
+(define (union-set set1 set2)
+  (append set1 set2))
+
+(define (intersection-set set1 set2)
+  (cond ((or (null? set1) (null? set2)) '())
+	((element-of-set? (car set1) set2)
+	 (cons (car set1)
+	       (intersection-set (cdr set1) set2)))
+	(else
+	 (intersection-set (cdr set1) set2))))
+
+(union-set '(1 2 3) '(3 4 4))
+(intersection-set '(1 2 3 3) '(2 2 2 2 3))
+</pre>
+</div>
+
+<pre class="example">
+(1 2 3 3 4 4)
+(2 3 3)
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org6c664ec" class="outline-3">
+<h3 id="org6c664ec">Sets as ordered lists</h3>
+<div class="outline-text-3" id="text-org6c664ec">
+<p>
+Keep elements of set in a list in an increasing order, e.g. {1, 3, 6, 10} would be (1 3 6 10).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="org77a74e3">(define (element-of-set? x set)
+  (cond ((null? set) false)
+	((&gt; (car set) x) false)
+	((= (car set) x) true)
+	(else (element-of-set? x (cdr set)))))
+
+;; Exercise 2.61
+;; Similarly to element-of-set?, on a diverse set of x adjoint-set will stop early, about n/2 on average
+(define (adjoint-set x set)
+  (cond ((null? set) (list x))
+	((&lt; x (car set)) (cons x set))
+	((= x (car set)) set)
+	((&gt; x (car set))
+	 (cons (car set)
+	       (adjoint-set x (cdr set))))))
+
+(define (intersection-set set1 set2)
+  (if (or (null? set1) (null? set2))
+      '()
+      (let ((x1 (car set1))
+	    (x2 (car set2)))
+	(cond ((= x1 x2)
+	       (cons x1 (intersection-set (cdr set1) (cdr set2))))
+	      ((&lt; x1 x2)
+	       (intersection-set (cdr set1) set2))
+	      ((&gt; x1 x2)
+	       (intersection-set set1 (cdr set2)))))))
+
+;; Exercise 2.62
+(define (union-set set1 set2)
+  (cond ((null? set1) set2)
+	((null? set2) set1)
+	(else
+	 (let ((x1 (car set1))
+	       (x2 (car set2)))
+	   (cond ((= x1 x2)
+		  (cons x1 (union-set (cdr set1) (cdr set2))))
+		 ((&lt; x1 x2)
+		  (cons x1 (union-set (cdr set1) set2)))
+		 ((&gt; x1 x2)
+		  (cons x2 (union-set set1 (cdr set2)))))))))
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+
+(element-of-set? 1 '(1 2 3 4))
+(element-of-set? 4 '(1 2 3 4))
+(element-of-set? 3 '(1 2 4 5))
+(element-of-set? 6 '(1 2 4 5))
+(adjoint-set 1 '())
+(adjoint-set 1 '(2 3 4))
+(adjoint-set 3 '(1 2 4))
+(adjoint-set 4 '(1 2 3))
+(intersection-set '(1 2 4 6) '(2 3 4 5))
+(union-set '() '(1 2 3))
+(union-set '(1 2 3) '())
+(union-set '(1 2 3) '(1 2 3))
+(union-set '(1 3 5) '(2 4 6))
+(union-set '(6) '(1 2 3 4 5))
+(union-set '(6) '(1 2 3 4 5 6))
+</pre>
+</div>
+
+<pre class="example" id="org33947b6">
+#t
+#t
+#f
+#f
+(1)
+(1 2 3 4)
+(1 2 3 4)
+(1 2 3 4)
+(2 4)
+(1 2 3)
+(1 2 3)
+(1 2 3)
+(1 2 3 4 5 6)
+(1 2 3 4 5 6)
+(1 2 3 4 5 6)
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org5318864" class="outline-3">
+<h3 id="org5318864">Sets as binary trees</h3>
+<div class="outline-text-3" id="text-org5318864">
+<p>
+Each node of the tree holds one element of the set, the "entry" of that node, and links to other two nodes, possibly empty.
+The "left" node's entry is smaller than the node's "entry", and the "right" node's entry is larger.
+</p>
+
+<p>
+Because every node has left and right, each represents a tree with two subtrees, with left subree holding elements smaller than node's entry, and right holding elements larger thant node's entry.
+</p>
+
+<p>
+Benefit of the tree structure is that when searching a tree for the element <code>, at each node ~x</code> is either equal, smaller or greater than the entry of that node. If equal - search is finished, otherwise the element is either in left or right subtrees, if at all.
+Thus, assuming the tree is "balanced", at each node the search space is approximately halved, and so search would have asymptotic complexity of \(O(\log{n})\).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="orgdba5d74">(define (make-tree entry left right)
+  (list entry left right))
+
+(define (entry tree) (car tree))
+(define (left-branch tree) (cadr tree))
+(define (right-branch tree) (caddr tree))
+
+(define (element-of-set? x set)
+  (cond ((null? set) false)
+	((= x (entry set)) true)
+	((&lt; x (entry set)) (element-of-set? x (left-branch set)))
+	((&gt; x (entry set)) (element-of-set? x (right-branch set)))))
+
+(define (adjoint-set x set)
+  (cond ((null? set) (make-tree x '() '()))
+	((= x (entry set)) set)
+	((&lt; x (entry set))
+	 (make-tree x
+		    (adjoint-set x (left-branch set))
+		    (right-branch set)))
+	((&gt; x (entry set))
+	 (make-tree x
+		    (left-branch set)
+		    (adjoint-set x (right-branch set))))))
+</pre>
+</div>
+
+<p>
+"Balanced" assumption is important for search and insert to maintain \(O(\log{n})\) complexity, and there ways to design data structres in a way to maintan balance, they are not discussed here.
+</p>
+</div>
+
+<div id="outline-container-org228c819" class="outline-4">
+<h4 id="org228c819">Exercise 2.63 - <code>tree-&gt;list</code></h4>
+<div class="outline-text-4" id="text-org228c819">
+<div class="org-src-container">
+<pre class="src src-racket" id="org53a3199">(define (tree-&gt;list-1 tree)
+  (if (null? tree)
+      '()
+      (append (tree-&gt;list-1 (left-branch tree))
+	      (cons (entry tree)
+		    (tree-&gt;list-1 (right-branch tree))))))
+
+(define (tree-&gt;list-2 tree)
+  (define (copy-to-list tree result-list)
+    (if (null? tree)
+	result-list
+	(copy-to-list (left-branch tree)
+		      (cons (entry tree)
+			    (copy-to-list (right-branch tree)
+					  result-list)))))
+  (copy-to-list tree '()))
+</pre>
+</div>
+
+<p>
+Both procedures produce the same result for every tree - an ordered list of elements from smaller to larger.
+</p>
+
+<p>
+For each of the tree they both produce <code>(1 3 5 7 9 11)</code> as output.
+</p>
+
+<p>
+Assuming the tree is balanced, let's calculate the orders of growth:
+</p>
+
+<p>
+For <code>tree-&gt;list-1</code>:
+</p>
+
+<p>
+Let \(T(n)\) be the number of steps it takes for <code>tree-&gt;list-1</code> to convert a tree into a list.
+<code>tree-&gt;list-1</code> calls itself twice with halved tree + it calls <code>append</code> which grows as \(O(n)\):
+</p>
+
+<p>
+\[ T(n) = 2*T(n/2)+O(n/2) \]
+</p>
+
+<p>
+expanding a few levels into the tree
+</p>
+
+<p>
+\[ T(n) = 2*(2*(2*T(n/8)+O(n/8))+O(n/4))+O(n/2) = ... \text{nested} \log{n}\,\text{times} ... = 2^{\log{n}}*T(1) + \log{n}*O(n/2), \]
+</p>
+
+<p>
+it can easily be shown that \[ T(1) = c \]
+</p>
+
+<p>
+therefore  \[ T(n) = nc+\log{n}O(n/2) \] and <code>tree-&gt;list-1</code> number of steps grows as \(O(n\log{n})\)
+</p>
+
+<p>
+For <code>tree-&gt;list-1</code>:
+Let \(T(n)\) be the number of steps it takes for <code>tree-&gt;list-2</code> to convert a tree into a list.
+<code>tree-&gt;list-2</code> calls itself twice with halved tree + <code>cons</code> which grows as \(O(1)\):
+</p>
+
+<p>
+\[ T(n) = 2*T(n/2) + O(1) \]
+</p>
+
+<p>
+expanding a few levels into the tree
+</p>
+
+<p>
+\[ T(n) = 2*(2*(2*T(n/8) + O(1)) + O(1)) + O(1) = ... = 2^{\log{n}}*T(1) + \log{n}*O(1) \]
+</p>
+
+<p>
+as \[ T(1) = c \]
+</p>
+
+<p>
+\[ T(n) = nc + \log{n} \]
+</p>
+
+<p>
+and therefore <code>tree-&gt;list-2</code> has the order of growth of \(O(n)\).
+</p>
+
+<p>
+Thus, the number of steps to compute <code>tree-&gt;list-2</code> grows slower than the number of steps to compute <code>tree-&gt;list-1</code> with the number of elements in a balanced tree.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org33544bd" class="outline-4">
+<h4 id="org33544bd">Exercise 2.64 - <code>list-&gt;tree</code></h4>
+<div class="outline-text-4" id="text-org33544bd">
+<p>
+<code>list-&gt;tree</code> converts a list of ordered elements to a balanced binary tree.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="orgc4b427e">(define (list-&gt;tree elements)
+  (car (partial-tree elements (length elements))))
+
+(define (partial-tree elts n)
+  (if (= n 0)
+      (cons '() elts)
+      (let ((left-size (quotient (- n 1) 2)))
+	(let ((left-result (partial-tree elts left-size)))
+	  (let ((left-tree (car left-result))
+		(non-left-elts (cdr left-result))
+		(right-size (- n (+ left-size 1))))
+	    (let ((this-entry (car non-left-elts))
+		  (right-result (partial-tree (cdr non-left-elts) right-size)))
+	      (let ((right-tree (car right-result))
+		    (remaining-elts (cdr right-result)))
+		(cons (make-tree this-entry left-tree right-tree)
+		      remaining-elts))))))))
+</pre>
+</div>
+
+<p>
+<code>partial-tree</code> splits the first <code>n</code> items of <code>elts</code> into 3 parts - left (of size \((n-1)/2)\), "this" (1 element) and right (\(n-left-1\) elements). Then it comptes <code>partial-tree</code> for left, right, and constructs a tree with "this" as an entry and newly constructed left and right subtrees.
+</p>
+
+<p>
+Result of the execution for input <code>(1 3 5 7 9 11)</code> is the tree:
+</p>
+<p>
+Let \(T(n)\) be the number of steps it takes to convert \(n\) element list for <code>partial-tree</code>.
+</p>
+
+<p>
+<code>partial-tree</code> calls itself with approximately halved input twice, for left and right trees.
+</p>
+
+<p>
+\[ T(n) = 2*T(n/2) = 2*2*T(n/4) = ... = 2^{\log{n}} * T(1) = n * T(1) \]
+</p>
+
+<p>
+and in can be shown that \[ T(1) = c \] for some constant \(c\)
+</p>
+
+<p>
+Thus, \[ T(n) = nc \] and therefore <code>partial-tree</code> has the order of growth of the number of steps of \(O(n)\).
+</p>
+</div>
+</div>
+
+<div id="outline-container-org65b8a59" class="outline-4">
+<h4 id="org65b8a59">Exercise 2.65 - <code>union-set</code> and <code>intersection-set</code></h4>
+<div class="outline-text-4" id="text-org65b8a59">
+<div class="org-src-container">
+<pre class="src src-racket" id="orgc17b968">
+
+(define (union-set set1 set2)
+  (define (merge xs ys)
+    (cond ((null? xs) ys)
+	  ((null? ys) xs)
+	  (else
+	   (let ((x (car xs))
+		 (y (car ys)))
+	     (cond ((= x y)
+		    (cons x (merge (cdr xs) (cdr ys))))
+		   ((&lt; x y)
+		    (cons x (merge (cdr xs) ys)))
+		   ((&gt; x y)
+		    (cons y (merge xs (cdr ys)))))))))
+  (let ((xs (tree-&gt;list-2 set1))
+	(ys (tree-&gt;list-2 set2)))
+    (list-&gt;tree (merge xs ys))))
+
+
+(define (intersection-set set1 set2)
+  (define (common xs ys)
+    (cond ((or (null? xs) (null? ys))
+	   '())
+	  (else
+	   (let ((x (car xs))
+		 (y (car ys)))
+	     (cond ((= x y)
+		    (cons x (common (cdr xs) (cdr ys))))
+		   ((&lt; x y)
+		    (common (cdr xs) ys))
+		   ((&gt; x y)
+		    (common xs (cdr ys))))))))
+  (let ((xs (tree-&gt;list-2 set1))
+	(ys (tree-&gt;list-2 set2)))
+    (list-&gt;tree (common xs ys))))
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+
+
+
+(union-set (make-tree 5
+		      (make-tree 3 '() '())
+		      (make-tree 7
+				 (make-tree 6 '() '())
+				 '()))
+	   (make-tree 5
+		      (make-tree 3 '() '())
+		      (make-tree 9
+				 '()
+				 (make-tree 11 '() '()))))
+
+(intersection-set (make-tree 5
+			     (make-tree 3 '() '())
+			     (make-tree 7
+					(make-tree 6 '() '())
+					'()))
+		  (make-tree 5
+			     (make-tree 3 '() '())
+			     (make-tree 9
+					'()
+					(make-tree 11 '() '()))))
+
+(define t make-tree)
+(define o '())
+
+(intersection-set (t 5
+		     (t 3 o o)
+		     (t 7
+			(t 6 o o)
+			o))
+		  (t 10
+		     o
+		     (t 11
+			o
+			(t 12
+			   o
+			   o))))
+
+</pre>
+</div>
+
+<pre class="example">
+(6 (3 () (5 () ())) (9 (7 () ()) (11 () ())))
+(3 () (5 () ()))
+()
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9f88424" class="outline-3">
+<h3 id="org9f88424">Sets and information retrieval</h3>
+<div class="outline-text-3" id="text-org9f88424">
+<p>
+Given a set of records, we need a way to retrieve any individual record often and fast. For that, each record can be identified with a unique key.
+</p>
+
+<p>
+If the set of records is represented as an unordered list:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">(define (lookup given-key set-of-records)
+  (cond ((null? set-of-records) false)
+	((equal? given-key (key (car set-of-records)))
+	 (car set-of-records))
+	(else
+	 (lookup given-key (cdr set-of-records)))))
+</pre>
+</div>
+
+<pre class="example">
+/var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-Rtcpes/ob-racketR92cYU.rkt:5:28: key: unbound identifier
+  in: key
+  location...:
+   /var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-Rtcpes/ob-racketR92cYU.rkt:5:28
+</pre>
+</div>
+
+<div id="outline-container-org2d9e6cc" class="outline-4">
+<h4 id="org2d9e6cc">Exercise 2.66 - <code>lookup</code> for the set representation based on binary tree</h4>
+<div class="outline-text-4" id="text-org2d9e6cc">
+<div class="org-src-container">
+<pre class="src src-racket">(define (lookup given-key node)
+  (cond ((null? node)
+	 false)
+	((= given-key (key (entry node)))
+	 (entry node))
+	((&lt; given-key (key (entry node)))
+	 (lookup given-key (left node)))
+	((&gt; given-key (key (entry node)))
+	 (lookup given-key (right node)))))
+
+(define (node key record left right)
+  (list key record left right))
+
+(define (entry node)
+  (cons (car node) (cadr node)))
+
+(define (key entry)
+  (car entry))
+
+(define (left node)
+  (caddr node))
+
+(define (right node)
+  (cadddr node))
+
+(lookup 9 (node 5
+		(list 'bob 23)
+		(node 3
+		      (list 'alice 22)
+		      '()
+		      '())
+		(node 7
+		      (list 'camille 28)
+		      '()
+		      (node 9
+			    (list 'david 25)
+			    '()
+			    '()))))
+</pre>
+</div>
+
+<pre class="example">
+'(9 david 25)
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org214b559" class="outline-2">
+<h2 id="org214b559">2.3.4 Example: Huffman Encoding Trees</h2>
+<div class="outline-text-2" id="text-org214b559">
+<p>
+p.161-162 have description of fixed-length vs variable-length binary encoding.
+</p>
+
+<p>
+A problem with variable-length encoding is knowing when the end of a symbol is reached. Morse code solves it by the separator code (pause). Another way to solve it is to not let any letter code be an exact prefix of any other letter code.
+</p>
+
+<p>
+Huffman encoding is a way to implement variable-length binary encoding.
+</p>
+
+<p>
+A Huffman code can be represented as a tree where each leaf represents a letter to be encoded, and each non-leaf node stores a set of letters under that node. In addition, each letter at a leaf is assigned a weight (which is a relative frequency), and each non-leaf node stores the sum of all weights in leafs under that node.
+</p>
+
+<p>
+Given a Huffman tree, we can find an encoding of any letter by descending down the tree until the leaf with that letter is reached, appending 0 each time left subtree is selected and 1 each time right subtree is selected. Subtree is selected using the set of letters under the subtree.
+</p>
+
+<p>
+To decode a binary sequence, start at the root and for 0 go left, for 1 go down, when reaching a leaf write down that symbol, and start over again at the root.
+</p>
+</div>
+
+
+<div id="outline-container-org8bc755a" class="outline-3">
+<h3 id="org8bc755a">Generating Huffman trees</h3>
+<div class="outline-text-3" id="text-org8bc755a">
+<p>
+The idea is to arrange tree such that the symbols with the lowest frequencies appear further away from the root.
+</p>
+
+<p>
+Start with the set of leaf nodes, find two nodes with the smallest weights, merge them to form a new node with the two nodes as the subtrees and weight of the sum of the two nodes weights, and replace the two nodes with the new set. Repeat until the set contains a signle node, which is the Huffman tree for the given frequencies.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgcdccb45" class="outline-3">
+<h3 id="orgcdccb45">Representing Huffman trees</h3>
+<div class="outline-text-3" id="text-orgcdccb45">
+<div class="org-src-container">
+<pre class="src src-racket" id="org5c7df30">(define (make-leaf symbol weight)
+  (list 'leaf symbol weight))
+
+(define (leaf? object)
+  (eq? (car object) 'leaf))
+
+(define (symbol-leaf x) (cadr x))
+(define (weight-leaf x) (caddr x))
+
+(define (make-code-tree left right)
+  (list left
+	right
+	(append (symbols left) (symbols right))
+	(+ (weight left) (weight right))))
+
+(define (left-branch tree) (car tree))
+(define (right-branch tree) (cadr tree))
+(define (symbols tree)
+  (if (leaf? tree)
+      (list (symbol-leaf tree))
+      (caddr tree)))
+(define (weight tree)
+  (if (leaf? tree)
+      (weight-leaf tree)
+      (cadddr tree)))
+</pre>
+</div>
+
+<p>
+<code>symbols</code> and <code>weight</code> are examples of <i>generic procedures</i> - those can handle more than one type of data.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org9e180fa" class="outline-3">
+<h3 id="org9e180fa">The decoding procedure</h3>
+<div class="outline-text-3" id="text-org9e180fa">
+<div class="org-src-container">
+<pre class="src src-racket" id="org6196960">(define (decode bits tree)
+  (define (decode-1 bits current-branch)
+    (if (null? bits)
+	'()
+	(let ((next-branch (choose-branch (car bits) current-branch)))
+	  (if (leaf? next-branch)
+	      (cons (symbol-leaf next-branch)
+		    (decode-1 (cdr bits) tree))
+	      (decode-1 (cdr bits) next-branch)))))
+  (decode-1 bits tree))
+
+(define (choose-branch bit tree)
+  (cond ((= 0 bit)
+	 (left-branch tree))
+	((= 1 bit)
+	 (right-branch tree))
+	(else
+	 (error "bad bit -- CHOOSE-BRANCH" bit))))
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge10b4c9" class="outline-3">
+<h3 id="orge10b4c9">Set of weighted-elements</h3>
+<div class="outline-text-3" id="text-orge10b4c9">
+<div class="org-src-container">
+<pre class="src src-racket" id="org14aad33">(define (adjoint-set x set)
+  (cond ((null? set) (list x))
+	((&lt; (weight x) (weight (car set)))
+	 (cons x set))
+	(else
+	 (cons (car set) (adjoint-set x (cdr set))))))
+
+(define (make-leaf-set pairs)
+  (if (null? pairs)
+      '()
+      (let ((pair (car pairs)))
+	(adjoint-set (make-leaf (car pair) (cadr pair))
+		     (make-leaf-set (cdr pairs))))))
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2e47668" class="outline-3">
+<h3 id="org2e47668">Exercise 2.67 - run <code>decode</code></h3>
+<div class="outline-text-3" id="text-org2e47668">
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+
+
+
+(define sample-tree
+  (make-code-tree (make-leaf 'A 4)
+		  (make-code-tree
+		   (make-leaf 'B 2)
+		   (make-code-tree
+		    (make-leaf 'D 1)
+		    (make-leaf 'C 1)))))
+
+(define sample-message '(0 1 1 0 0 1 0 1 0 1 1 1 0))
+
+(decode sample-message sample-tree)
+</pre>
+</div>
+
+<pre class="example">
+(A D A B B C A)
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org34ec51e" class="outline-3">
+<h3 id="org34ec51e">Exercise 2.68 - <code>encode</code></h3>
+<div class="outline-text-3" id="text-org34ec51e">
+<div class="org-src-container">
+<pre class="src src-racket" id="org166dbcf">(define (encode message tree)
+  (if (null? message)
+      '()
+      (append (encode-symbol (car message) tree)
+	      (encode (cdr message) tree))))
+
+(define (encode-symbol symbol tree)
+  (cond ((leaf? tree) '())
+	((contains? (symbols (left-branch tree)) symbol)
+	 (cons 0 (encode-symbol symbol (left-branch tree))))
+	((contains? (symbols (right-branch tree)) symbol)
+	 (cons 1 (encode-symbol symbol (right-branch tree))))
+	(else
+	 (error "symbol has no encoding -- ENCODE-SYMBOL" symbol))))
+
+(define (contains? haystack needle)
+  (cond ((null? haystack) false)
+	((eq? (car haystack) needle) true)
+	(else (contains? (cdr haystack) needle))))
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-racket">
+
+
+(define sample-tree
+  (make-code-tree (make-leaf 'A 4)
+		  (make-code-tree
+		   (make-leaf 'B 2)
+		   (make-code-tree
+		    (make-leaf 'D 1)
+		    (make-leaf 'C 1)))))
+
+(define sample-message '(A D A B B C A))
+
+(encode sample-message sample-tree)
+</pre>
+</div>
+
+<pre class="example">
+'(0 1 1 0 0 1 0 1 0 1 1 1 0)
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgf831614" class="outline-3">
+<h3 id="orgf831614">Exercise 2.69 - <code>generate-huffman-tree</code></h3>
+<div class="outline-text-3" id="text-orgf831614">
+<div class="org-src-container">
+<pre class="src src-racket" id="org8b9c19b">(define (generate-huffman-tree pairs)
+  (successive-merge (make-leaf-set pairs)))
+
+(define (successive-merge node-set)
+  (cond ((null? node-set)
+	 (error "Empty node-set -- SUCCESSIVE-MERGE"))
+	((null? (cdr node-set))
+	 (car node-set))
+	(else
+	 (successive-merge
+	  (adjoint-set (make-code-tree
+			(car node-set)
+			(cadr node-set))
+		       (cddr node-set))))))
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgdb8189a" class="outline-3">
+<h3 id="orgdb8189a">Exercise 2.70 - check it out</h3>
+<div class="outline-text-3" id="text-orgdb8189a">
+<p>
+Here's the full listing of the code developed so far:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket" id="org8d48ee8"><span class="linenr"> 1: </span>(define (make-leaf symbol weight)
+<span class="linenr"> 2: </span>  (list 'leaf symbol weight))
+<span class="linenr"> 3: </span>
+<span class="linenr"> 4: </span>(define (leaf? object)
+<span class="linenr"> 5: </span>  (eq? (car object) 'leaf))
+<span class="linenr"> 6: </span>
+<span class="linenr"> 7: </span>(define (symbol-leaf x) (cadr x))
+<span class="linenr"> 8: </span>(define (weight-leaf x) (caddr x))
+<span class="linenr"> 9: </span>
+<span class="linenr">10: </span>(define (make-code-tree left right)
+<span class="linenr">11: </span>  (list left
+<span class="linenr">12: </span>	right
+<span class="linenr">13: </span>	(append (symbols left) (symbols right))
+<span class="linenr">14: </span>	(+ (weight left) (weight right))))
+<span class="linenr">15: </span>
+<span class="linenr">16: </span>(define (left-branch tree) (car tree))
+<span class="linenr">17: </span>(define (right-branch tree) (cadr tree))
+<span class="linenr">18: </span>(define (symbols tree)
+<span class="linenr">19: </span>  (if (leaf? tree)
+<span class="linenr">20: </span>      (list (symbol-leaf tree))
+<span class="linenr">21: </span>      (caddr tree)))
+<span class="linenr">22: </span>(define (weight tree)
+<span class="linenr">23: </span>  (if (leaf? tree)
+<span class="linenr">24: </span>      (weight-leaf tree)
+<span class="linenr">25: </span>      (cadddr tree)))
+<span class="linenr">26: </span>
+<span class="linenr">27: </span>(define (adjoint-set x set)
+<span class="linenr">28: </span>  (cond ((null? set) (list x))
+<span class="linenr">29: </span>	((&lt; (weight x) (weight (car set)))
+<span class="linenr">30: </span>	 (cons x set))
+<span class="linenr">31: </span>	(else
+<span class="linenr">32: </span>	 (cons (car set) (adjoint-set x (cdr set))))))
+<span class="linenr">33: </span>
+<span class="linenr">34: </span>(define (make-leaf-set pairs)
+<span class="linenr">35: </span>  (if (null? pairs)
+<span class="linenr">36: </span>      '()
+<span class="linenr">37: </span>      (let ((pair (car pairs)))
+<span class="linenr">38: </span>	(adjoint-set (make-leaf (car pair) (cadr pair))
+<span class="linenr">39: </span>		     (make-leaf-set (cdr pairs))))))
+<span class="linenr">40: </span>
+<span class="linenr">41: </span>(define (generate-huffman-tree pairs)
+<span class="linenr">42: </span>  (successive-merge (make-leaf-set pairs)))
+<span class="linenr">43: </span>
+<span class="linenr">44: </span>(define (successive-merge node-set)
+<span class="linenr">45: </span>  (cond ((null? node-set)
+<span class="linenr">46: </span>	 (error "Empty node-set -- SUCCESSIVE-MERGE"))
+<span class="linenr">47: </span>	((null? (cdr node-set))
+<span class="linenr">48: </span>	 (car node-set))
+<span class="linenr">49: </span>	(else
+<span class="linenr">50: </span>	 (successive-merge
+<span class="linenr">51: </span>	  (adjoint-set (make-code-tree
+<span class="linenr">52: </span>			(car node-set)
+<span class="linenr">53: </span>			(cadr node-set))
+<span class="linenr">54: </span>		       (cddr node-set))))))
+<span class="linenr">55: </span>
+<span class="linenr">56: </span>(define (encode message tree)
+<span class="linenr">57: </span>  (if (null? message)
+<span class="linenr">58: </span>      '()
+<span class="linenr">59: </span>      (append (encode-symbol (car message) tree)
+<span class="linenr">60: </span>	      (encode (cdr message) tree))))
+<span class="linenr">61: </span>
+<span class="linenr">62: </span>(define (encode-symbol symbol tree)
+<span class="linenr">63: </span>  (cond ((leaf? tree) '())
+<span class="linenr">64: </span>	((contains? (symbols (left-branch tree)) symbol)
+<span class="linenr">65: </span>	 (cons 0 (encode-symbol symbol (left-branch tree))))
+<span class="linenr">66: </span>	((contains? (symbols (right-branch tree)) symbol)
+<span class="linenr">67: </span>	 (cons 1 (encode-symbol symbol (right-branch tree))))
+<span class="linenr">68: </span>	(else
+<span class="linenr">69: </span>	 (error "symbol has no encoding -- ENCODE-SYMBOL" symbol))))
+<span class="linenr">70: </span>
+<span class="linenr">71: </span>(define (contains? haystack needle)
+<span class="linenr">72: </span>  (cond ((null? haystack) false)
+<span class="linenr">73: </span>	((eq? (car haystack) needle) true)
+<span class="linenr">74: </span>	(else (contains? (cdr haystack) needle))))
+<span class="linenr">75: </span>
+<span class="linenr">76: </span>(define (decode bits tree)
+<span class="linenr">77: </span>  (define (decode-1 bits current-branch)
+<span class="linenr">78: </span>    (if (null? bits)
+<span class="linenr">79: </span>	'()
+<span class="linenr">80: </span>	(let ((next-branch (choose-branch (car bits) current-branch)))
+<span class="linenr">81: </span>	  (if (leaf? next-branch)
+<span class="linenr">82: </span>	      (cons (symbol-leaf next-branch)
+<span class="linenr">83: </span>		    (decode-1 (cdr bits) tree))
+<span class="linenr">84: </span>	      (decode-1 (cdr bits) next-branch)))))
+<span class="linenr">85: </span>  (decode-1 bits tree))
+<span class="linenr">86: </span>
+<span class="linenr">87: </span>(define (choose-branch bit tree)
+<span class="linenr">88: </span>  (cond ((= 0 bit)
+<span class="linenr">89: </span>	 (left-branch tree))
+<span class="linenr">90: </span>	((= 1 bit)
+<span class="linenr">91: </span>	 (right-branch tree))
+<span class="linenr">92: </span>	(else
+<span class="linenr">93: </span>	 (error "bad bit -- CHOOSE-BRANCH" bit))))
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-racket">
+(define rock-frequencies '((A 2)
+			   (BOOM 1)
+			   (GET 2)
+			   (JOB 2)
+			   (NA 16)
+			   (SHA 3)
+			   (YIP 9)
+			   (WAH 1)))
+
+(define rock-tree (generate-huffman-tree rock-frequencies))
+
+(define rock-song '(GET A JOB
+			SHA NA NA NA NA NA NA NA NA
+			GET A JOB
+			SHA NA NA NA NA NA NA NA NA
+			WAH YIP YIP YIP YIP YIP YIP YIP YIP YIP
+			SHA BOOM))
+
+(define enc (encode rock-song rock-tree))
+(define dec (decode enc rock-tree))
+
+enc
+(display (list (length enc) "bits required to encode original message using a variable-length encoding method")) (newline)
+dec
+(display (list (* 3 (length dec))
+	       "bits would be used by the the fixed-length for 8=2^3 characters alphabet")) (newline)
+</pre>
+</div>
+
+<pre class="example">
+'(1 1 1 1 1 1 1 0 0 1 1 1 1 0 1 1 1 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 0 0 1 1 1 1 0 1 1 1 0 0 0 0 0 0 0 0 0 1 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 1 1 0 1 1 0 1 1)
+(84 bits required to encode original message using a variable-length encoding method)
+'(GET A JOB SHA NA NA NA NA NA NA NA NA GET A JOB SHA NA NA NA NA NA NA NA NA WAH YIP YIP YIP YIP YIP YIP YIP YIP YIP SHA BOOM)
+(108 bits would be used by the the fixed-length for 8=2^3 characters alphabet)
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org007e0fa" class="outline-3">
+<h3 id="org007e0fa">Exercise 2.71 - frequencies in geometric progression</h3>
+<div class="outline-text-3" id="text-org007e0fa">
+<p>
+Suppose we have a Huffman tree for an alphabet of \(n\) symbols, with relative frequences \(1, 2, 4, ..., 2^{n-1}\).
+Example of tree for \(n = 5\)
+</p>
+<pre class="example">
+  .
+ / \
+a   .
+   / \
+  b   .
+     / \
+    c   .
+       / \
+      d   e
+</pre>
+
+<p>
+Example of tree for \(n = 10\)
+</p>
+<pre class="example">
+  .
+ / \
+a   .
+   / \
+  b   .
+     / \
+    c   .
+       / \
+      d   .
+	 / \
+	e   .
+	   / \
+	  f   .
+	     / \
+	    g   .
+	       / \
+	      h   .
+		 / \
+		i   j
+</pre>
+
+<p>
+Key observation with this special case is that during the tree generation, newly merged node's weight is always less than the least-weight node weight in the remaining set (\(2^{k+1} - 1 < 2^{k+1}\)).
+Then, on every merge except the very first one, the first node is a leaf node and the second is a tree with all less frequent symbols than the first node's symbol.
+</p>
+
+<p>
+The leaf with the least frequent symbol will be carried over in the same growing tree until construction is done, that is for \(n-1\) steps, and thus will have a distance of \(n-1\) from the root.
+</p>
+
+<p>
+The most frequent symbol will be merged last, and so will be at a distance of \(1\) from the root.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org3bab007" class="outline-3">
+<h3 id="org3bab007">Exercise 2.72 - order of growth of <code>encode</code></h3>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: LMG</p>
+<p class="date">Created: 2023-06-11 Sun 17:27</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

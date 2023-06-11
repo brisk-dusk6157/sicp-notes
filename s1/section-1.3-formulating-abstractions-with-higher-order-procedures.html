@@ -1,0 +1,1501 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2023-05-25 Thu 12:15 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>&lrm;</title>
+<meta name="author" content="LMG" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="content" class="content">
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#orgd13fdf4">1.3. Formulating Abstractions with Higher-Order Procedures</a>
+<ul>
+<li><a href="#orgfd5aead">1.3.1. Procedures as Arguments</a>
+<ul>
+<li><a href="#org7fa25a6">Exercise 1.29 - Simpson's Rule</a></li>
+<li><a href="#org181c66c">Exercise 1.30 - Linear recursion -&gt; iteration</a></li>
+<li><a href="#org63dbbfd">Exercise 1.31 - <code>product</code> higher order function</a></li>
+<li><a href="#org37cbf29">Exercise 1.32 - generalize <code>sum</code> and <code>product</code> into <code>accumulate</code></a></li>
+<li><a href="#org69b77b4">Exercise 1.33 - <code>filtered-accumulate</code></a></li>
+</ul>
+</li>
+<li><a href="#orgdb97bec">1.3.2. Constructing Procedures Using <code>lambda</code></a>
+<ul>
+<li><a href="#orgf17992d">Using <code>let</code> to create local variables</a></li>
+<li><a href="#orgeb65c3a">Exercise 1.34 - (f f)</a></li>
+</ul>
+</li>
+<li><a href="#orga5b9451">1.3.3. Procedures as General Methods</a>
+<ul>
+<li><a href="#org0bdb44c">Finding fixed points of functions</a></li>
+<li><a href="#orgf2b8a16">Exercise 1.35 - \(\phi\) is a fixed point of of \(x \mapsto 1 + 1/x\)</a></li>
+<li><a href="#org598f719">Exercise 1.36 - Solve \(x^x = 1000\)</a></li>
+<li><a href="#orgb2f053b">Exercise 1.37 - Finite continued fraction</a></li>
+<li><a href="#orgb059ed7">Exercise 1.38 - Euler's continued fraction approximation for \(e - 2\)</a></li>
+<li><a href="#org6f001cc"><span class="todo TODO">TODO</span> Exercise 1.39 - Lambert's continued fraction approximation for \(\tan{x}\)</a></li>
+</ul>
+</li>
+<li><a href="#orgbab13bd">1.3.4. Procedures as Returned Values</a>
+<ul>
+<li><a href="#org8ec8ebd">Newton's method</a></li>
+<li><a href="#org5cd4526">Abstractions and first-class procedures</a></li>
+<li><a href="#org50fa320">Exercise 1.40</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgd13fdf4" class="outline-2">
+<h2 id="orgd13fdf4">1.3. Formulating Abstractions with Higher-Order Procedures</h2>
+<div class="outline-text-2" id="text-orgd13fdf4">
+</div>
+<div id="outline-container-orgfd5aead" class="outline-3">
+<h3 id="orgfd5aead">1.3.1. Procedures as Arguments</h3>
+<div class="outline-text-3" id="text-orgfd5aead">
+<p>
+These three functions follow the same pattern, with different names, functions to compute the term and function that provides next value.
+</p>
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (sum-integers a b)
+  (if (&gt; a b)
+      0
+      (+ a (sum-integers (+ a 1) b))))
+
+(define (sum-cubes a b)
+  (if (&gt; a b)
+      0
+      (+ (cube a) (sum-cubes (+ a 1) b))))
+
+(define (pi-sum a b)
+  (if (&gt; a b)
+      0
+      (+ (/ 1.0 (* a (+ a 2))) (pi-sum (+ a 4) b))))
+</pre>
+</div>
+
+<p>
+Here's the pattern extracted:
+</p>
+<pre class="example" id="orga97e55e">
+(define (&lt;name&gt; a b)
+  (if (&gt; a b)
+      0
+      (+ (&lt;term&gt; a)
+	 (&lt;name&gt; (&lt;next&gt; a) b)))
+</pre>
+
+<p>
+And it's implementation in Scheme, <code>term</code> and <code>next</code> are parameters that expect functions:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket" id="org701de90">#lang sicp
+
+(define (sum term a next b)
+  (if (&gt; a b)
+      0
+      (+ (term a)
+	 (sum term (next a) next b))))
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (sum term a next b)
+  (if (&gt; a b)
+      0
+      (+ (term a)
+	 (sum term (next a) next b))))
+(define (cube x) (* x x x))
+
+(define (sum-cubes a b)
+  (sum cube a inc b))
+
+(sum-cubes 1 3)
+
+(define (sum-integers a b)
+  (sum identity a inc b))
+
+(sum-integers 1 10)
+
+(define (pi-sum a b)
+  (define (pi-term x)
+    (/ 1.0 (* x (+ x 2))))
+  (define (pi-next x)
+    (+ x 4))
+  (sum pi-term a pi-next b))
+
+(* 8 (pi-sum 1 1000))
+
+(define (integral f a b dx)
+  (define (add-dx x) (+ x dx))
+  (* (sum f (+ a (/ dx 2.0)) add-dx b)
+     dx))
+
+(define (f x) (/ 1 x))
+
+(integral f 1 2.718 0.001)
+(integral cube 0 1 0.0001)
+(integral cube 1 100 0.001)
+(integral cube 1 1000 0.001)
+</pre>
+</div>
+
+<pre class="example">
+36
+55
+3.139592655589783
+0.9998962797024742
+0.24999999874993412
+24999999.74877359
+249999999988.77032
+</pre>
+</div>
+
+<div id="outline-container-org7fa25a6" class="outline-4">
+<h4 id="org7fa25a6">Exercise 1.29 - Simpson's Rule</h4>
+<div class="outline-text-4" id="text-org7fa25a6">
+<p>
+\[ \int\limits_a^b f(x) \approx \frac{h}{3}[y_0 + 4y_1 + 2y_2 + 4y_3 + 2y_4 + ... + 2y_{n-2} + 4y_{n-1} + y_n] \]
+</p>
+
+<p>
+where \(h = (b-a)/n\) for some even integer \(n\), and \(y_k = f(a+kh)\).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (sum term a next b)
+  (if (&gt; a b)
+      0
+      (+ (term a)
+	 (sum term (next a) next b))))
+
+(define (simpson-rule f a b n)
+  (define h (/ (- b a) n))
+  (define (y k) (f (+ a (* k h))))
+  (define (term k)
+    (cond ((or (= k 0) (= k n))
+	   (y k))
+	  ((even? k)
+	   (* 2 (y k)))
+	  (else
+	   (* 4 (y k)))))
+  (* (/ h 3.0) (sum term 0 inc n)))
+
+(define (f x) (/ 1 x))
+(define (cube x) (* x x x))
+(simpson-rule f 1 2.718 100)
+(simpson-rule cube 0 1 100)
+(simpson-rule cube 0 1 1000)
+(simpson-rule cube 1 100 1000)
+(simpson-rule cube 1 1000 1000)
+</pre>
+</div>
+
+<pre class="example">
+0.9998963185775426
+0.25
+0.25
+24999999.75
+249999999999.75
+</pre>
+
+
+<p>
+Simpson rule provides more precise integral estimation.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org181c66c" class="outline-4">
+<h4 id="org181c66c">Exercise 1.30 - Linear recursion -&gt; iteration</h4>
+<div class="outline-text-4" id="text-org181c66c">
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (sum-iter term a next b)
+  (define (iter cur acc)
+    (if (&gt; cur b)
+	acc
+	(iter (next cur) (+ acc (term cur)))))
+  (iter a 0))
+
+(sum-iter identity 1 inc 10)
+</pre>
+</div>
+
+<pre class="example">
+55
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org63dbbfd" class="outline-4">
+<h4 id="org63dbbfd">Exercise 1.31 - <code>product</code> higher order function</h4>
+<div class="outline-text-4" id="text-org63dbbfd">
+</div>
+<ul class="org-ul">
+<li><a id="orgc2c105f"></a><span class="done DONE">DONE</span> Implement <code>product</code><br /></li>
+
+<li><a id="orge8599c2"></a><span class="done DONE">DONE</span> Implement <code>factorial</code> using <code>product</code><br /></li>
+
+<li><a id="org5daf405"></a><span class="done DONE">DONE</span> Compute approximation of \(\pi\)<br />
+<div class="outline-text-5" id="text-org5daf405">
+<p>
+John Wallis formula to approximate \(\pi\):
+\[ \frac{\pi}{4} = \frac{2*4*4*6*6*8...}{3*3*5*5*7*7...} \]
+</p>
+</div>
+</li>
+
+<li><a id="org4e253f5"></a><span class="done DONE">DONE</span> Write both recursive and iterative versions<br />
+<div class="outline-text-5" id="text-org4e253f5">
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (product term a next b)
+  (if (&gt; a b)
+      1
+      (* (term a) (product term (next a) next b))))
+
+(define (product-iter term a next b)
+  (define (iter cur acc)
+    (if (&gt; cur b)
+	acc
+	(iter (next cur) (* (term cur) acc))))
+  (iter a 1))
+
+(define (factorial n)
+  (product-iter identity 1 inc n))
+
+(factorial 5)
+
+(define (pi-approx k)
+  (define (num i) (* 2 (floor (/ (+ i 2) 2))))
+  (define (denom i) (+ (* 2 (floor (/ (+ i 1) 2))) 1))
+  (define (term i) (* 1.0 (/ (num i) (denom i))))
+  (product-iter term 1 inc k))
+
+(define (pi-approx-2 k)
+  (define (num i) (* 2 (floor (/ (+ i 2) 2))))
+  (define (denom i) (+ (* 2 (floor (/ (+ i 1) 2))) 1))
+  (/ (product-iter num 1 inc k)
+     (product-iter denom 1 inc k)))
+
+(* 4.0 (pi-approx 100000000))
+</pre>
+</div>
+
+<pre class="example">
+120
+3.1415926692944294
+</pre>
+
+
+<p>
+Note: calculation using the integer ratios is much slower than converting to floats as we go (Scheme supports long arithmetic and will use it for calculations).
+</p>
+</div>
+</li>
+</ul>
+</div>
+
+<div id="outline-container-org37cbf29" class="outline-4">
+<h4 id="org37cbf29">Exercise 1.32 - generalize <code>sum</code> and <code>product</code> into <code>accumulate</code></h4>
+<div class="outline-text-4" id="text-org37cbf29">
+</div>
+<ul class="org-ul">
+<li><a id="org5d4f5be"></a><span class="done DONE">DONE</span> Show that <code>sum</code> and <code>product</code> are special cases of <code>accumulate</code><br />
+<div class="outline-text-5" id="text-org5d4f5be">
+<p>
+<code>(accumulate combiner null-value term a next b)</code>
+</p>
+
+<p>
+Here are the <code>sum</code> and <code>product</code> recursive implementations:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket">(define (product term a next b)
+  (if (&gt; a b)
+      1
+      (* (term a) (product term (next a) next b))))
+
+
+(define (sum term a next b)
+  (if (&gt; a b)
+      0
+      (+ (term a)
+	 (sum term (next a) next b))))
+</pre>
+</div>
+
+<p>
+Here common pattern is extracted:
+</p>
+<pre class="example" id="org7ae92c5">
+(define (&lt;name&gt; term a next b)
+(if (&gt; a b)
+    &lt;null-value&gt;
+    (&lt;combine&gt; (term a)
+	       (&lt;name&gt; term (next a) next b))
+</pre>
+
+<p>
+Both <code>sum</code> and <code>product</code> follow this pattern and so are the special cases of suggested <code>accumulate</code> function.
+</p>
+</div>
+</li>
+
+<li><a id="org634fd8e"></a><span class="done DONE">DONE</span> Write <code>accumulate</code><br />
+<div class="outline-text-5" id="text-org634fd8e">
+<div class="org-src-container">
+<pre class="src src-racket" id="orgce4b4ca">#lang sicp
+
+(define (accumulate combiner null-value term a next b)
+  (if (&gt; a b)
+      null-value
+      (combiner (term a)
+		(accumulate combiner null-value term (next a) next b))))
+
+(define (accumulate-iter combiner null-value term a next b)
+  (define (iter x acc)
+    (if (&gt; x b)
+	acc
+	(iter (next x)
+	      (combiner (term x)
+			acc))))
+  (iter a null-value))
+
+(define (sum term a next b)
+  (accumulate-iter + 0 term a next b))
+
+(define (product term a next b)
+  (accumulate-iter * 1 term a next b))
+
+(sum identity 1 inc 10)
+(product identity 1 inc 6)
+</pre>
+</div>
+
+<pre class="example">
+55
+720
+</pre>
+</div>
+</li>
+
+<li><a id="orgefcd922"></a><span class="done DONE">DONE</span> Implement <code>sum</code> and <code>product</code> in terms of <code>accumulate</code><br /></li>
+
+<li><a id="org7da52d1"></a><span class="done DONE">DONE</span> Write both recursive and iterative versions<br /></li>
+</ul>
+</div>
+
+<div id="outline-container-org69b77b4" class="outline-4">
+<h4 id="org69b77b4">Exercise 1.33 - <code>filtered-accumulate</code></h4>
+<div class="outline-text-4" id="text-org69b77b4">
+</div>
+<ul class="org-ul">
+<li><a id="org7333031"></a><span class="done DONE">DONE</span> Implement <code>filtered-accumulate</code><br /></li>
+<li><a id="orgf567ab2"></a><span class="done DONE">DONE</span> Show how to express&#x2026;<br />
+<ul class="org-ul">
+<li><a id="org43d8609"></a><span class="done DONE">DONE</span> the sum of the squares of the primes in the interval \([a,b)\)<br /></li>
+<li><a id="orgd79279d"></a><span class="done DONE">DONE</span> the product of the positive integers \(i<n\) with \((i, n)=1\)<br /></li>
+</ul>
+</li>
+
+<li><a id="orgb976a99"></a>Implementation<br />
+<div class="outline-text-5" id="text-orgb976a99">
+<div class="org-src-container">
+<pre class="src src-racket" id="org807d838">#lang sicp
+
+
+(define (square x) (* x x))
+
+(define (filtered-accumulate combiner null-value predicate term a next b)
+  (define (iter x acc)
+    (cond ((&gt; x b) acc)
+	  ((predicate x)
+	   (iter (next x)
+		 (combiner acc (term x))))
+	  (else
+	   (iter (next x)
+		 acc))))
+  (iter a null-value))
+
+
+(define (prime? n)
+
+  (define (expmod b e m)
+    (cond ((zero? e) 1)
+	  ((even? e)
+	   (remainder (square (expmod b (/ e 2) m))
+		      m))
+	  (else
+	   (remainder (* b (expmod b (- e 1) m))
+		      m))))
+
+  (define (fermat-test n)
+    (define (try-it a)
+      (= (expmod a n n) a))
+    (try-it (+ 1 (random (- n 1)))))
+
+  (define (iter-fermat-test count)
+    (cond ((zero? count) #t)
+	  ((fermat-test n) (iter-fermat-test (dec count)))
+	  (else #f)))
+  (iter-fermat-test 5))
+
+(define (gcd a b)
+  (if (zero? b)
+      a
+      (gcd b (remainder a b))))
+
+
+(define (sum-prime-squares a b)
+  (filtered-accumulate + 0 prime? square a inc b))
+
+;; 2^2 + 3^2 + 5^2 + 7^2 = 87
+(sum-prime-squares 2 10)
+
+(define (product-coprimes-and-lt-n n)
+  (define (coprime? x)
+    (= (gcd n x) 1))
+  (filtered-accumulate * 1 coprime? identity 2 inc n))
+
+;;3*7*9 = 189
+(product-coprimes-and-lt-n 10)
+</pre>
+</div>
+
+<pre class="example">
+87
+189
+</pre>
+</div>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgdb97bec" class="outline-3">
+<h3 id="orgdb97bec">1.3.2. Constructing Procedures Using <code>lambda</code></h3>
+<div class="outline-text-3" id="text-orgdb97bec">
+<p>
+Argument for <code>lambdas</code> is "seems terribly awkward" (p.62):
+</p>
+
+<blockquote>
+<p>
+In using <code>sum</code> as in section 1.3.1, it seems terribly awkward to have to define trivial procedures such as <code>pi-term</code> and <code>pi-next</code> just so we can use them as arguments to our higher-order procedure.
+</p>
+</blockquote>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (accumulate combiner null-value term a next b)
+  (if (&gt; a b)
+      null-value
+      (combiner (term a)
+		(accumulate combiner null-value term (next a) next b))))
+
+(define (accumulate-iter combiner null-value term a next b)
+  (define (iter x acc)
+    (if (&gt; x b)
+	acc
+	(iter (next x)
+	      (combiner (term x)
+			acc))))
+  (iter a null-value))
+
+(define (sum term a next b)
+  (accumulate-iter + 0 term a next b))
+
+(define (product term a next b)
+  (accumulate-iter * 1 term a next b))
+
+(sum identity 1 inc 10)
+(product identity 1 inc 6)
+
+(define (pi-sum a b)
+  (sum (lambda (x) (/ 1.0 (* x (+ x 2))))
+       a
+       (lambda (x) (+ x 4))
+       b))
+
+(define (integral f a b dx)
+  (* (sum f
+	  (+ a (/ dx 2.0))
+	  (lambda (x) (+ x dx))
+	  b)
+     dx))
+
+(integral (lambda (x) (/ 1 x)) 1 2.718 0.001)
+</pre>
+</div>
+
+<pre class="example">
+55
+720
+0.9998962797024724
+</pre>
+</div>
+
+<div id="outline-container-orgf17992d" class="outline-4">
+<h4 id="orgf17992d">Using <code>let</code> to create local variables</h4>
+<div class="outline-text-4" id="text-orgf17992d">
+<div class="org-src-container">
+<pre class="src src-racket">(define (f x y)
+  (let ((a (+ 1 (* x y)))
+	(b (- 1 y)))
+    (+ (* x (square a))
+       (* y b)
+       (* a b))))
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgeb65c3a" class="outline-4">
+<h4 id="orgeb65c3a">Exercise 1.34 - (f f)</h4>
+<div class="outline-text-4" id="text-orgeb65c3a">
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (square x) (* x x))
+
+(define (f g)
+  (g 2))
+
+(f square)
+(f (lambda (x) (+ 4 x)))
+(f f)
+</pre>
+</div>
+
+<pre class="example">
+application: not a procedure;
+ expected a procedure that can be applied to arguments
+  given: 2
+  context...:
+   body of "/var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-Feglcv/ob-racketa7cf5P.rkt"
+4
+6
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga5b9451" class="outline-3">
+<h3 id="orga5b9451">1.3.3. Procedures as General Methods</h3>
+<div class="outline-text-3" id="text-orga5b9451">
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (close-enough? x y)
+  (&lt; (abs (- x y)) 0.0001))
+
+(define (average a b) (/ (+ a b) 2))
+
+(define (search f neg-point pos-point)
+  (let ((midpoint (average neg-point pos-point)))
+    (if (close-enough? neg-point pos-point)
+	midpoint
+	(let ((test-value (f midpoint)))
+	  (cond ((positive? test-value)
+		 (search f neg-point midpoint))
+		((negative? test-value)
+		 (search f midpoint pos-point))
+		(else midpoint))))))
+
+(define (half-interval-method f a b)
+  (let ((a-value (f a))
+	(b-value (f b)))
+    (cond ((and (negative? a-value) (positive? b-value))
+	   (search f a b))
+	  ((and (negative? b-value) (positive? a-value))
+	   (search f b a))
+	  (else
+	   (error "Values are not of opposite sign" a b)))))
+
+(half-interval-method (lambda (x) (* x x x)) 1 2)
+</pre>
+</div>
+
+<pre class="example">
+Values are not of opposite sign 1 2
+  context...:
+   body of "/var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-D5Pbj3/ob-racketQkbnoU.rkt"
+</pre>
+</div>
+
+<div id="outline-container-org0bdb44c" class="outline-4">
+<h4 id="org0bdb44c">Finding fixed points of functions</h4>
+<div class="outline-text-4" id="text-org0bdb44c">
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define tolerance 0.000001)
+(define (average a b) (/ (+ a b) 2))
+
+(define (fixed-point f first-guess)
+  (define (close-enough? v1 v2)
+    (&lt; (abs (- v1 v2)) tolerance))
+
+  (define (try guess)
+    (let ((next (f guess)))
+      (if (close-enough? guess next)
+	  next
+	  (try next))))
+  (try first-guess))
+
+(fixed-point cos 1.0)
+
+(define (sqrt x)
+  (fixed-point (lambda (y) (average y (/ x y)))
+	       1.0))
+(sqrt 2.0)
+</pre>
+</div>
+
+<pre class="example">
+0.7390855263619245
+1.414213562373095
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgf2b8a16" class="outline-4">
+<h4 id="orgf2b8a16">Exercise 1.35 - \(\phi\) is a fixed point of of \(x \mapsto 1 + 1/x\)</h4>
+<div class="outline-text-4" id="text-orgf2b8a16">
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (fixed-point f x0)
+
+  (define (close-enough? x1 x2)
+    (&lt; (abs (- x1 x2)) 0.00001))
+
+  (define (try x1)
+    (let ((x2 (f x1)))
+      (if (close-enough? x1 x2)
+	  x2
+	  (try x2))))
+
+  (try x0))
+
+(define (sqrt x)
+  ;; find such y, that [y^2 = x] &lt;=&gt;  [y = x/y] &lt;=&gt; [y + y = y + x/y] &lt;=&gt; [y = (y+x/y)/2]
+  (fixed-point (lambda (y) (/ (+ y
+				 (/ x y))
+			      2))
+	       1))
+
+(sqrt 2.0)
+
+(define fp (fixed-point (lambda (x) (+ 1 (/ 1 x)))
+			1.0))
+fp
+
+;; look, they are very close:
+(abs (- fp
+	(/ (+ 1 (sqrt 5.0))
+	   2)))
+</pre>
+</div>
+
+<pre class="example">
+1.4142135623746899
+1.6180327868852458
+1.2018647432832097e-6
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-org598f719" class="outline-4">
+<h4 id="org598f719">Exercise 1.36 - Solve \(x^x = 1000\)</h4>
+<div class="outline-text-4" id="text-org598f719">
+</div>
+<ul class="org-ul">
+<li><a id="orgd5479eb"></a><span class="todo TODO">TODO</span> MOdify <code>fixed-point</code> to display the sequence of approximations<br />
+<div class="outline-text-5" id="text-orgd5479eb">
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (fixed-point f x0)
+
+  (define (close-enough? x1 x2)
+    (&lt; (abs (- x1 x2)) 0.00001))
+
+  (define (try x1)
+    (let ((x2 (f x1)))
+      (display x2) (newline)
+      (if (close-enough? x1 x2)
+	  x2
+	  (try x2))))
+
+  (display x0) (newline)
+  (try x0))
+
+;; (define (sqrt x)
+;;   (fixed-point (lambda (y) (/ (+ y
+;; 				     (/ x y))
+;; 				  2))
+;; 		   1))
+;; 
+;; (sqrt 2.0)
+
+(fixed-point
+ (lambda (x)
+   (/ (log 1000) (log x)))
+ 1.01)
+
+(fixed-point
+ (lambda (x)
+   (/ (+ x
+	 (/ (log 1000) (log x)))
+      2))
+ 1.01)
+
+</pre>
+</div>
+
+<pre class="example" id="org8cfe2db">
+1.01
+694.2236776762827
+1.055780612460517
+127.26055743910173
+1.4253854739914937
+19.489083462500002
+2.3259574873698248
+8.18326648626343
+3.2861346035282715
+5.806241667198841
+3.92724075378532
+5.049760968410063
+4.2657819856380215
+4.76191492154257
+4.426204339358592
+4.64373670252144
+4.498644193048986
+4.593606360935328
+4.530669621326673
+4.572038912567034
+4.544697660392501
+4.5627029678822515
+4.550817635030553
+4.558650925618256
+4.5534829030241575
+4.5568901976417955
+4.554642750539031
+4.556124726000178
+4.555147315191813
+4.555791866477423
+4.555366782622978
+4.5556471112691534
+4.5554622370513895
+4.555584156970991
+4.555503752547114
+4.555556777541618
+4.555521808450369
+4.555544869871394
+4.555529661276244
+4.5555396910529815
+4.555533076598918
+4.555533076598918
+1.01
+347.61683883814135
+174.39871477317138
+87.86853920133174
+44.70594066829248
+23.261860055041023
+12.728508854591553
+7.721993845962085
+5.550700917830408
+4.790537371352316
+4.599905313618908
+4.563253309499359
+4.5568546876839555
+4.555760420225574
+4.555573969263438
+4.555542220132647
+4.5555368144275885
+4.5555368144275885
+</pre>
+
+<p>
+Wow! It takes 34 iterations to converge without average dampoing and only 9 with, if started from \(2.0\).
+</p>
+</div>
+</li>
+</ul>
+</div>
+
+
+<div id="outline-container-orgb2f053b" class="outline-4">
+<h4 id="orgb2f053b">Exercise 1.37 - Finite continued fraction</h4>
+<div class="outline-text-4" id="text-orgb2f053b">
+</div>
+<ul class="org-ul">
+<li><a id="orgbd8af9c"></a><span class="done DONE">DONE</span> Write <code>cont-frac</code> procedure<br /></li>
+<li><a id="org6c3818f"></a><span class="done DONE">DONE</span> Write both iterative and recursive process<br />
+<div class="outline-text-5" id="text-org6c3818f">
+<div class="org-src-container">
+<pre class="src src-racket" id="orgc11bcf1">#lang sicp
+
+(define (cont-frac-rec n d k)
+  (define (rec i)
+    (if (= i k)
+	(/ (n i) (d i))
+	(/ (n i) (+ (d i) (rec (inc i))))))
+  (rec 1))
+
+(define (cont-frac n d k)
+  (define (iter i so-far)
+    (if (zero? i)
+	so-far
+	(iter (dec i)
+	      (/ (n i) (+ (d i) so-far)))))
+  (iter k 0))
+</pre>
+</div>
+</div>
+</li>
+
+<li><a id="org03a2f7e"></a><span class="done DONE">DONE</span> Test \(1/\phi\) approximation<br /></li>
+<li><a id="org16290ae"></a><span class="done DONE">DONE</span> How many iterations needed for approximation to be accurate to 4 decimal places<br />
+<div class="outline-text-5" id="text-org16290ae">
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (cont-frac-rec n d k)
+  (define (rec i)
+    (if (= i k)
+	(/ (n i) (d i))
+	(/ (n i) (+ (d i) (rec (inc i))))))
+  (rec 1))
+
+(define (cont-frac n d k)
+  (define (iter i so-far)
+    (if (zero? i)
+	so-far
+	(iter (dec i)
+	      (/ (n i) (+ (d i) so-far)))))
+  (iter k 0))
+
+(define (f k)
+  (cont-frac
+   (lambda (i) 1.0)
+   (lambda (i) 1.0)
+   k))
+
+(define (f2 k)
+  (cont-frac-rec
+   (lambda (i) 1.0)
+   (lambda (i) 1.0)
+   k))
+
+(define phi-recip 0.6180339887498948)
+
+(define (find-k k)
+  (let ((r (f k)))
+    (if (&lt; (abs (- r phi-recip))
+	   0.00001)
+	k
+	(find-k (inc k)))))
+phi-recip
+(define k00001 (find-k 1))
+k00001
+(f k00001)
+(f2 k00001)
+</pre>
+</div>
+
+<pre class="example">
+0.6180339887498948
+12
+0.6180257510729613
+0.6180257510729613
+</pre>
+</div>
+</li>
+</ul>
+</div>
+
+<div id="outline-container-orgb059ed7" class="outline-4">
+<h4 id="orgb059ed7">Exercise 1.38 - Euler's continued fraction approximation for \(e - 2\)</h4>
+<div class="outline-text-4" id="text-orgb059ed7">
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (cont-frac-rec n d k)
+  (define (rec i)
+    (if (= i k)
+	(/ (n i) (d i))
+	(/ (n i) (+ (d i) (rec (inc i))))))
+  (rec 1))
+
+(define (cont-frac n d k)
+  (define (iter i so-far)
+    (if (zero? i)
+	so-far
+	(iter (dec i)
+	      (/ (n i) (+ (d i) so-far)))))
+  (iter k 0))
+
+(define (e-2-approx k)
+  (cont-frac (lambda (i) 1.0)
+	     (lambda (i)
+	       (let ((v (if (= (remainder i 3) 2)
+			    (* 2.0
+			       (+ 1
+				  (floor (/ i 3))))
+			    1.0)))
+		 v)
+	       )
+	     k))
+
+(define e (+ 2 (e-2-approx 10)))
+e
+</pre>
+</div>
+
+<pre class="example">
+2.7182817182817183
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org6f001cc" class="outline-4">
+<h4 id="org6f001cc"><span class="todo TODO">TODO</span> Exercise 1.39 - Lambert's continued fraction approximation for \(\tan{x}\)</h4>
+<div class="outline-text-4" id="text-org6f001cc">
+<p>
+While it's possible to use existing <code>cont-frac</code> with carefully chosen <code>n</code> and <code>d</code>,
+this solution implements everything from scratch with a different idea:
+</p>
+
+<p>
+<code>(expand step k)</code> function applies <code>step</code> for <code>k</code> iterations counting down.
+For each iteration <code>i</code> it calls <code>(step i expanded)</code> where <code>expanded</code> is the
+intermediary result of expansion from <code>k</code> to <code>i+1</code> inclusive.
+</p>
+
+<p>
+<code>tan-cf</code> then can be implemented with <code>expand</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+;; reimlemented just for practice
+(define (square x) (* x x))
+(define (pow b p)
+  (cond ((zero? p) 1)
+	((even? p) (square (pow b (/ p 2))))
+	(else (* b (pow b (- p 1))))))
+
+(define (expand step k)
+  (define (iter i expanded)
+    (if (zero? i)
+	expanded
+	(iter (dec i) (step i expanded))))
+  (iter k 0))
+
+(define (tan-cf x k)
+  (define (bounded x b)
+    (if (&gt; x b) b x))
+  (define (n i)
+    (pow x (bounded i 2)))
+  (define (d i)
+    (- (* 2 i) 1))
+  (define (step i so-far)
+    (/ (n i) (- (d i) so-far)))
+  (expand step k))
+
+(define PI 3.141592653589793)
+(tan-cf (/ PI 4) 10)
+(tan-cf (/ PI 3) 10)
+(tan-cf (/ PI 6) 10)
+(tan-cf (/ (* 3 PI) 4) 10)
+(tan-cf (/ (* 99 PI) 200) 10)
+(display "----") (newline)
+(tan-cf (/ PI 4) 5)
+(tan-cf (/ PI 3) 5)
+(tan-cf (/ PI 6) 5)
+(tan-cf (/ (* 3 PI) 4) 5)
+(tan-cf (/ (* 99 PI) 200) 5)
+
+</pre>
+</div>
+
+<pre class="example" id="org47dc4dc">
+1.0
+1.732050807568877
+0.5773502691896257
+-1.0000000000111287
+63.656741162867455
+----
+0.999999986526355
+1.7320501979592633
+0.5773502690823613
+-1.0014725253285737
+63.61463501121894
+</pre>
+
+<p>
+And results are incredibly close to the real values, after only \(10\) iterations.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgbab13bd" class="outline-3">
+<h3 id="orgbab13bd">1.3.4. Procedures as Returned Values</h3>
+<div class="outline-text-3" id="text-orgbab13bd">
+<p>
+Average dumping is a useful general technique in itself.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+(define tolerance 0.00001)
+(define (fixed-point f first-guess)
+  (define (close-enough? v1 v2)
+    (&lt; (abs (- v1 v2)) tolerance))
+
+  (define (try guess)
+    (let ((next (f guess)))
+      (if (close-enough? guess next)
+	  next
+	  (try next))))
+  (try first-guess))
+
+
+(define (average a b) (/ (+ a b) 2))
+(define (square x) (* x x))
+(define (average-damp f)
+  (lambda (x) (average x (f x))))
+
+((average-damp square) 10)
+
+(define (sqrt x)
+  (fixed-point (average-damp (lambda (y) (/ x y)))
+	       1.0))
+
+(define (cube-root x)
+  (fixed-point (average-damp (lambda (y) (/ x (square y))))
+	       1.0))
+
+(sqrt 2)
+(cube-root 2)
+</pre>
+</div>
+
+<pre class="example">
+55
+1.4142135623746899
+1.259923236422975
+</pre>
+</div>
+
+<div id="outline-container-org8ec8ebd" class="outline-4">
+<h4 id="org8ec8ebd">Newton's method</h4>
+<div class="outline-text-4" id="text-org8ec8ebd">
+<p>
+If \(x \mapsto g(x)\) is a differentiable function, then a solution of the equation \(g(x) = 0\) is a fixed point of the function \(x \mapsto f(x)\), where \[ f(x) = x - \frac{g(x)}{Dg(x)} \] and \(Dg(x)\) is the derivative of \(g\) evaluated at \(x\).
+</p>
+
+<p>
+Newton's method is the use of the fixed-point method to approximate a solution of the equation by finding the fixed point of \(f\).
+</p>
+
+<p>
+"Derivative" transforms a function into another function. If \(g\) is a function and \(dx\) is a small number, the the derivative \(Dg\) of \(g\) is the function whose value at any number x is given by \[ Dg(x) = \frac{g(x+dx) - g(x)}{dx} \]
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define dx 0.00001)
+(define tolerance 0.00001)
+(define (square x) (* x x))
+
+(define (fixed-point f first-guess)
+  (define (close-enough? v1 v2)
+    (&lt; (abs (- v1 v2)) tolerance))
+
+  (define (try guess)
+    (let ((next (f guess)))
+      (if (close-enough? guess next)
+	  next
+	  (try next))))
+  (try first-guess))
+
+(define (deriv g)
+  (lambda (x)
+    (/ (- (g (+ x dx)) (g x))
+       dx)))
+
+(define (newton-transform g)
+  (lambda (x)
+    (- x (/ (g x) ((deriv g) x)))))
+
+(define (newtons-method g guess)
+  (fixed-point (newton-transform g) guess))
+
+(define (sqrt x)
+  (newtons-method (lambda (y) (- (square y) x))
+		  1.0))
+
+(define (cube-root x)
+  (newtons-method (lambda (y) (- (* y y y) x))
+		  1.0))
+
+(sqrt 2)
+(cube-root 2)
+</pre>
+</div>
+
+
+<pre class="example">
+1.4142135623822438
+1.259921049894875
+</pre>
+
+
+<p>
+Here's the relevant bit of Newton transformation where fixed point is located:
+</p>
+<div class="org-center">
+
+<div id="org7f5c386" class="figure">
+<p><img src="./images/newton_transformation_sqrt.png" alt="newton_transformation_sqrt.png" width="100%" />
+</p>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5cd4526" class="outline-4">
+<h4 id="org5cd4526">Abstractions and first-class procedures</h4>
+<div class="outline-text-4" id="text-org5cd4526">
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define (fixed-point-of-transform g transform guess)
+  (fixed-point (transform g) guess))
+
+
+;; finding sqrt with average damping
+(define (sqrt-a x)
+  (fixed-point-of-transform (lambda (y) (/ x y))
+			    average-damp
+			    1.0))
+
+;; finding sqrt with Newton's transform
+(define (sqrt-n x)
+  (fixed-point-of-transform (lambda (y) (- (square y) x))
+			    newton-transform
+			    1.0))
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org50fa320" class="outline-4">
+<h4 id="org50fa320">Exercise 1.40</h4>
+<div class="outline-text-4" id="text-org50fa320">
+<p>
+Define a procedure <code>cubic</code> that can be used together with the <code>newtons-method</code> procedures in expressions of the form <code>(newtons-method (cubic a b c) 1)</code> to approximate zeros of the cubic \(x^3+ax^2+c\)
+</p>
+
+
+<div class="org-src-container">
+<pre class="src src-racket">#lang sicp
+
+(define dx 0.00001)
+(define tolerance 0.00001)
+
+(define (fixed-point f x0)
+  (define (try x1)
+    (let ((x2 (f x1)))
+      (if (&lt; (abs (- x2 x1)) tolerance)
+	  x2
+	  (try x2))))
+  (try x0))
+
+(define (deriv g)
+  (lambda (x) (/ (- (g (+ x dx))
+		    (g x))
+		 dx)))
+
+(define (newton-transform g)
+  (lambda (x) (- x (/ (g x) ((deriv g) x)))))
+
+(define (newton-method g guess)
+  (fixed-point (newton-transform g) guess))
+
+(define (cubic a b c)
+  (lambda (x)
+    (+ (* x x x)
+       (* a x x)
+       (* b x)
+       c)))
+
+(newton-method (cubic 1 1 1) 1.0)
+(newton-method (cubic 2 3 1) 1.0)
+(newton-method (cubic 3 -2 -1) 1.0)
+(newton-method (cubic 3 -2 -1) -1.0)
+
+</pre>
+</div>
+
+
+<div id="orge288f7b" class="figure">
+<p><img src="./images/cubic.1.1.1.png" alt="cubic.1.1.1.png" width="100%" />
+</p>
+</div>
+
+<div id="orgd6b2612" class="figure">
+<p><img src="./images/cubic.2.3.1.png" alt="cubic.2.3.1.png" width="100%" />
+</p>
+</div>
+
+<div id="org79d86c2" class="figure">
+<p><img src="./images/cubic.3.-2.-1.png" alt="cubic.3.-2.-1.png" width="100%" />
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: LMG</p>
+<p class="date">Created: 2023-05-25 Thu 12:15</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
