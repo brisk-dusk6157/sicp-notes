@@ -1,0 +1,545 @@
+#+PROPERTY: header-args  :cache yes
+#+PROPERTY: header-args+  :exports code
+#+PROPERTY: header-args+  :noweb strip-export
+#+TITLE: 2.4 Multiple Representations for Abstract Data
+#+options: num:nil
+** Introduction
+
+Data objects may have several representations, each of which might be useful for different use-cases.
+
+#+begin_quote
+... programming systems are often designed by many people working over extended periods of time, subject to requirements that change over time. In such an environment, it is simply not possible for everyone to agree in advance on choices of data representations. So in addition to the data-abstraction barriers that isolate representation from use, we need abstraction barriers that isolate different design choices from each other  and permit different choices to coexist in a single program.
+#+end_quote
+
+Way to cope with data that may be represented in different ways is to construct /generic procedures/ - those can operate on data that may be represented in more than one way. A technique for building generic procedures is to work in terms of data objects that have /type tags/, i.e. include explicit information about how they are to be processed.
+
+/Data-directed/ programming - a powerful and convenient implementation strategy for additively assembling systems with generic operations.
+
+** 2.4.1 Representations for Complex Numbers
+
+Unrealistic example for illustrative purposes.
+
+Complex numbers are natrually represented as ordered pairs. The set of complex numbers can be thought of as a two-dimensional space with two orthogonal axes, the "real" axis and the "imaginary" axis. From this point of view, the complex number $z=x+iy$ can be thought of as the point in the plane whose real coordinate is $x$ and whose imaginary coordinate is $y$.
+
+Addition of complex numbers reduces in this representation to addition of coordinates.
+
+When multyplyig complex numbers, it is more natural to think in terms of representing a complex number in polar form, as a magnitude and an angle. The product of two complex numbers is the vector obtained by stretching one complex number by the length of the other and then rotating it through the angle of the other.
+
+Two different representations for complex numbers are appropriate for different operations. From the viewpoint of someone writing a program that uses complex numbers, all operations on complex numbers should be available regardles of which representation is actually used to store data objects.
+
+Data-abstraction strategy: assume the operations on complex numbers are implemented in terms of four selectors: ~real-part~, ~imag-part~, ~magnitude~, and ~angle~. Also assume we have two procedures for constructing complex numbers: ~make-from-real-imag~ and ~make-from-mag-ang~.
+These procedures have the property that, for any complex number ~z~, both ~(make-from-real-imag (real-part z) (imag-part z))~ and ~(make-from-mag-ang (magnitude z) (angle z))~ produce complex numbers that are equal to ~z~.
+
+With these in place, implement operations on arithmetic numbers:
+
+#+name: complex-numbers-operations
+#+begin_src racket
+  (define (add-complex z1 z2)
+    (make-from-real-imag
+     (+ (real-part z1) (real-part z2))
+     (+ (imag-part z1) (imag-part z2))))
+
+  (define (sub-complex z1 z2)
+    (make-from-real-imag
+     (- (real-part z1) (real-part z2))
+     (- (imag-part z1) (imag-part z2))))
+
+  (define (mul-complex z1 z2)
+    (make-from-mag-ang
+     (* (magnitude z1) (magnitude z2))
+     (+ (angle z1) (angle z2))))
+
+  (define (div-complex z1 z2)
+    (make-from-mag-ang
+     (/ (magnitude z1) (magnitude z2))
+     (- (angle z1) (angle z2))))
+#+end_src
+
+#+name: complex-numbers-interface-rectangular
+#+begin_src racket
+  (define (real-part z) (car z))
+  (define (imag-part z) (cdr z))
+  (define (magnitude z)
+    (sqrt (+ (square (real-part z))
+	     (square (imag-part z)))))
+  (define (angle z)
+    (atan (imag-part z) (real-part z)))
+
+  (define (make-from-real-image x y) (cons x y))
+
+  (define (make-from-mag-ang r a)
+    (cons (* r (cos a)) (* r (sin a))))
+#+end_src
+
+#+name: complex-numbers-interface-polar
+#+begin_src racket
+  (define (real-part z)
+    (* (magnitude z) (cos (angle z))))
+  (define (imag-part z)
+    (* (magnitude z) (sin (angle z))))
+  (define (magnitude z) (car z))
+  (define (angle z) (cdr z))
+
+  (define (make-from-real-image x y)
+    (cons (sqrt (+ (square x) (square y)))
+	  (atan y x)))
+
+  (define (make-from-mag-ang r a) (cons r a))
+#+end_src
+
+Data abstraction ensures that the same implementation of operations works with either rectangular or polar  
+
+** 2.4.2 Tagged data
+
+Using "the principle of least commitment" we can use either of representations, delaying the choice of concrete representation to the last moment.
+Even more extreme version of the principle is to allow to use both representations in the user code. The problem is it's impossible to know whether (3 5) is a rectangular or polar representation. This problem can be solved by including an explicit /type tag/ into the representation, e.g. ~rectangular~ or ~polar~. Then when we need to manipulate a complex number we can use that tag to decide which selector to apply.
+
+In order to manipulate tagged data, we will assume that we have procedures ~type-tag~ and ~contents~ that extract from a data object that tag and acutal contents. We will also postulate the procedure ~attach-tag~ that takes a tag and contents and produces tagged data object.
+
+#+name: type-tags-interface
+#+begin_src racket
+  (define (attach-tag type-tag contents)
+    (cons type-tag contents))
+
+  (define (type-tag datum)
+    (if (pair? datum)
+	(car datum)
+	(error "Bad tagged datum -- TYPE-ARG" datum)))
+
+  (define (contents datum)
+    (if (pair? datum)
+	(cdr datum)
+	(error "Bad tagged datum -- CONTENTS" datum)))
+#+end_src
+
+#+name: complex-number-tag-queries
+#+begin_src racket
+  (define (rectangular? z)
+    (eq? (type-tag z) 'rectangular))
+
+  (define (polar? z)
+    (eq? (type-tag z) 'polar))
+#+end_src
+
+Using tag queries, interface implementations can be udpated to allow coexistence:
+
+#+begin_src python
+  def real_part_rectangular(z):
+      return car(z)
+
+  def sum(n):
+      s = 0
+      for i in range(n):
+	  s += i
+      return s
+#+end_src
+
+
+#+begin_src racket
+  (define (sum n)
+    (if (= n 0)
+	0
+	(+ n (sum (- n 1)))))
+
+  (define (++ xs ys)
+    (if (null? xs)
+	ys
+	(cons (first xs)
+	      (++ (rest xs) ys))))
+#+end_src
+
+#+name: complex-numbers-interface
+#+begin_src racket
+  (define (real-part-rectangular z) (car z))
+  (define (imag-part-rectangular z) (cdr z))
+  (define (magnitude-rectangular z)
+    (sqrt (+ (square (real-part-rectangular z))
+	     (square (imag-part-rectangular z)))))
+  (define (angle-rectangular z)
+    (atan (imag-part-rectangular z) (real-part-rectangular z)))
+
+  (define (make-from-real-image-rectangular x y)
+    (attach-tag 'rectangular (cons x y)))
+
+  (define (make-from-mag-ang-rectangular r a)
+    (attach-tag 'rectangular (cons (* r (cos a)) (* r (sin a)))))
+
+
+  (define (real-part-polar z)
+    (* (magnitude-polar z) (cos (angle-polar z))))
+  (define (imag-part-polar z)
+    (* (magnitude-polar z) (sin (angle-polar z))))
+  (define (magnitude-polar z) (car z))
+  (define (angle-polar z) (cdr z))
+
+  (define (make-from-real-image-polar x y)
+    (attach-tag 'polar (cons (sqrt (+ (square x) (square y)))
+	   (atan y x))))
+
+  (define (make-from-mag-ang-polar r a)
+    (attach-tag 'polar (cons r a)))
+
+
+  (define (real-part z)
+    (cond ((rectangular? z)
+	   (real-part-rectangular (contents z)))
+	  ((polar? z)
+	   (real-part-polar (contents z)))
+	  (else
+	   (error "Unknown type -- REAL-PART" z))))
+  (define (imag-part z)
+    (cond ((rectangular? z)
+	   (imag-part-rectangular (contents z)))
+	  ((polar? z)
+	   (imag-part-polar (contents z)))
+	  (else
+	   (error "Unknown type -- IMAG-PART" z))))
+  (define (magnitude z)
+    (cond ((rectangular? z)
+	   (magnitude-rectangular (contents z)))
+	  ((polar? z)
+	   (magnitude-polar (contents z)))
+	  (else
+	   (error "Unknown type -- MAGNITUDE" z))))
+  (define (angle z)
+    (cond ((rectangular? z)
+	   (angle-rectangular (contents z)))
+	  ((polar? z)
+	   (angle-polar (contents z)))
+	  (else
+	   (error "Unknown type -- ANGLE" z))))
+
+  (define (make-from-real-imag x y)
+    (make-from-real-image-rectangular x y))
+
+  (define (make-from-mag-ang r a)
+    (make-from-mag-ang-polar r a))
+#+end_src
+
+
+Note that the implementations for polar and rectangulare representations are relatively independent, and do not intersect in naming space.
+
+Note that the constructors of concrete implementations produce tagged data, but the selectors operate on untagged data. Routing layer calls ~contents~ before passing representation to selectors.
+
+** 2.4.3 Data-Directed Programming and Additivity
+
+/Dispatching on type/ - general strategy of selecting a specific procedure based on the type of the datum.
+
+Weaknesses of implementation in 2.4.2:
+- generic interface procedures must know about implementation procedures
+- name uniqueness should be maintaned
+
+Underlying issue can be fixed by making the implementation of generic interfaces /additive/.
+
+/Data-directed programming/ rationale: set of generic functions for a set of possible types can be represented as a 2D table - for each type there should be an implementation for each function.
+E.g. for the selectors of complex numbers:
+
+|           | Polar           | Rectangular           |
+| real-part | real-part-polar | real-part-rectangular |
+| imag-part | imag-part-polar | imag-part-rectangular |
+| magnitude | magnitude-polar | magnitude-rectangular |
+| angle     | angle-polar     | angle-rectangular     |
+
+/Data-directed programming/ is the technique of designing programs to work with such a table directly.
+
+To implement, assume we have ~(put <op> <type> <item>)~ that will put an item into a table for given op and type, and ~(get <op> <type>)~ that will fetch corresponding item, or return false if not found.
+
+#+name: rectangular-package
+#+begin_src racket
+  (define (install-rectangular-package)
+    (define (real-part z) (car z))
+    (define (imag-part z) (cdr z))
+    (define (make-from-real-imag x y) (cons x y))
+    (define (magnitude z)
+      (sqrt (+ (square (real-part z))
+	       (square (imag-part z)))))
+    (define (angle z)
+      (atan (imag-part z) (real-part z)))
+    (define (make-from-mag-ang r a)
+      (cons (* r (cos a)) (* r (sin a))))
+
+    (define (tag x) (attach-tag 'rectangular x))
+    (put 'real-part '(rectangular) real-part)
+    (put 'imag-part '(rectangular) imag-part)
+    (put 'magnitude '(rectangular) magnitude)
+    (put 'angle '(rectangular) angle)
+    (put 'make-from-real-imag 'rectangular
+	 (lambda (x y) (tag (make-from-real-imag x y))))
+    (put 'make-from-mag-ang 'rectangular
+	 (lambda (r a) (tag (make-from-mag-ang r a)))))
+#+end_src
+
+#+name: polar-package
+#+begin_src racket
+  (define (install-polar-package)
+    (define (real-part z)
+      (* (magnitude z) (cos (angle z))))
+    (define (imag-part z)
+      (* (magnitude z) (sin (angle z))))
+    (define (make-from-real-imag x y)
+      (cons (sqrt (+ (square x) (square y)))
+	    (atan y x)))
+    (define (magnitude z) (car z))
+    (define (angle z) (cdr z))
+    (define (make-from-mag-ang r a)
+      (cons r a))
+
+    (define (tag x) (attach-tag 'polar x))
+    (put 'real-part '(polar) real-part)
+    (put 'imag-part '(polar) imag-part)
+    (put 'magnitude '(polar) magnitude)
+    (put 'angle '(polar) angle)
+    (put 'make-from-real-imag 'polar
+	 (lambda (x y) (tag (make-from-real-imag x y))))
+    (put 'make-from-mag-ang 'polar
+	 (lambda (r a) (tag (make-from-mag-ang r a)))))
+#+end_src
+
+#+begin_src racket
+  (define (apply-generic op . args)
+    (let ((type-tags (map type-tag args)))
+      (let ((proc (get op type-tags)))
+	(if proc
+	    (apply proc (map contents args))
+	    (error
+	     "No method for these types -- APPLY-GENERIC"
+	     (list op type-tags))))))
+
+  (define (real-part z) (apply-generic 'real-part z))
+  (define (imag-part z) (apply-generic 'imag-part z))
+  (define (magnitude z) (apply-generic 'magnitude z))
+  (define (angle z) (apply-generic 'angle z))
+
+  (define (make-from-real-imag x y)
+    ((get 'make-from-real-imag 'rectangular) x y))
+
+  (define (make-from-mag-ang r a)
+    ((get 'make-from-mag-ang 'polar) r a))
+#+end_src
+
+*** Exercise 2.73 - derivation with data-directed style
+
+We can regard this program as performing dispatch on the type of the expression to be differentiated. In this case, type tag is the operator symbol (e.g. '+ or '*) and the operation to be performed is 'deriv:
+#+name: ex2.73-deriv-data-directed
+#+begin_src racket
+  (define (deriv exp var)
+    (cond ((number? exp) 0)
+	  ((variable? exp) (if (same-variable? exp var) 1 0))
+	  (else
+	   ((get 'deriv (operator exp)) (operands exp) var))))
+
+  (define (operator exp) (car exp))
+  (define (operands exp) (cdr exp))
+#+end_src
+ 
+**** a. Explain what was done above
+Moved the derivation rules out into separate functions that should be registered with the dispatch table.
+
+Operation signature is ~(derive-<name> operands var)~.
+
+***** Why can't we assimilate the predicates ~number?~ and ~same-variable?~ into the data-directed dispatch?
+
+We can, with appropriate definitions for ~operator~ and ~operands~, e.g.:
+#+begin_src racket
+  (define (operator exp)
+    (cond ((number? exp) 'const)
+	  ((variable? exp) 'var)
+	  (else (car exp))))
+
+  (define (operands exp)
+    (cond ((or (number? exp) (variable? exp)) exp)
+	  (else (cdr exp))))
+#+end_src
+
+Or, with marking numbers and variables explicitly in expressions, as ~(const 10)~ and ~(var x)~.
+
+**** b. Write the procedures for derivatives of sums and products, and the auxiliary code required to install them in the table used by the program above
+
+#+begin_src racket
+  (define (deriv-sum operands var)
+    (apply make-sum
+	   (map (lambda (exp) (deriv exp var))
+		operands)))
+  (define (deriv-product operands var)
+    (if (not (= (length operands) 2))
+	(error "Expected exactly 2 operands -- DERIV-PRODUCT" operands)
+	(make-sum (make-product
+		   (car operands)
+		   (deriv (cadr operands) var))
+		  (make-product
+		   (deriv (car operands) var)
+		   (cadr operands)))))
+  (put 'deriv '+ deriv-sum)
+  (put 'deriv '* deriv-product)
+#+end_src
+
+**** c. Choose any additional differential rule that you like, such as the one for exponents, and install it in this data-directed system.
+
+#+begin_src racket
+  (define (deriv-exp operands var)
+    (make-product
+     (cadr operands)
+     (make-product
+      (make-exponentiation (car operands) (- (cadr operands) 1))
+      (deriv (car operands) var))))
+
+  (put 'deriv '** deriv-exp)
+#+end_src
+
+**** d. Indexing procedures
+
+#+begin_quote
+In this simple algebraic manipulator the type of an expression is the algebraic operator that binds it together. Suppose, however, we indexed procedures in the opposite way, so that the dispatch line in ~deriv~ looked like
+
+~((get (operator exp) 'deriv) (operands exp) var)~
+
+What corresponding changes to the derivative system are required?
+#+end_quote
+
+Swap first two arguments in all ~put~ calls.
+
+*** Exercise 2.74 - Data-directed programming exercise
+
+Company consists of a large number of independent divisions.
+Data structures vary from division to division.
+Headquarters need to query data, while maintaining existin autonomy of the divisions.
+
+Concrete example:
+Assume each division's personnel records consists of a single file, which contains a set of records keyed on employees' names.
+The structure of the set varies from division to division. Furthermore, each employee's record is itself a set (structured differently from division to division) that contains information keyed under identifiers such as ~address~ and ~salary~.
+
+**** a. Implement ~get-record~
+Retrieves a specified employee's record from a specified personnel file. The procedure should be applicable to any division's file.
+
+#+begin_src racket
+  ;; (define (get-record division employee)
+  ;;   (let ((div-get-records (get division 'get-records))
+  ;; 	     (div-get-record (get division 'get-record)))
+  ;;     (let ((records (div-get-records)))
+  ;;       (div-get-record records employee))))
+
+  ;; (define (get-record division employee)
+  ;;   (let ((div-get-record (get division 'get-record)))
+  ;;     (div-get-record employee)))
+
+  ;; (define (get-record division-file employee-name division)
+  ;;   (let ((div-get-record (get division 'get-record)))
+  ;;     (div-get-record division-file employee-name)))
+
+  (define (get-record employee-name division-file)
+    (let ((div-get-record (get (division division-file) 'get-record)))
+      (div-get-record division-file employee-name)))
+#+end_src
+
+***** Explain how the individual divisons' files should be structured. In particular, what type information must be supplied?
+
+~division-file~ should expose the division identifier, so that appropriate division's ~get-record~ function can be retrieved from the dispatch table.
+
+**** b. Implement ~get-salary~
+Returns the salary information from a given employee's record from any divison's personnel file.
+
+#+begin_src racket
+  ;; (define (get-salary division employee)
+  ;;   (let ((div-get-record-field (get division 'get-record-field)))
+  ;;     (get-record-field
+  ;;      (get-record division employee)
+  ;;      'salary)))
+
+  (define (get-salary record)
+    (let ((div-get-salary (get (division record) 'get-salary)))
+      (div-get-salary record)))
+#+end_src
+
+***** How should the record be structured in order to make this operation work?
+
+~record~ should expose the division identifier, so that appropriate division's ~get-salary~ implementation can be retrieved from the dispatch table.
+
+**** c. Implement ~find-employee-record~
+Search all divisions' files for the record of a given employee and return the record.
+
+#+begin_src racket
+  (define (find-employee-record employee-name division-files)
+    (if (null? division-files)
+	false
+	(let ((record (get-record employee-name (car division-files))))
+	  (if (not record)
+	      (find-employee-record employee-name (cdr division-files))
+	      record))))
+#+end_src
+
+**** d. When Insatiable takes over a new company, what changes must be made in order to incorporate the new personnel information into the central system
+
+- A new set of "adapter" functions should be implemented and registered with the dispatch table under the division identifier, such as:
+  - ~get-record~
+  - ~get-salary~
+  - ~find-employee-record~
+- new company file and record data structures to expose division identifier through the ~division~ selector
+
+
+*** Message passing
+
+The key idea of data-directed programming is to handle generic operations by dealing explicitely with operation-and-type tables. Style used in 2.4.2 decomposes the table into rows, each operation takes care of its own dispatching.
+
+An alternative implementation strategy is to decompose the table into columns and instead of using "intelligent operations" that dispatch on data types, to work with "intelligent data objects" that dispatch on operation names.
+
+#+begin_src racket
+  (define (make-from-real-imag x y)
+    (define (dispatch op)
+      (cond ((eq? op 'real-part) x)
+	    ((eq? op 'imag-part) y)
+	    ((eq? op 'magnitutde)
+	     (sqrt (+ (square x) (square y))))
+	    ((eq? op 'angle) (atan y x))
+	    (else
+	     (error "Unknown op -- MAKE-FROM-REAL-IMAG" op))))
+    dispatch)
+
+  (define (apply-generic op arg) (arg op))
+#+end_src
+
+This style of programming is called /message passing/ (data object receives requested operation as a "message").
+
+**** Exercise 2.75 - ~make-from-mag-ang~ in message passing style
+
+#+begin_src racket
+  (define (make-from-mag-ang r a)
+    (define (dispatch op)
+      (cond ((eq? op 'real-part)
+	     (* r (cos a)))
+	    ((eq? op 'imag-part)
+	     (* r (sin a)))
+	    ((eq? op 'magnitutde) r)
+	    ((eq? op 'angle) a)
+	    (else
+	     (error "Unknown op -- MAKE-FROM-MAG-ANG" op))))
+    dispatch)
+#+end_src
+
+**** Exercise 2.76 - Analysis of required system changes
+
+Changes that must be made to a system in order to add new types or new operations for each of the three strategies:
+- generic operations with explicit dispatch
+  - new type T
+    - implement the set of concrete opertaions for type T
+    - update every generic operation with new dispatch branch for type T
+    - add new "generic" constructor for type T
+    - implement constructor for each type S with T_constructure signature
+  - new operation P
+    - for every type T, add a concrete implementation for P_T
+    - add a new generic operation P that dispatches to concrete operation based on type
+- data-directed programming
+  - new type T
+    - implement the set of concrete operations for type T and register them in the dispatch table
+    - add a new "generic" constructor for type T      
+    - for every type T, implement constructors with the T_constructor signature
+  - new operation P
+    - for every type T, add a concrete operation P_T and register it with the dispatch table as 'P
+    - add a new generic opertaion P that simply searches 'P in the dispatch table to locate implementation
+- message passing
+  - new type T
+    - implement the set of concrete operations for type T under T_constructor
+  - new operation P
+    - for every type T, add a concrete implementation for P_T (it will automatically be available via apply-generic through 'P)
+
+When new types are added often message passing works best.
+When new operations are added often, either message passing or data-directed programming works.

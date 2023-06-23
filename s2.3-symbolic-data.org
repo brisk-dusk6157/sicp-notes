@@ -131,15 +131,15 @@ Quoting lists:
 
 ~(car ''abracadabra)~ is the same as ~(car '(quote abracadabra))~ and this should evaluate to ~quote~.
 
-** 2.3.2 example: symbolic differentiation
+** 2.3.2 Example: symbolic differentiation
 
-strategy of data abstraction - first define a differentiation algorithm that operates on abstract objects suchs as sums, products and variables, and only afterwards address the representation problem.
+Strategy of data abstraction - first define a differentiation algorithm that operates on abstract objects suchs as sums, products and variables, and only afterwards address the representation problem.
 
-*** the differentiation program with abstract data
+*** The differentiation program with abstract data
 
-we will consider a symbolic differentiation program that handle expressions involving addition and multiplication of two variables.
+We will consider a symbolic differentiation program that handle expressions involving addition and multiplication of two variables.
 
-differentiation of any such expression can be carried out following these reduction rules:
+Differentiation of any such expression can be carried out following these reduction rules:
 
 $$\frac{dc}{dx} = 0$$
 where $c$ is a constant or a variable different than $x$
@@ -150,7 +150,21 @@ $$\frac{d(u+v)}{dx} = \frac{du}{dx}+\frac{dv}{dx}$$
 
 $$\frac{d(uv)}{dx} = u\left(\frac{dv}{dx}\right) + v\left(\frac{du}{dx}\right)$$
 
-assume the following are defined:
+Assume the following are defined:
+
+#+begin_src racket :exports code
+  (variable? e)
+  (same-variable? v1 v2)
+  (sum? e)
+  (addend e)
+  (augend e)
+  (make-sum a1 a2)
+  (product? e)
+  (multiplier e)
+  (multiplicand e)
+  (make-product m1 m2)
+#+end_src
+
 #+name: deriv-algorithm
 #+begin_src racket
   (define (deriv exp var)
@@ -178,31 +192,6 @@ assume the following are defined:
 	   (error "unknown expression type -- deriv" exp))))
 
 #+end_src
-
-#+RESULTS[5eac6a29369a42c7cc97acb7904b679cea64b718]: deriv-algorithm
-: /var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-vnKy6L/ob-racketuB7lG2.rkt:5:10: variable?: unbound identifier
-:   in: variable?
-:   location...:
-:    /var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-vnKy6L/ob-racketuB7lG2.rkt:5:10
-
-#+begin_src racket :exports code
-  (variable? e)
-  (same-variable? v1 v2)
-  (sum? e)
-  (addend e)
-  (augend e)
-  (make-sum a1 a2)
-  (product? e)
-  (multiplier e)
-  (multiplicand e)
-  (make-product m1 m2)
-#+end_src
-
-#+RESULTS[26d58c3e9cded42c5b70274c866b4da2eec43c13]:
-: /var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-ROoqMH/ob-racketwnZSVz.rkt:3:1: variable?: unbound identifier
-:   in: variable?
-:   location...:
-:    /var/folders/9t/w6bf6xgd4qs98pm22l9hcpk40000gn/T/ob-racket-ROoqMH/ob-racketwnZSVz.rkt:3:1
 
 *** Representing algebraic expression
 
@@ -1255,7 +1244,7 @@ Start with the set of leaf nodes, find two nodes with the smallest weights, merg
   (define sample-message '(A D A B B C A))
 
   (encode sample-message sample-tree)
-#+end_src
+ #+end_src
 
 #+RESULTS[5cbecb9f856f6f3e47c9d2a696f2ccda780e09af]:
 : '(0 1 1 0 0 1 0 1 0 1 1 1 0)
@@ -1384,3 +1373,44 @@ The most frequent symbol will be merged last, and so will be at a distance of $1
 
 *** Exercise 2.72 - order of growth of ~encode~
 
+Here is the code again:
+#+begin_src racket :exports code
+  (define (encode message tree)
+    (if (null? message)
+	'()
+	(append (encode-symbol (car message) tree)
+		(encode (cdr message) tree))))
+
+  (define (encode-symbol symbol tree)
+    (cond ((leaf? tree) '())
+	  ((contains? (symbols (left-branch tree)) symbol)
+	   (cons 0 (encode-symbol symbol (left-branch tree))))
+	  ((contains? (symbols (right-branch tree)) symbol)
+	   (cons 1 (encode-symbol symbol (right-branch tree))))
+	  (else
+	   (error "symbol has no encoding -- ENCODE-SYMBOL" symbol))))
+
+  (define (contains? haystack needle)
+    (cond ((null? haystack) false)
+	  ((eq? (car haystack) needle) true)
+	  (else (contains? (cdr haystack) needle))))
+
+#+end_src
+
+Assume we have a Huffman tree of an alphabet with $n$ symbols with relative frequencies $1, 2, 4, ..., 2^{n-1}$.
+Assume the message has the size $m$ and has the same frequencies distribution as the alphabet that generated the tree.
+
+Note that the distance of each leaf from the root is $n-1, n-1, n-2, n-3, ..., 3, 2, 1$.
+
+~encode~ calls ~encode-symbol~ for each symbol of the message, that's $m$ calls.
+
+Around half of those calls would be for the most frequent symbol, a quarter for the second most frequent symbol and so on.
+The expected depth $d_a$ of each call then will be:
+
+$$ d_a = \frac{1}{2} * 1 + \frac{1}{4} * 2 + \frac{1}{8} * 3 + ... + \frac{1}{2^{n-1}} * (n-1) + \frac{1}{2^n} * n = ... = 2 - (n+2)/2^n $$
+
+If $n$ is large enough, $d_a \approx 2$, e.g. $d_a \approx 1.99$ for $n=10$.
+
+Thus, on average a call to ~encode-symbol~ takes 2 iterations, for simplicity say each can take up to $n$ steps to search symbols of that node, $2n$ in total, that's $O(n)$.
+
+Thus, on average ~encode~ runs in $O(mn)$ steps.

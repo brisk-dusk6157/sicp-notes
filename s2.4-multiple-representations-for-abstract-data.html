@@ -1,0 +1,1033 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2023-06-23 Fri 14:32 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2.4 Multiple Representations for Abstract Data</title>
+<meta name="author" content="LMG" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">2.4 Multiple Representations for Abstract Data</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org651fdb0">Introduction</a></li>
+<li><a href="#org67512ba">2.4.1 Representations for Complex Numbers</a></li>
+<li><a href="#org123a654">2.4.2 Tagged data</a></li>
+<li><a href="#orge631b20">2.4.3 Data-Directed Programming and Additivity</a>
+<ul>
+<li><a href="#org781c765">Exercise 2.73 - derivation with data-directed style</a>
+<ul>
+<li><a href="#orga4b9a43">a. Explain what was done above</a></li>
+<li><a href="#org17c9e46">b. Write the procedures for derivatives of sums and products, and the auxiliary code required to install them in the table used by the program above</a></li>
+<li><a href="#orge1da719">c. Choose any additional differential rule that you like, such as the one for exponents, and install it in this data-directed system.</a></li>
+<li><a href="#org67dda61">d. Indexing procedures</a></li>
+</ul>
+</li>
+<li><a href="#orgef2200d">Exercise 2.74 - Data-directed programming exercise</a>
+<ul>
+<li><a href="#orgc202576">a. Implement <code>get-record</code></a></li>
+<li><a href="#org423edd5">b. Implement <code>get-salary</code></a></li>
+<li><a href="#org09d72e1">c. Implement <code>find-employee-record</code></a></li>
+<li><a href="#org84d11ac">d. When Insatiable takes over a new company, what changes must be made in order to incorporate the new personnel information into the central system</a></li>
+</ul>
+</li>
+<li><a href="#org32fdcbb">Message passing</a>
+<ul>
+<li><a href="#orga0a691b">Exercise 2.75 - <code>make-from-mag-ang</code> in message passing style</a></li>
+<li><a href="#org2779f2f">Exercise 2.76 - Analysis of required system changes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org651fdb0" class="outline-2">
+<h2 id="org651fdb0">Introduction</h2>
+<div class="outline-text-2" id="text-org651fdb0">
+<p>
+Data objects may have several representations, each of which might be useful for different use-cases.
+</p>
+
+<blockquote>
+<p>
+&#x2026; programming systems are often designed by many people working over extended periods of time, subject to requirements that change over time. In such an environment, it is simply not possible for everyone to agree in advance on choices of data representations. So in addition to the data-abstraction barriers that isolate representation from use, we need abstraction barriers that isolate different design choices from each other  and permit different choices to coexist in a single program.
+</p>
+</blockquote>
+
+<p>
+Way to cope with data that may be represented in different ways is to construct <i>generic procedures</i> - those can operate on data that may be represented in more than one way. A technique for building generic procedures is to work in terms of data objects that have <i>type tags</i>, i.e. include explicit information about how they are to be processed.
+</p>
+
+<p>
+<i>Data-directed</i> programming - a powerful and convenient implementation strategy for additively assembling systems with generic operations.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org67512ba" class="outline-2">
+<h2 id="org67512ba">2.4.1 Representations for Complex Numbers</h2>
+<div class="outline-text-2" id="text-org67512ba">
+<p>
+Unrealistic example for illustrative purposes.
+</p>
+
+<p>
+Complex numbers are natrually represented as ordered pairs. The set of complex numbers can be thought of as a two-dimensional space with two orthogonal axes, the "real" axis and the "imaginary" axis. From this point of view, the complex number \(z=x+iy\) can be thought of as the point in the plane whose real coordinate is \(x\) and whose imaginary coordinate is \(y\).
+</p>
+
+<p>
+Addition of complex numbers reduces in this representation to addition of coordinates.
+</p>
+
+<p>
+When multyplyig complex numbers, it is more natural to think in terms of representing a complex number in polar form, as a magnitude and an angle. The product of two complex numbers is the vector obtained by stretching one complex number by the length of the other and then rotating it through the angle of the other.
+</p>
+
+<p>
+Two different representations for complex numbers are appropriate for different operations. From the viewpoint of someone writing a program that uses complex numbers, all operations on complex numbers should be available regardles of which representation is actually used to store data objects.
+</p>
+
+<p>
+Data-abstraction strategy: assume the operations on complex numbers are implemented in terms of four selectors: <code>real-part</code>, <code>imag-part</code>, <code>magnitude</code>, and <code>angle</code>. Also assume we have two procedures for constructing complex numbers: <code>make-from-real-imag</code> and <code>make-from-mag-ang</code>.
+These procedures have the property that, for any complex number <code>z</code>, both <code>(make-from-real-imag (real-part z) (imag-part z))</code> and <code>(make-from-mag-ang (magnitude z) (angle z))</code> produce complex numbers that are equal to <code>z</code>.
+</p>
+
+<p>
+With these in place, implement operations on arithmetic numbers:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="orgc0ed096">(define (add-complex z1 z2)
+  (make-from-real-imag
+   (+ (real-part z1) (real-part z2))
+   (+ (imag-part z1) (imag-part z2))))
+
+(define (sub-complex z1 z2)
+  (make-from-real-imag
+   (- (real-part z1) (real-part z2))
+   (- (imag-part z1) (imag-part z2))))
+
+(define (mul-complex z1 z2)
+  (make-from-mag-ang
+   (* (magnitude z1) (magnitude z2))
+   (+ (angle z1) (angle z2))))
+
+(define (div-complex z1 z2)
+  (make-from-mag-ang
+   (/ (magnitude z1) (magnitude z2))
+   (- (angle z1) (angle z2))))
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="org48c4b6c">(define (real-part z) (car z))
+(define (imag-part z) (cdr z))
+(define (magnitude z)
+  (sqrt (+ (square (real-part z))
+	   (square (imag-part z)))))
+(define (angle z)
+  (atan (imag-part z) (real-part z)))
+
+(define (make-from-real-image x y) (cons x y))
+
+(define (make-from-mag-ang r a)
+  (cons (* r (cos a)) (* r (sin a))))
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="org77f7ee4">(define (real-part z)
+  (* (magnitude z) (cos (angle z))))
+(define (imag-part z)
+  (* (magnitude z) (sin (angle z))))
+(define (magnitude z) (car z))
+(define (angle z) (cdr z))
+
+(define (make-from-real-image x y)
+  (cons (sqrt (+ (square x) (square y)))
+	(atan y x)))
+
+(define (make-from-mag-ang r a) (cons r a))
+</pre>
+</div>
+
+<p>
+Data abstraction ensures that the same implementation of operations works with either rectangular or polar  
+</p>
+</div>
+</div>
+
+<div id="outline-container-org123a654" class="outline-2">
+<h2 id="org123a654">2.4.2 Tagged data</h2>
+<div class="outline-text-2" id="text-org123a654">
+<p>
+Using "the principle of least commitment" we can use either of representations, delaying the choice of concrete representation to the last moment.
+Even more extreme version of the principle is to allow to use both representations in the user code. The problem is it's impossible to know whether (3 5) is a rectangular or polar representation. This problem can be solved by including an explicit <i>type tag</i> into the representation, e.g. <code>rectangular</code> or <code>polar</code>. Then when we need to manipulate a complex number we can use that tag to decide which selector to apply.
+</p>
+
+<p>
+In order to manipulate tagged data, we will assume that we have procedures <code>type-tag</code> and <code>contents</code> that extract from a data object that tag and acutal contents. We will also postulate the procedure <code>attach-tag</code> that takes a tag and contents and produces tagged data object.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="orged4921b">(define (attach-tag type-tag contents)
+  (cons type-tag contents))
+
+(define (type-tag datum)
+  (if (pair? datum)
+      (car datum)
+      (error "Bad tagged datum -- TYPE-ARG" datum)))
+
+(define (contents datum)
+  (if (pair? datum)
+      (cdr datum)
+      (error "Bad tagged datum -- CONTENTS" datum)))
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="orge9d4c97">(define (rectangular? z)
+  (eq? (type-tag z) 'rectangular))
+
+(define (polar? z)
+  (eq? (type-tag z) 'polar))
+</pre>
+</div>
+
+<p>
+Using tag queries, interface implementations can be udpated to allow coexistence:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">def real_part_rectangular(z):
+    return car(z)
+
+def sum(n):
+    s = 0
+    for i in range(n):
+	s += i
+    return s
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-racket">(define (sum n)
+  (if (= n 0)
+      0
+      (+ n (sum (- n 1)))))
+
+(define (++ xs ys)
+  (if (null? xs)
+      ys
+      (cons (first xs)
+	    (++ (rest xs) ys))))
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="orgf535c3f">(define (real-part-rectangular z) (car z))
+(define (imag-part-rectangular z) (cdr z))
+(define (magnitude-rectangular z)
+  (sqrt (+ (square (real-part-rectangular z))
+	   (square (imag-part-rectangular z)))))
+(define (angle-rectangular z)
+  (atan (imag-part-rectangular z) (real-part-rectangular z)))
+
+(define (make-from-real-image-rectangular x y)
+  (attach-tag 'rectangular (cons x y)))
+
+(define (make-from-mag-ang-rectangular r a)
+  (attach-tag 'rectangular (cons (* r (cos a)) (* r (sin a)))))
+
+
+(define (real-part-polar z)
+  (* (magnitude-polar z) (cos (angle-polar z))))
+(define (imag-part-polar z)
+  (* (magnitude-polar z) (sin (angle-polar z))))
+(define (magnitude-polar z) (car z))
+(define (angle-polar z) (cdr z))
+
+(define (make-from-real-image-polar x y)
+  (attach-tag 'polar (cons (sqrt (+ (square x) (square y)))
+	 (atan y x))))
+
+(define (make-from-mag-ang-polar r a)
+  (attach-tag 'polar (cons r a)))
+
+
+(define (real-part z)
+  (cond ((rectangular? z)
+	 (real-part-rectangular (contents z)))
+	((polar? z)
+	 (real-part-polar (contents z)))
+	(else
+	 (error "Unknown type -- REAL-PART" z))))
+(define (imag-part z)
+  (cond ((rectangular? z)
+	 (imag-part-rectangular (contents z)))
+	((polar? z)
+	 (imag-part-polar (contents z)))
+	(else
+	 (error "Unknown type -- IMAG-PART" z))))
+(define (magnitude z)
+  (cond ((rectangular? z)
+	 (magnitude-rectangular (contents z)))
+	((polar? z)
+	 (magnitude-polar (contents z)))
+	(else
+	 (error "Unknown type -- MAGNITUDE" z))))
+(define (angle z)
+  (cond ((rectangular? z)
+	 (angle-rectangular (contents z)))
+	((polar? z)
+	 (angle-polar (contents z)))
+	(else
+	 (error "Unknown type -- ANGLE" z))))
+
+(define (make-from-real-imag x y)
+  (make-from-real-image-rectangular x y))
+
+(define (make-from-mag-ang r a)
+  (make-from-mag-ang-polar r a))
+</pre>
+</div>
+
+
+<p>
+Note that the implementations for polar and rectangulare representations are relatively independent, and do not intersect in naming space.
+</p>
+
+<p>
+Note that the constructors of concrete implementations produce tagged data, but the selectors operate on untagged data. Routing layer calls <code>contents</code> before passing representation to selectors.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge631b20" class="outline-2">
+<h2 id="orge631b20">2.4.3 Data-Directed Programming and Additivity</h2>
+<div class="outline-text-2" id="text-orge631b20">
+<p>
+<i>Dispatching on type</i> - general strategy of selecting a specific procedure based on the type of the datum.
+</p>
+
+<p>
+Weaknesses of implementation in 2.4.2:
+</p>
+<ul class="org-ul">
+<li>generic interface procedures must know about implementation procedures</li>
+<li>name uniqueness should be maintaned</li>
+</ul>
+
+<p>
+Underlying issue can be fixed by making the implementation of generic interfaces <i>additive</i>.
+</p>
+
+<p>
+<i>Data-directed programming</i> rationale: set of generic functions for a set of possible types can be represented as a 2D table - for each type there should be an implementation for each function.
+E.g. for the selectors of complex numbers:
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Polar</td>
+<td class="org-left">Rectangular</td>
+</tr>
+
+<tr>
+<td class="org-left">real-part</td>
+<td class="org-left">real-part-polar</td>
+<td class="org-left">real-part-rectangular</td>
+</tr>
+
+<tr>
+<td class="org-left">imag-part</td>
+<td class="org-left">imag-part-polar</td>
+<td class="org-left">imag-part-rectangular</td>
+</tr>
+
+<tr>
+<td class="org-left">magnitude</td>
+<td class="org-left">magnitude-polar</td>
+<td class="org-left">magnitude-rectangular</td>
+</tr>
+
+<tr>
+<td class="org-left">angle</td>
+<td class="org-left">angle-polar</td>
+<td class="org-left">angle-rectangular</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+<i>Data-directed programming</i> is the technique of designing programs to work with such a table directly.
+</p>
+
+<p>
+To implement, assume we have <code>(put &lt;op&gt; &lt;type&gt; &lt;item&gt;)</code> that will put an item into a table for given op and type, and <code>(get &lt;op&gt; &lt;type&gt;)</code> that will fetch corresponding item, or return false if not found.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="orge89e747">(define (install-rectangular-package)
+  (define (real-part z) (car z))
+  (define (imag-part z) (cdr z))
+  (define (make-from-real-imag x y) (cons x y))
+  (define (magnitude z)
+    (sqrt (+ (square (real-part z))
+	     (square (imag-part z)))))
+  (define (angle z)
+    (atan (imag-part z) (real-part z)))
+  (define (make-from-mag-ang r a)
+    (cons (* r (cos a)) (* r (sin a))))
+
+  (define (tag x) (attach-tag 'rectangular x))
+  (put 'real-part '(rectangular) real-part)
+  (put 'imag-part '(rectangular) imag-part)
+  (put 'magnitude '(rectangular) magnitude)
+  (put 'angle '(rectangular) angle)
+  (put 'make-from-real-imag 'rectangular
+       (lambda (x y) (tag (make-from-real-imag x y))))
+  (put 'make-from-mag-ang 'rectangular
+       (lambda (r a) (tag (make-from-mag-ang r a)))))
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="org8c5fe06">(define (install-polar-package)
+  (define (real-part z)
+    (* (magnitude z) (cos (angle z))))
+  (define (imag-part z)
+    (* (magnitude z) (sin (angle z))))
+  (define (make-from-real-imag x y)
+    (cons (sqrt (+ (square x) (square y)))
+	  (atan y x)))
+  (define (magnitude z) (car z))
+  (define (angle z) (cdr z))
+  (define (make-from-mag-ang r a)
+    (cons r a))
+
+  (define (tag x) (attach-tag 'polar x))
+  (put 'real-part '(polar) real-part)
+  (put 'imag-part '(polar) imag-part)
+  (put 'magnitude '(polar) magnitude)
+  (put 'angle '(polar) angle)
+  (put 'make-from-real-imag 'polar
+       (lambda (x y) (tag (make-from-real-imag x y))))
+  (put 'make-from-mag-ang 'polar
+       (lambda (r a) (tag (make-from-mag-ang r a)))))
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-racket">(define (apply-generic op . args)
+  (let ((type-tags (map type-tag args)))
+    (let ((proc (get op type-tags)))
+      (if proc
+	  (apply proc (map contents args))
+	  (error
+	   "No method for these types -- APPLY-GENERIC"
+	   (list op type-tags))))))
+
+(define (real-part z) (apply-generic 'real-part z))
+(define (imag-part z) (apply-generic 'imag-part z))
+(define (magnitude z) (apply-generic 'magnitude z))
+(define (angle z) (apply-generic 'angle z))
+
+(define (make-from-real-imag x y)
+  ((get 'make-from-real-imag 'rectangular) x y))
+
+(define (make-from-mag-ang r a)
+  ((get 'make-from-mag-ang 'polar) r a))
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org781c765" class="outline-3">
+<h3 id="org781c765">Exercise 2.73 - derivation with data-directed style</h3>
+<div class="outline-text-3" id="text-org781c765">
+<p>
+We can regard this program as performing dispatch on the type of the expression to be differentiated. In this case, type tag is the operator symbol (e.g. '+ or '*) and the operation to be performed is 'deriv:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket" id="org266c8dc">(define (deriv exp var)
+  (cond ((number? exp) 0)
+	((variable? exp) (if (same-variable? exp var) 1 0))
+	(else
+	 ((get 'deriv (operator exp)) (operands exp) var))))
+
+(define (operator exp) (car exp))
+(define (operands exp) (cdr exp))
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orga4b9a43" class="outline-4">
+<h4 id="orga4b9a43">a. Explain what was done above</h4>
+<div class="outline-text-4" id="text-orga4b9a43">
+<p>
+Moved the derivation rules out into separate functions that should be registered with the dispatch table.
+</p>
+
+<p>
+Operation signature is <code>(derive-&lt;name&gt; operands var)</code>.
+</p>
+</div>
+
+<ul class="org-ul">
+<li><a id="org9c51983"></a>Why can't we assimilate the predicates <code>number?</code> and <code>same-variable?</code> into the data-directed dispatch?<br />
+<div class="outline-text-5" id="text-org9c51983">
+<p>
+We can, with appropriate definitions for <code>operator</code> and <code>operands</code>, e.g.:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket">(define (operator exp)
+  (cond ((number? exp) 'const)
+	((variable? exp) 'var)
+	(else (car exp))))
+
+(define (operands exp)
+  (cond ((or (number? exp) (variable? exp)) exp)
+	(else (cdr exp))))
+</pre>
+</div>
+
+<p>
+Or, with marking numbers and variables explicitly in expressions, as <code>(const 10)</code> and <code>(var x)</code>.
+</p>
+</div>
+</li>
+</ul>
+</div>
+
+<div id="outline-container-org17c9e46" class="outline-4">
+<h4 id="org17c9e46">b. Write the procedures for derivatives of sums and products, and the auxiliary code required to install them in the table used by the program above</h4>
+<div class="outline-text-4" id="text-org17c9e46">
+<div class="org-src-container">
+<pre class="src src-racket">(define (deriv-sum operands var)
+  (apply make-sum
+	 (map (lambda (exp) (deriv exp var))
+	      operands)))
+(define (deriv-product operands var)
+  (if (not (= (length operands) 2))
+      (error "Expected exactly 2 operands -- DERIV-PRODUCT" operands)
+      (make-sum (make-product
+		 (car operands)
+		 (deriv (cadr operands) var))
+		(make-product
+		 (deriv (car operands) var)
+		 (cadr operands)))))
+(put 'deriv '+ deriv-sum)
+(put 'deriv '* deriv-product)
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge1da719" class="outline-4">
+<h4 id="orge1da719">c. Choose any additional differential rule that you like, such as the one for exponents, and install it in this data-directed system.</h4>
+<div class="outline-text-4" id="text-orge1da719">
+<div class="org-src-container">
+<pre class="src src-racket">(define (deriv-exp operands var)
+  (make-product
+   (cadr operands)
+   (make-product
+    (make-exponentiation (car operands) (- (cadr operands) 1))
+    (deriv (car operands) var))))
+
+(put 'deriv '** deriv-exp)
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org67dda61" class="outline-4">
+<h4 id="org67dda61">d. Indexing procedures</h4>
+<div class="outline-text-4" id="text-org67dda61">
+<blockquote>
+<p>
+In this simple algebraic manipulator the type of an expression is the algebraic operator that binds it together. Suppose, however, we indexed procedures in the opposite way, so that the dispatch line in <code>deriv</code> looked like
+</p>
+
+<p>
+<code>((get (operator exp) 'deriv) (operands exp) var)</code>
+</p>
+
+<p>
+What corresponding changes to the derivative system are required?
+</p>
+</blockquote>
+
+<p>
+Swap first two arguments in all <code>put</code> calls.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgef2200d" class="outline-3">
+<h3 id="orgef2200d">Exercise 2.74 - Data-directed programming exercise</h3>
+<div class="outline-text-3" id="text-orgef2200d">
+<p>
+Company consists of a large number of independent divisions.
+Data structures vary from division to division.
+Headquarters need to query data, while maintaining existin autonomy of the divisions.
+</p>
+
+<p>
+Concrete example:
+Assume each division's personnel records consists of a single file, which contains a set of records keyed on employees' names.
+The structure of the set varies from division to division. Furthermore, each employee's record is itself a set (structured differently from division to division) that contains information keyed under identifiers such as <code>address</code> and <code>salary</code>.
+</p>
+</div>
+
+<div id="outline-container-orgc202576" class="outline-4">
+<h4 id="orgc202576">a. Implement <code>get-record</code></h4>
+<div class="outline-text-4" id="text-orgc202576">
+<p>
+Retrieves a specified employee's record from a specified personnel file. The procedure should be applicable to any division's file.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">;; (define (get-record division employee)
+;;   (let ((div-get-records (get division 'get-records))
+;; 	     (div-get-record (get division 'get-record)))
+;;     (let ((records (div-get-records)))
+;;       (div-get-record records employee))))
+
+;; (define (get-record division employee)
+;;   (let ((div-get-record (get division 'get-record)))
+;;     (div-get-record employee)))
+
+;; (define (get-record division-file employee-name division)
+;;   (let ((div-get-record (get division 'get-record)))
+;;     (div-get-record division-file employee-name)))
+
+(define (get-record employee-name division-file)
+  (let ((div-get-record (get (division division-file) 'get-record)))
+    (div-get-record division-file employee-name)))
+</pre>
+</div>
+</div>
+
+<ul class="org-ul">
+<li><a id="orge621cdc"></a>Explain how the individual divisons' files should be structured. In particular, what type information must be supplied?<br />
+<div class="outline-text-5" id="text-orge621cdc">
+<p>
+<code>division-file</code> should expose the division identifier, so that appropriate division's <code>get-record</code> function can be retrieved from the dispatch table.
+</p>
+</div>
+</li>
+</ul>
+</div>
+
+<div id="outline-container-org423edd5" class="outline-4">
+<h4 id="org423edd5">b. Implement <code>get-salary</code></h4>
+<div class="outline-text-4" id="text-org423edd5">
+<p>
+Returns the salary information from a given employee's record from any divison's personnel file.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">;; (define (get-salary division employee)
+;;   (let ((div-get-record-field (get division 'get-record-field)))
+;;     (get-record-field
+;;      (get-record division employee)
+;;      'salary)))
+
+(define (get-salary record)
+  (let ((div-get-salary (get (division record) 'get-salary)))
+    (div-get-salary record)))
+</pre>
+</div>
+</div>
+
+<ul class="org-ul">
+<li><a id="org5b25630"></a>How should the record be structured in order to make this operation work?<br />
+<div class="outline-text-5" id="text-org5b25630">
+<p>
+<code>record</code> should expose the division identifier, so that appropriate division's <code>get-salary</code> implementation can be retrieved from the dispatch table.
+</p>
+</div>
+</li>
+</ul>
+</div>
+
+<div id="outline-container-org09d72e1" class="outline-4">
+<h4 id="org09d72e1">c. Implement <code>find-employee-record</code></h4>
+<div class="outline-text-4" id="text-org09d72e1">
+<p>
+Search all divisions' files for the record of a given employee and return the record.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">(define (find-employee-record employee-name division-files)
+  (if (null? division-files)
+      false
+      (let ((record (get-record employee-name (car division-files))))
+	(if (not record)
+	    (find-employee-record employee-name (cdr division-files))
+	    record))))
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org84d11ac" class="outline-4">
+<h4 id="org84d11ac">d. When Insatiable takes over a new company, what changes must be made in order to incorporate the new personnel information into the central system</h4>
+<div class="outline-text-4" id="text-org84d11ac">
+<ul class="org-ul">
+<li>A new set of "adapter" functions should be implemented and registered with the dispatch table under the division identifier, such as:
+<ul class="org-ul">
+<li><code>get-record</code></li>
+<li><code>get-salary</code></li>
+<li><code>find-employee-record</code></li>
+</ul></li>
+<li>new company file and record data structures to expose division identifier through the <code>division</code> selector</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org32fdcbb" class="outline-3">
+<h3 id="org32fdcbb">Message passing</h3>
+<div class="outline-text-3" id="text-org32fdcbb">
+<p>
+The key idea of data-directed programming is to handle generic operations by dealing explicitely with operation-and-type tables. Style used in 2.4.2 decomposes the table into rows, each operation takes care of its own dispatching.
+</p>
+
+<p>
+An alternative implementation strategy is to decompose the table into columns and instead of using "intelligent operations" that dispatch on data types, to work with "intelligent data objects" that dispatch on operation names.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket">(define (make-from-real-imag x y)
+  (define (dispatch op)
+    (cond ((eq? op 'real-part) x)
+	  ((eq? op 'imag-part) y)
+	  ((eq? op 'magnitutde)
+	   (sqrt (+ (square x) (square y))))
+	  ((eq? op 'angle) (atan y x))
+	  (else
+	   (error "Unknown op -- MAKE-FROM-REAL-IMAG" op))))
+  dispatch)
+
+(define (apply-generic op arg) (arg op))
+</pre>
+</div>
+
+<p>
+This style of programming is called <i>message passing</i> (data object receives requested operation as a "message").
+</p>
+</div>
+
+<div id="outline-container-orga0a691b" class="outline-4">
+<h4 id="orga0a691b">Exercise 2.75 - <code>make-from-mag-ang</code> in message passing style</h4>
+<div class="outline-text-4" id="text-orga0a691b">
+<div class="org-src-container">
+<pre class="src src-racket">(define (make-from-mag-ang r a)
+  (define (dispatch op)
+    (cond ((eq? op 'real-part)
+	   (* r (cos a)))
+	  ((eq? op 'imag-part)
+	   (* r (sin a)))
+	  ((eq? op 'magnitutde) r)
+	  ((eq? op 'angle) a)
+	  (else
+	   (error "Unknown op -- MAKE-FROM-MAG-ANG" op))))
+  dispatch)
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2779f2f" class="outline-4">
+<h4 id="org2779f2f">Exercise 2.76 - Analysis of required system changes</h4>
+<div class="outline-text-4" id="text-org2779f2f">
+<p>
+Changes that must be made to a system in order to add new types or new operations for each of the three strategies:
+</p>
+<ul class="org-ul">
+<li>generic operations with explicit dispatch
+<ul class="org-ul">
+<li>new type T
+<ul class="org-ul">
+<li>implement the set of concrete opertaions for type T</li>
+<li>update every generic operation with new dispatch branch for type T</li>
+<li>add new "generic" constructor for type T</li>
+<li>implement constructor for each type S with T<sub>constructure</sub> signature</li>
+</ul></li>
+<li>new operation P
+<ul class="org-ul">
+<li>for every type T, add a concrete implementation for P<sub>T</sub></li>
+<li>add a new generic operation P that dispatches to concrete operation based on type</li>
+</ul></li>
+</ul></li>
+<li>data-directed programming
+<ul class="org-ul">
+<li>new type T
+<ul class="org-ul">
+<li>implement the set of concrete operations for type T and register them in the dispatch table</li>
+<li>add a new "generic" constructor for type T</li>
+<li>for every type T, implement constructors with the T<sub>constructor</sub> signature</li>
+</ul></li>
+<li>new operation P
+<ul class="org-ul">
+<li>for every type T, add a concrete operation P<sub>T</sub> and register it with the dispatch table as 'P</li>
+<li>add a new generic opertaion P that simply searches 'P in the dispatch table to locate implementation</li>
+</ul></li>
+</ul></li>
+<li>message passing
+<ul class="org-ul">
+<li>new type T
+<ul class="org-ul">
+<li>implement the set of concrete operations for type T under T<sub>constructor</sub></li>
+</ul></li>
+<li>new operation P
+<ul class="org-ul">
+<li>for every type T, add a concrete implementation for P<sub>T</sub> (it will automatically be available via apply-generic through 'P)</li>
+</ul></li>
+</ul></li>
+</ul>
+
+<p>
+When new types are added often message passing works best.
+When new operations are added often, either message passing or data-directed programming works.
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: LMG</p>
+<p class="date">Created: 2023-06-23 Fri 14:32</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
