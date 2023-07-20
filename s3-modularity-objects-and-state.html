@@ -1,0 +1,1384 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2023-07-20 Thu 20:10 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>3 Modularity, Objects and State</title>
+<meta name="author" content="LMG" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">3 Modularity, Objects and State</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org68f98cb">Intro</a></li>
+<li><a href="#org825d4f7">3.1 Assignment and Local State</a>
+<ul>
+<li><a href="#org83b1c97">3.1.1 Local State Variables</a>
+<ul>
+<li><a href="#orgde8d36f">Exercise 3.1 - accumulator</a></li>
+<li><a href="#org5c58f8e">Exercise 3.2 - <code>make-monitored</code></a></li>
+<li><a href="#org5f03013">Exercise 3.3 - password-protected accounts</a></li>
+<li><a href="#org98a2240">Exercise 3.4 - password-protected accounts with cops</a></li>
+</ul>
+</li>
+<li><a href="#org4d8f12d">3.1.2 The Benefits of Introducing Assignment</a>
+<ul>
+<li><a href="#org2876ae3">Exercise 3.5 - Monte Carlo integration</a></li>
+<li><a href="#orge2b716b">Exercise 3.6 - rand reset</a></li>
+</ul>
+</li>
+<li><a href="#org011d057">3.1.2 The Costs of Introducing Assignment</a>
+<ul>
+<li><a href="#org0918982">Sameness and change</a></li>
+<li><a href="#org6f9c40e">Pitfalls of imperative programming</a></li>
+<li><a href="#org9c831f3">Exercise 3.7 - joint account</a></li>
+<li><a href="#orgc9fb00e">Exercise 3.8 - order of evaluation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orga052b12">3.2 The Environment Model of Evaluation</a>
+<ul>
+<li><a href="#org25f891b">3.2.1 The Rules for Evaluation</a></li>
+<li><a href="#orgd279bd3">3.2.2 Applying Simple Procedures</a></li>
+<li><a href="#org1f4bd4b">3.2.3 Frames as the Repository of Local State</a></li>
+<li><a href="#org4d469a5">3.2.4 Internal Definitions</a></li>
+</ul>
+</li>
+<li><a href="#orgba38279">3.3 Modeling with Mutable Data</a>
+<ul>
+<li><a href="#orgd4a7577">3.3.1 Mutable List Structure</a>
+<ul>
+<li><a href="#orgba0aab8">Exercise 3.13</a></li>
+<li><a href="#org925806e">Exercise 3.14</a></li>
+<li><a href="#org4e73553">Sharing and Identity</a></li>
+<li><a href="#org605d9bf">Exercise 3.15, 3.16</a></li>
+<li><a href="#orgf0a3616">Exercise 3.17 - count pairs in structure</a></li>
+<li><a href="#orge1f775a">Exercise 3.18 - detect cycle</a></li>
+<li><a href="#org7173d62">Exercise 3.19 - detect cycle in constant space</a></li>
+<li><a href="#org57156c8">Mutation is just assignment</a></li>
+<li><a href="#org53070f5">Exercise 3.20 - environment diagrams for <code>cons</code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org68f98cb" class="outline-2">
+<h2 id="org68f98cb">Intro</h2>
+<div class="outline-text-2" id="text-org68f98cb">
+<p>
+In previous chapters we introduced:
+</p>
+<ul class="org-ul">
+<li>basic elements from which programs are made</li>
+<li>how to combine primitives to construct compound entities</li>
+<li>abstraction is vital to cope with complexity of large systems</li>
+</ul>
+
+<p>
+But these are not sufficient for designing programs.
+</p>
+
+<p>
+Effective program synthesis also requires an organizational principles that can guide us in formulating overall design of the system.
+</p>
+
+
+<p>
+Effective program synthesis requires organizational principles that can guide us in formulating overall design of a program.
+</p>
+
+<p>
+In particular, we need strategies to help us structure large system so the they are <i>modular</i>, that is, so that they are divided "naturally" into coherent parts that can be developed and maintained separately.
+</p>
+
+<p>
+One (what are the others Gerald??) powerful design strategy, is to base the structure of a program on the structure of the system being modelled. For each object in the system we construct corresponding computational object. For each system action we define a symbolic operation in our computational model.
+</p>
+
+<p>
+Our hope in using this strategy is that extending the model to accomodate new objects or new actions will require no strategic changes to the program, only the addition of the new symbolic analogs of those objects or actions. If we are successful in our system organization, then to add a new feature or debug an old one we will have to work in a localized part of the system.
+</p>
+
+<p>
+To a large extent the way we orgnize programs depends on our perception of the systems being modelled. In this chapter we will investigate two organizational strategies arising from two different "world views" of the structure of systems.
+</p>
+
+<p>
+First organizational strategy concentrates on <i>objects</i>, viewing a large system as a collection of objects whose behavior may change over time.
+</p>
+
+<p>
+An alternative organizational strategy concentrates on the <i>streams</i> of information that flow in the system.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org825d4f7" class="outline-2">
+<h2 id="org825d4f7">3.1 Assignment and Local State</h2>
+<div class="outline-text-2" id="text-org825d4f7">
+<p>
+We ordinarily view the world as populated by independent objects, each of which has a state that changes over time. An object is said to "have state" if its history influences its behavior. Object's state can be characterized by one or more <i>state variables</i>.
+</p>
+
+<p>
+In a system composed of many objects, the objects are rarely completely independent. Each may influence the states of others through interactions, which servie to couple the state variables of one object to those of another.
+</p>
+
+<p>
+If we choose to model the flow of time in the system by the elapsed time in the computer, then we must have a way to construct computational objects whose behaviors change as our programs run.
+</p>
+</div>
+
+<div id="outline-container-org83b1c97" class="outline-3">
+<h3 id="org83b1c97">3.1.1 Local State Variables</h3>
+<div class="outline-text-3" id="text-org83b1c97">
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">balance</span> <span style="color: #D0372D;">100</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">withdraw</span> amount<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">if</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">&gt;=</span> balance amount<span style="color: #909183;">)</span>
+      <span style="color: #909183;">(</span><span style="color: #0000FF;">begin</span> <span style="color: #709870;">(</span><span style="color: #0000FF;">set!</span> balance <span style="color: #907373;">(</span><span style="color: #006FE0;">-</span> balance amount<span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+             balance<span style="color: #909183;">)</span>
+      <span style="color: #008000;">"Insufficient funds"</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<p>
+<code>balance</code> is global and could be modified by anyone,
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">new-withdraw</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">let</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #BA36A5;">balance</span> <span style="color: #D0372D;">100</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>amount<span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #0000FF;">if</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">&gt;=</span> balance amount<span style="color: #907373;">)</span>
+          <span style="color: #907373;">(</span><span style="color: #0000FF;">begin</span> <span style="color: #6276BA;">(</span><span style="color: #0000FF;">set!</span> balance <span style="color: #858580;">(</span><span style="color: #006FE0;">-</span> balance amount<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+                 balance<span style="color: #907373;">)</span>
+          <span style="color: #008000;">"Insufficient funds"</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #0000FF;">#lang</span> <span style="color: #BA36A5;">sicp</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-withdraw</span> balance<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #909183;">(</span>amount<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">if</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">&gt;=</span> balance amount<span style="color: #709870;">)</span>
+        <span style="color: #709870;">(</span><span style="color: #0000FF;">begin</span> <span style="color: #907373;">(</span><span style="color: #0000FF;">set!</span> balance <span style="color: #6276BA;">(</span><span style="color: #006FE0;">-</span> balance amount<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+               balance<span style="color: #709870;">)</span>
+        <span style="color: #008000;">"Insufficient funds"</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">W1</span> <span style="color: #7388D6;">(</span>make-withdraw <span style="color: #D0372D;">100</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">W2</span> <span style="color: #7388D6;">(</span>make-withdraw <span style="color: #D0372D;">100</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>W1 <span style="color: #D0372D;">50</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>W2 <span style="color: #D0372D;">70</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #0000FF;">#lang</span> <span style="color: #BA36A5;">sicp</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-account</span> balance<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">withdraw</span> amount<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">if</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">&gt;=</span> balance amount<span style="color: #709870;">)</span>
+        <span style="color: #709870;">(</span><span style="color: #0000FF;">begin</span> <span style="color: #907373;">(</span><span style="color: #0000FF;">set!</span> balance <span style="color: #6276BA;">(</span><span style="color: #006FE0;">-</span> balance amount<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+               balance<span style="color: #709870;">)</span>
+        <span style="color: #008000;">"Insufficient funds"</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">deposit</span> amount<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">set!</span> balance <span style="color: #709870;">(</span><span style="color: #006FE0;">+</span> balance amount<span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    balance<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">dispatch</span> m<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #709870;">(</span><span style="color: #907373;">(</span><span style="color: #006FE0;">eq?</span> m <span style="color: #D0372D;">'withdraw</span><span style="color: #907373;">)</span> withdraw<span style="color: #709870;">)</span>
+          <span style="color: #709870;">(</span><span style="color: #907373;">(</span><span style="color: #006FE0;">eq?</span> m <span style="color: #D0372D;">'deposit</span><span style="color: #907373;">)</span> deposit<span style="color: #709870;">)</span>
+          <span style="color: #709870;">(</span><span style="color: #0000FF;">else</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"Unknown request -- MAKE-ACCOUNT"</span> m<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  dispatch<span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">a</span> <span style="color: #7388D6;">(</span>make-account <span style="color: #D0372D;">0</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>a <span style="color: #D0372D;">'deposit</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">100</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>a <span style="color: #D0372D;">'deposit</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">50</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>a <span style="color: #D0372D;">'withdraw</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">120</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>a <span style="color: #D0372D;">'withdraw</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">100</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>a <span style="color: #D0372D;">'withdraw</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">30</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgde8d36f" class="outline-4">
+<h4 id="orgde8d36f">Exercise 3.1 - accumulator</h4>
+<div class="outline-text-4" id="text-orgde8d36f">
+<p>
+An <i>accumulator</i> is a function of one numeric argument, when called repeatedly accumulates it's arguments into a sum. Each time it is called it returns the currently accumulated sum.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-accumulator</span> sum<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #909183;">(</span>arg<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">set!</span> sum <span style="color: #709870;">(</span><span style="color: #006FE0;">+</span> sum arg<span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    sum<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">acc</span> <span style="color: #7388D6;">(</span>make-accumulator <span style="color: #D0372D;">10</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>acc <span style="color: #D0372D;">20</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>acc <span style="color: #D0372D;">30</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5c58f8e" class="outline-4">
+<h4 id="org5c58f8e">Exercise 3.2 - <code>make-monitored</code></h4>
+<div class="outline-text-4" id="text-org5c58f8e">
+<p>
+Write a procedure <code>make-monitored</code> that takes as input a procedure, f, that itself takes one input. The result returned by <code>make-monitored</code> is a third procedure, say <code>mf</code>, tat keeps track of the number of times it has been called by maintaining an internal counter.
+</p>
+
+<p>
+If the input to <code>mf</code> is the special symbol <code>how-many-calls?</code>, then <code>mf</code> returns the value of the counter.
+If the input to <code>mf</code> is the special symbol <code>reset-count</code> them <code>mf</code> resets the counter to zero.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="org785695d"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-monitored</span> f<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">let</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #BA36A5;">cnt</span> <span style="color: #D0372D;">0</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #709870;">(</span><span style="color: #006699;">mf</span> x<span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #006FE0;">eq?</span> x <span style="color: #D0372D;">'how-many-calls?</span><span style="color: #6276BA;">)</span> cnt<span style="color: #907373;">)</span>
+            <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #006FE0;">eq?</span> x <span style="color: #D0372D;">'reset-counter</span><span style="color: #6276BA;">)</span>
+             <span style="color: #6276BA;">(</span><span style="color: #0000FF;">set!</span> cnt <span style="color: #D0372D;">0</span><span style="color: #6276BA;">)</span>
+             cnt<span style="color: #907373;">)</span>
+            <span style="color: #907373;">(</span><span style="color: #0000FF;">else</span>
+             <span style="color: #6276BA;">(</span><span style="color: #0000FF;">set!</span> cnt <span style="color: #858580;">(</span><span style="color: #006FE0;">+</span> <span style="color: #D0372D;">1</span> cnt<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+             <span style="color: #6276BA;">(</span>f x<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    mf<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-racket">
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">s</span> <span style="color: #7388D6;">(</span>make-monitored <span style="color: #006FE0;">sqrt</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>s <span style="color: #D0372D;">100</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>s <span style="color: #D0372D;">'how-many-calls?</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>s <span style="color: #D0372D;">10</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>s <span style="color: #D0372D;">10</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>s <span style="color: #D0372D;">10</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>s <span style="color: #D0372D;">10</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>s <span style="color: #D0372D;">'how-many-calls?</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>s <span style="color: #D0372D;">'how-many-calls?</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>s <span style="color: #D0372D;">'how-many-calls?</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>s <span style="color: #D0372D;">'reset-counter</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>s <span style="color: #D0372D;">'how-many-calls?</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5f03013" class="outline-4">
+<h4 id="org5f03013">Exercise 3.3 - password-protected accounts</h4>
+<div class="outline-text-4" id="text-org5f03013">
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-account</span> amount password<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">withdraw</span> a<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">begin</span>
+          <span style="color: #709870;">(</span><span style="color: #0000FF;">if</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">&gt;</span> amount a<span style="color: #907373;">)</span>
+              <span style="color: #907373;">(</span><span style="color: #0000FF;">begin</span>
+                <span style="color: #6276BA;">(</span><span style="color: #0000FF;">set!</span> amount <span style="color: #858580;">(</span><span style="color: #006FE0;">-</span> amount a<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+                amount<span style="color: #907373;">)</span>
+              <span style="color: #008000;">"Insufficient funds"</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">deposit</span> a<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">begin</span>
+          <span style="color: #709870;">(</span><span style="color: #0000FF;">set!</span> amount <span style="color: #907373;">(</span><span style="color: #006FE0;">+</span> amount a<span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+          amount<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">incorrect-password</span> a<span style="color: #909183;">)</span>
+    <span style="color: #008000;">"Incorrect password"</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">dispatch</span> p m<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">if</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">eq?</span> p password<span style="color: #709870;">)</span>
+        <span style="color: #709870;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #006FE0;">eq?</span> m <span style="color: #D0372D;">'withdraw</span><span style="color: #6276BA;">)</span> withdraw<span style="color: #907373;">)</span>
+              <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #006FE0;">eq?</span> m <span style="color: #D0372D;">'deposit</span><span style="color: #6276BA;">)</span> deposit<span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+        incorrect-password<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  dispatch<span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">acc</span> <span style="color: #7388D6;">(</span>make-account <span style="color: #D0372D;">100</span> <span style="color: #D0372D;">'secret</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>acc <span style="color: #D0372D;">'secret</span> <span style="color: #D0372D;">'withdraw</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">10</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>acc <span style="color: #D0372D;">'secret</span> <span style="color: #D0372D;">'deposit</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">100</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>acc <span style="color: #D0372D;">'secret</span> <span style="color: #D0372D;">'withdraw</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">1000</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>acc <span style="color: #D0372D;">'pecret</span> <span style="color: #D0372D;">'withdraw</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">190</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org98a2240" class="outline-4">
+<h4 id="org98a2240">Exercise 3.4 - password-protected accounts with cops</h4>
+<div class="outline-text-4" id="text-org98a2240">
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">call-the-cops</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #006FE0;">display</span> <span style="color: #008000;">"[police called]"</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #006FE0;">newline</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-account</span> amount password<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">let</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #BA36A5;">incorrect-password-count</span> <span style="color: #D0372D;">0</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #709870;">(</span><span style="color: #006699;">withdraw</span> a<span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #0000FF;">begin</span>
+        <span style="color: #907373;">(</span><span style="color: #0000FF;">if</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">&gt;</span> amount a<span style="color: #6276BA;">)</span>
+            <span style="color: #6276BA;">(</span><span style="color: #0000FF;">begin</span>
+              <span style="color: #858580;">(</span><span style="color: #0000FF;">set!</span> amount <span style="color: #80A880;">(</span><span style="color: #006FE0;">-</span> amount a<span style="color: #80A880;">)</span><span style="color: #858580;">)</span>
+              amount<span style="color: #6276BA;">)</span>
+            <span style="color: #008000;">"Insufficient funds"</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #709870;">(</span><span style="color: #006699;">deposit</span> a<span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #0000FF;">begin</span>
+        <span style="color: #907373;">(</span><span style="color: #0000FF;">set!</span> amount <span style="color: #6276BA;">(</span><span style="color: #006FE0;">+</span> amount a<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+        amount<span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #709870;">(</span><span style="color: #006699;">dispatch</span> p m<span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #0000FF;">if</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">not</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">eq?</span> p password<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+          <span style="color: #907373;">(</span><span style="color: #0000FF;">begin</span>
+            <span style="color: #6276BA;">(</span><span style="color: #0000FF;">set!</span> incorrect-password-count <span style="color: #858580;">(</span><span style="color: #006FE0;">+</span> <span style="color: #D0372D;">1</span> incorrect-password-count<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+            <span style="color: #6276BA;">(</span><span style="color: #0000FF;">if</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">&gt;</span> incorrect-password-count <span style="color: #D0372D;">7</span><span style="color: #858580;">)</span>
+                <span style="color: #858580;">(</span>call-the-cops<span style="color: #858580;">)</span>
+                <span style="color: #006FE0;">false</span><span style="color: #6276BA;">)</span>
+            <span style="color: #6276BA;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #858580;">(</span>x<span style="color: #858580;">)</span> <span style="color: #008000;">"Incorrect password"</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+          <span style="color: #907373;">(</span><span style="color: #0000FF;">begin</span>
+            <span style="color: #6276BA;">(</span><span style="color: #0000FF;">set!</span> incorrect-password-count <span style="color: #D0372D;">0</span><span style="color: #6276BA;">)</span>
+            <span style="color: #6276BA;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #858580;">(</span><span style="color: #80A880;">(</span><span style="color: #006FE0;">eq?</span> m <span style="color: #D0372D;">'withdraw</span><span style="color: #80A880;">)</span> withdraw<span style="color: #858580;">)</span>
+                  <span style="color: #858580;">(</span><span style="color: #80A880;">(</span><span style="color: #006FE0;">eq?</span> m <span style="color: #D0372D;">'deposit</span><span style="color: #80A880;">)</span> deposit<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    dispatch<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">acc</span> <span style="color: #7388D6;">(</span>make-account <span style="color: #D0372D;">100</span> <span style="color: #D0372D;">'secret</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>acc <span style="color: #D0372D;">'secret</span> <span style="color: #D0372D;">'withdraw</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">10</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>acc <span style="color: #D0372D;">'secret</span> <span style="color: #D0372D;">'deposit</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">100</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>acc <span style="color: #D0372D;">'secret</span> <span style="color: #D0372D;">'withdraw</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">1000</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>acc <span style="color: #D0372D;">'pecret</span> <span style="color: #D0372D;">'withdraw</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">190</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>acc <span style="color: #D0372D;">'pecret</span> <span style="color: #D0372D;">'withdraw</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">190</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>acc <span style="color: #D0372D;">'pecret</span> <span style="color: #D0372D;">'withdraw</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">190</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>acc <span style="color: #D0372D;">'pecret</span> <span style="color: #D0372D;">'withdraw</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">190</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>acc <span style="color: #D0372D;">'pecret</span> <span style="color: #D0372D;">'withdraw</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">190</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>acc <span style="color: #D0372D;">'pecret</span> <span style="color: #D0372D;">'withdraw</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">190</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>acc <span style="color: #D0372D;">'pecret</span> <span style="color: #D0372D;">'withdraw</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">190</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>acc <span style="color: #D0372D;">'pecret</span> <span style="color: #D0372D;">'withdraw</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">190</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>acc <span style="color: #D0372D;">'pecret</span> <span style="color: #D0372D;">'withdraw</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">190</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>acc <span style="color: #D0372D;">'secret</span> <span style="color: #D0372D;">'withdraw</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">1000</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>acc <span style="color: #D0372D;">'pecret</span> <span style="color: #D0372D;">'withdraw</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">190</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4d8f12d" class="outline-3">
+<h3 id="org4d8f12d">3.1.2 The Benefits of Introducing Assignment</h3>
+<div class="outline-text-3" id="text-org4d8f12d">
+<p>
+Introducing assignment leads us into a thicket of difficult conceptual issues. Nevertheless, viewing our system as a collection of objects with local state is a powerful technique for maintaining a modular design.
+</p>
+
+<p>
+Consider the design of a procedure <code>rand</code>, that, whenever it is called, returns an integer chosen at random.
+</p>
+
+<p>
+We want successive calls to <code>rand</code> to produce a sequence of numbers having certain statistical properties (uniform distribution).
+</p>
+
+<p>
+To not focus on method of generating such sequences, assume we have a procedure <code>rand-update</code>, such that <code>x2 = (rand-update x1)</code>, <code>x3 = (rand-update x2)</code> and so on, where <code>x1, x2, x3, ...</code> sequence has the uniform distribution.
+</p>
+
+<p>
+We can implement <code>rand</code> as a procedure with a local state variable <code>x</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">rand</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">let</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #BA36A5;">x</span> random-init<span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">()</span>
+      <span style="color: #709870;">(</span><span style="color: #0000FF;">set!</span> x <span style="color: #907373;">(</span>rand-update x<span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+      x<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<p>
+Of course, we could generate the same sequence of random numbers without using local variable by simply calling <code>rand-update</code> directly. But then any part of our program that used random numbers would have to explicitly remember the current value of x to be passed as an argument to <code>rand-update</code>.
+</p>
+
+<p>
+Consider using random numbers to imlement a technique called <i>Monte Carlo simulation</i>.
+</p>
+
+<p>
+The Monte Carlo method consists of choosing sample experiments at random from a large set and then making deductions on the basis of the probabilities estimated from tabulating the results of those experiments.
+</p>
+
+<p>
+For example, we can appoximate \(\pi\) using the fact that \(6/\pi^2\) is the probability that two integers choosen at random will have no factors in common; that is that their gcd is 1. To obtain the approximation to \(\pi\), we perform a large number of experiments. In each experiment we choose two integers at random and perform a test to see if their GCDs is 1. The fraction of times that the test is passed gives us our estimate of \(6/\pi^2\).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #0000FF;">#lang</span> <span style="color: #BA36A5;">sicp</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">estimate-pi</span> trials<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #006FE0;">sqrt</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">/</span> <span style="color: #D0372D;">6</span> <span style="color: #709870;">(</span>monte-carlo trials cesaro-test<span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">cesaro-test</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #006FE0;">=</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">gcd</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">random</span> <span style="color: #D0372D;">1000000000</span><span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">random</span> <span style="color: #D0372D;">1000000000</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span> <span style="color: #D0372D;">1</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">monte-carlo</span> trials experiment<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">iter</span> trials-remaining trials-passed<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #709870;">(</span><span style="color: #907373;">(</span><span style="color: #006FE0;">=</span> trials-remaining <span style="color: #D0372D;">0</span><span style="color: #907373;">)</span>
+           <span style="color: #907373;">(</span><span style="color: #006FE0;">/</span> trials-passed trials<span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+          <span style="color: #709870;">(</span><span style="color: #907373;">(</span>experiment<span style="color: #907373;">)</span>
+           <span style="color: #907373;">(</span>iter <span style="color: #6276BA;">(</span><span style="color: #006FE0;">-</span> trials-remaining <span style="color: #D0372D;">1</span><span style="color: #6276BA;">)</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">+</span> trials-passed <span style="color: #D0372D;">1</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+          <span style="color: #709870;">(</span><span style="color: #0000FF;">else</span>
+           <span style="color: #907373;">(</span>iter <span style="color: #6276BA;">(</span><span style="color: #006FE0;">-</span> trials-remaining <span style="color: #D0372D;">1</span><span style="color: #6276BA;">)</span> trials-passed<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>iter trials <span style="color: #D0372D;">0</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span>estimate-pi <span style="color: #D0372D;">10000000</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<p>
+Alternatively, using <code>rand-update</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">random-init</span> <span style="color: #D0372D;">10</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">estimate-pi</span> trials<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #006FE0;">sqrt</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">/</span> <span style="color: #D0372D;">6</span> <span style="color: #709870;">(</span>random-gcd-test trials random-init<span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">random-gcd-test</span> trials initial-x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">iter</span> trials-remaining trials-passed x<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">let</span> <span style="color: #709870;">(</span><span style="color: #907373;">(</span><span style="color: #BA36A5;">x1</span> <span style="color: #6276BA;">(</span>rand-update x<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #0000FF;">let</span> <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #BA36A5;">x2</span> <span style="color: #858580;">(</span>rand-update x1<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+        <span style="color: #907373;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #6276BA;">(</span><span style="color: #858580;">(</span><span style="color: #006FE0;">=</span> trials-remaining <span style="color: #D0372D;">0</span><span style="color: #858580;">)</span>
+               <span style="color: #858580;">(</span><span style="color: #006FE0;">/</span> trials-passed trials<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+              <span style="color: #6276BA;">(</span><span style="color: #858580;">(</span><span style="color: #006FE0;">=</span> <span style="color: #80A880;">(</span><span style="color: #006FE0;">gcd</span> x1 x2<span style="color: #80A880;">)</span> <span style="color: #D0372D;">1</span><span style="color: #858580;">)</span>
+               <span style="color: #858580;">(</span>iter <span style="color: #80A880;">(</span><span style="color: #006FE0;">-</span> trials-remaining <span style="color: #D0372D;">1</span><span style="color: #80A880;">)</span>
+                     <span style="color: #80A880;">(</span><span style="color: #006FE0;">+</span> trials-passed <span style="color: #D0372D;">1</span><span style="color: #80A880;">)</span>
+                     x2<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+              <span style="color: #6276BA;">(</span><span style="color: #0000FF;">else</span>
+               <span style="color: #858580;">(</span>iter <span style="color: #80A880;">(</span><span style="color: #006FE0;">-</span> trials-remaining <span style="color: #D0372D;">1</span><span style="color: #80A880;">)</span>
+                     trials-passed
+                     x2<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>iter trials <span style="color: #D0372D;">0</span> initial-x<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<p>
+In the version without local state, user code should manipulate the random numbers x1 and x2, and recycle x2 as the new input to <code>rand-update</code>. The explicit handling of randomness intertwines with the experiment code, and greatly constricts the system with exactly 2 random numbers, making it impossible to reuse with 1 or 3.
+Even <code>esimtate-pi</code> should be aware of this random system, by supplying <code>random-init</code>.
+All this makes it difficult to isolate the Monte Carlo idea so that it can be applied to other tasks.
+</p>
+
+<p>
+In the first version assignment helps to encapsulate the state of the random-number generator withing the <code>rand</code> procedure, so that the details of random-number generation remaing independent of the rest of the program.
+</p>
+
+<p>
+From the point of view of one part of a complex system, the other parts appear to change in time. They have hidden time-varying local state.
+</p>
+</div>
+
+<div id="outline-container-org2876ae3" class="outline-4">
+<h4 id="org2876ae3">Exercise 3.5 - Monte Carlo integration</h4>
+<div class="outline-text-4" id="text-org2876ae3">
+<p>
+Space described by a predicate \(P(x,y)\) that is true for all points inside the region and false otherwise.
+</p>
+
+<p>
+To estimate the area of the region, begin by choosing a rectangle that contains the region. The desired integral is the area of that portion of the rectangle that lies in the region.
+We can estimate the integral by picking, at random, points \((x, y)\) that lie in the rectangle, and testing \(P(x,y)\) for each point. If we try this enough times, the fraction of points inside the region approximates the fraction of rectangle occupied be the region. Hence, multiplying this fraction by the area of the entire rectangle gives an estimate of the area of the region.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #0000FF;">#lang</span> <span style="color: #BA36A5;">sicp</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">random-in-range</span> low high<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">let</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #BA36A5;">range</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">-</span> high low<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #006FE0;">+</span> low <span style="color: #709870;">(</span><span style="color: #006FE0;">random</span> <span style="color: #006FE0;">range</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">estimate-integral</span> P x1 y1 x2 y2 trials<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">experiment</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span>P <span style="color: #709870;">(</span>random-in-range x1 x2<span style="color: #709870;">)</span>
+       <span style="color: #709870;">(</span>random-in-range y1 y2<span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>  
+  <span style="color: #7388D6;">(</span><span style="color: #006FE0;">*</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">-</span> x2 x1<span style="color: #909183;">)</span>
+     <span style="color: #909183;">(</span><span style="color: #006FE0;">-</span> y2 y1<span style="color: #909183;">)</span>
+     <span style="color: #909183;">(</span>monte-carlo trials experiment<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">monte-carlo</span> trials experiment<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">iter</span> remaining passed<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #709870;">(</span><span style="color: #907373;">(</span><span style="color: #006FE0;">zero?</span> remaining<span style="color: #907373;">)</span>
+           <span style="color: #907373;">(</span><span style="color: #006FE0;">/</span> passed trials<span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+          <span style="color: #709870;">(</span><span style="color: #907373;">(</span>experiment<span style="color: #907373;">)</span>
+           <span style="color: #907373;">(</span>iter <span style="color: #6276BA;">(</span><span style="color: #006FE0;">-</span> remaining <span style="color: #D0372D;">1</span><span style="color: #6276BA;">)</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">+</span> passed <span style="color: #D0372D;">1</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+          <span style="color: #709870;">(</span><span style="color: #0000FF;">else</span>
+           <span style="color: #907373;">(</span>iter <span style="color: #6276BA;">(</span><span style="color: #006FE0;">-</span> remaining <span style="color: #D0372D;">1</span><span style="color: #6276BA;">)</span> passed<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>iter trials <span style="color: #D0372D;">0</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">square</span> x<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">*</span> x x<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">in-circle</span> cx cy r<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #909183;">(</span>x y<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #006FE0;">&lt;</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">+</span> <span style="color: #907373;">(</span>square <span style="color: #6276BA;">(</span><span style="color: #006FE0;">-</span> x cx<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+          <span style="color: #907373;">(</span>square <span style="color: #6276BA;">(</span><span style="color: #006FE0;">-</span> y cy<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+       <span style="color: #709870;">(</span>square r<span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span>estimate-integral
+ <span style="color: #7388D6;">(</span>in-circle <span style="color: #D0372D;">1.0</span> <span style="color: #D0372D;">1.0</span> <span style="color: #D0372D;">1.0</span><span style="color: #7388D6;">)</span>
+ <span style="color: #D0372D;">0.0</span>
+ <span style="color: #D0372D;">0.0</span>
+ <span style="color: #D0372D;">2.0</span>
+ <span style="color: #D0372D;">2.0</span>
+ <span style="color: #D0372D;">10000000</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<p>
+<code>monte-carlo</code> is the same as used for Cesaro-based estimation, only experiment code differs.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge2b716b" class="outline-4">
+<h4 id="orge2b716b">Exercise 3.6 - rand reset</h4>
+<div class="outline-text-4" id="text-orge2b716b">
+<p>
+It is useful to be able to reset a random-number generator to produce a sequence starting from a given value.
+</p>
+
+<p>
+Design a new <code>rand</code> procedure that is called with an argument that is either the symbol <code>generate</code> or <code>reset</code>, and behaves as follows <code>(rand 'generate)</code> outputs a random value, and <code>((rand 'reset) &lt;new-value&gt;)</code> resets the internal state variable with the new-value.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">rand-update</span> x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #006FE0;">remainder</span>
+   <span style="color: #909183;">(</span><span style="color: #006FE0;">+</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">*</span> <span style="color: #D0372D;">115249</span> x<span style="color: #709870;">)</span> <span style="color: #D0372D;">112909</span><span style="color: #909183;">)</span>
+   <span style="color: #D0372D;">108301</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">random-init</span> <span style="color: #D0372D;">0</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">rand</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">let</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #BA36A5;">x</span> random-init<span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>method<span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #006FE0;">eq?</span> method <span style="color: #D0372D;">'generate</span><span style="color: #6276BA;">)</span>
+             <span style="color: #6276BA;">(</span><span style="color: #0000FF;">begin</span>
+               <span style="color: #858580;">(</span><span style="color: #0000FF;">set!</span> x <span style="color: #80A880;">(</span>rand-update x<span style="color: #80A880;">)</span><span style="color: #858580;">)</span>
+               x<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+            <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #006FE0;">eq?</span> method <span style="color: #D0372D;">'reset</span><span style="color: #6276BA;">)</span>
+             <span style="color: #6276BA;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #858580;">(</span>n<span style="color: #858580;">)</span>
+               <span style="color: #858580;">(</span><span style="color: #0000FF;">set!</span> x n<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+            <span style="color: #907373;">(</span><span style="color: #0000FF;">else</span>
+             <span style="color: #6276BA;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"Unknown method -- RAND"</span> method<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>rand <span style="color: #D0372D;">'generate</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>rand <span style="color: #D0372D;">'generate</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>rand <span style="color: #D0372D;">'generate</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>rand <span style="color: #D0372D;">'generate</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>rand <span style="color: #D0372D;">'generate</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>rand <span style="color: #D0372D;">'reset</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">0</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>rand <span style="color: #D0372D;">'generate</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>rand <span style="color: #D0372D;">'generate</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>rand <span style="color: #D0372D;">'generate</span><span style="color: #707183;">)</span>
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org011d057" class="outline-3">
+<h3 id="org011d057">3.1.2 The Costs of Introducing Assignment</h3>
+<div class="outline-text-3" id="text-org011d057">
+<p>
+As we have seen, the <code>set!</code> operation enables us to model objects that have local state. However, this advantage comes at a price.
+Substitution model of procedure application is no longer adequate for interpreting programs. Moreover, no simple model with "nice" mathematical properties can be an adequate framework for dealing with objects and assignment in programming languages.
+</p>
+
+<p>
+So long as we do not use assignments, two evaluations of the same procedures applied to the same arguments will produce the same results. Programming without any use of assignments is known as <i>functional programming</i>.
+</p>
+
+<p>
+The trouble is that substitution is based ultimately on the notion that the symbols are essentially names for values.
+</p>
+
+<p>
+&gt; But as soon as we introduce <code>set!</code> and the idea the the value of a variable can change, a variable can no longer be simply a name.
+Without <code>set!</code>: name -&gt; value.
+With <code>set!</code>: name -&gt; variable -&gt; value.
+</p>
+
+<p>
+Now, variable refer to some place where the value is stored and can be changed. Environments play this role of "place".
+</p>
+</div>
+
+<div id="outline-container-org0918982" class="outline-4">
+<h4 id="org0918982">Sameness and change</h4>
+<div class="outline-text-4" id="text-org0918982">
+<p>
+Introducing change into computational model renders what was previously straightforward as problematic. Consider the concept of two things being "the same".
+</p>
+
+<p>
+Without <code>set!</code>: if two values are created by the same expression, they are "the same", meaning they are computationally equivalent and can be substituted one for the other.
+With <code>set!</code>: even if two variables are created by the same expression, they are not "the same", they may have different histories, and hold different local state variables. The can <i>not</i> be substituted one for the other.
+</p>
+
+<p>
+A language that supports the concept that "equals can be substituted for equals" in an expressions without changing the value of expression is said to be <i>referentially transparent</i>.
+</p>
+
+<p>
+Reasoning about the programs that contain assignment becomes drastically more difficult.
+</p>
+
+<p>
+In real world, to decide if two apparently identical objects are the "same", one has to change one object and observe the other changed in the same way. But to determine if it's changed one has to observe "same" object at two distinct times, and detect some property change between two observations. Thus, we can not determine "change" without a priori notion of "sameness", and we cannot determine sameness without observing the change.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org6f9c40e" class="outline-4">
+<h4 id="org6f9c40e">Pitfalls of imperative programming</h4>
+<div class="outline-text-4" id="text-org6f9c40e">
+<p>
+Programming that makes extensive use of assignment is called <i>imperative programming</i>.
+</p>
+
+<ol class="org-ol">
+<li>Order of assignment is significant.</li>
+<li>Concurrent execution complicates things even more.</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-org9c831f3" class="outline-4">
+<h4 id="org9c831f3">Exercise 3.7 - joint account</h4>
+<div class="outline-text-4" id="text-org9c831f3">
+<p>
+Define a procedue <code>make-joint</code> that takes three arguments:
+</p>
+<ul class="org-ul">
+<li>password-protected account</li>
+<li>auth password</li>
+<li>another password</li>
+</ul>
+
+<p>
+, and returns an additional access to original account, protected by another password.
+</p>
+
+<hr />
+
+<p>
+One solution is to wrap <code>dispatch</code> definition in a function that accepts <code>password</code>.
+</p>
+
+<p>
+Probably a better one would be to provide a restricted version of dispatch to the joint account (e.g. without <code>'make-joint</code> method).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #0000FF;">#lang</span> <span style="color: #BA36A5;">sicp</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-account</span> amount password<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">withdraw</span> a<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">if</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">&gt;=</span> amount a<span style="color: #709870;">)</span>
+        <span style="color: #709870;">(</span><span style="color: #0000FF;">begin</span>
+          <span style="color: #907373;">(</span><span style="color: #0000FF;">set!</span> amount <span style="color: #6276BA;">(</span><span style="color: #006FE0;">-</span> amount a<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+          amount<span style="color: #709870;">)</span>
+        <span style="color: #008000;">"Insufficient funds"</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">deposit</span> a<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">set!</span> amount <span style="color: #709870;">(</span><span style="color: #006FE0;">+</span> amount a<span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    amount<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">make-dispatch</span> password<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #709870;">(</span><span style="color: #006699;">dispatch</span> m p<span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #006FE0;">not</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">eq?</span> p password<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+             <span style="color: #6276BA;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #858580;">(</span>x<span style="color: #858580;">)</span> <span style="color: #008000;">"Incorrect password"</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+            <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #006FE0;">eq?</span> m <span style="color: #D0372D;">'withdraw</span><span style="color: #6276BA;">)</span> withdraw<span style="color: #907373;">)</span>
+            <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #006FE0;">eq?</span> m <span style="color: #D0372D;">'deposit</span><span style="color: #6276BA;">)</span> deposit<span style="color: #907373;">)</span>
+            <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #006FE0;">eq?</span> m <span style="color: #D0372D;">'make-joint</span><span style="color: #6276BA;">)</span> make-dispatch<span style="color: #907373;">)</span>
+            <span style="color: #907373;">(</span><span style="color: #0000FF;">else</span>
+             <span style="color: #6276BA;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"Unknown method -- MAKE-ACCOUNT"</span> m<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    dispatch<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>make-dispatch password<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-joint</span> acc verify-password new-password<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #909183;">(</span>acc <span style="color: #D0372D;">'make-joint</span> verify-password<span style="color: #909183;">)</span> new-password<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">paul</span> <span style="color: #7388D6;">(</span>make-account <span style="color: #D0372D;">100</span> <span style="color: #D0372D;">'secret</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>paul <span style="color: #D0372D;">'withdraw</span> <span style="color: #D0372D;">'secret</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">10</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">peter</span> <span style="color: #7388D6;">(</span>make-joint paul <span style="color: #D0372D;">'secret</span> <span style="color: #D0372D;">'pecret</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>peter <span style="color: #D0372D;">'withdraw</span> <span style="color: #D0372D;">'pecret</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">90</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>paul <span style="color: #D0372D;">'withdraw</span> <span style="color: #D0372D;">'secret</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">10</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">pylyp</span> <span style="color: #7388D6;">(</span>make-joint peter <span style="color: #D0372D;">'pecret</span> <span style="color: #D0372D;">'qecret</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>pylyp <span style="color: #D0372D;">'deposit</span> <span style="color: #D0372D;">'qecret</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">100</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>paul <span style="color: #D0372D;">'withdraw</span> <span style="color: #D0372D;">'secret</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">10</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgc9fb00e" class="outline-4">
+<h4 id="orgc9fb00e">Exercise 3.8 - order of evaluation</h4>
+<div class="outline-text-4" id="text-orgc9fb00e">
+<p>
+Define a simple procedure <code>f</code> the evaluating <code>(+ (f 0) (f 1))</code> will return 0 if the arguments evaluated left to right, and 1 if the arguments evaluated right to left.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="orgcc0d655"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">f</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">let</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #BA36A5;">s</span> <span style="color: #006FE0;">null</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x<span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #0000FF;">if</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">null?</span> s<span style="color: #907373;">)</span>
+          <span style="color: #907373;">(</span><span style="color: #0000FF;">begin</span>
+            <span style="color: #6276BA;">(</span><span style="color: #0000FF;">set!</span> s x<span style="color: #6276BA;">)</span>
+            s<span style="color: #907373;">)</span>
+          <span style="color: #D0372D;">0</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-racket">&lt;&lt;ex3.8-f&gt;&gt;
+<span style="color: #707183;">(</span><span style="color: #006FE0;">+</span> <span style="color: #7388D6;">(</span>f <span style="color: #D0372D;">0</span><span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span>f <span style="color: #D0372D;">1</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-racket">
+<span style="color: #707183;">(</span><span style="color: #006FE0;">+</span> <span style="color: #7388D6;">(</span>f <span style="color: #D0372D;">1</span><span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span>f <span style="color: #D0372D;">0</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga052b12" class="outline-2">
+<h2 id="orga052b12">3.2 The Environment Model of Evaluation</h2>
+<div class="outline-text-2" id="text-orga052b12">
+<p>
+Substitution model of expression evaluation:
+</p>
+
+<p>
+To apply a compound procedure, evaluate the body of the procedure with each formal parameter replaced with passed argument.
+</p>
+
+<p>
+With assignment, the definition is no longer adequate. A variable can no longer be considered a name for a value. Rather, variable must somehow designate the place to store the value. In a new model evaluation, these places will be maintained in structures called <i>environments</i>.
+</p>
+
+<p>
+An environment is a sequence of <i>frames</i>.
+</p>
+
+<p>
+Each frame is a table (possible empty) of <i>bindings</i>, which associate the variable name with the corresponding value. A single frame can contain at most one binding for each variable.
+</p>
+
+<p>
+Each frame stores a pointer to its <i>enclosing environment</i>, unless, the frame is considered to be <i>global</i>.
+</p>
+
+<p>
+The <i>value of a variable</i> w.r.t. an environment is the value given by the binding of the variable in the first frame in the environment that contains binding for that variable. If no frame in the sequence specifies a bindings for the variable, then the variable is said to be <i>unbound</i> in the environment.
+</p>
+
+<p>
+Expressions in a programming language have no meaning on its own, only within some environment where it's evaluated.
+</p>
+</div>
+
+<div id="outline-container-org25f891b" class="outline-3">
+<h3 id="org25f891b">3.2.1 The Rules for Evaluation</h3>
+<div class="outline-text-3" id="text-org25f891b">
+<p>
+The overall specification for how the interpreter evaluates a combination is not changed:
+</p>
+<ul class="org-ul">
+<li>evaluate the subexpressions of the combination</li>
+<li>apply the value of the operator subexpression to the values of the operand subexpressions</li>
+</ul>
+
+<p>
+The environment model of evaluation replaces a substitution model in specifying what it means to apply a compound procedure to arguments.
+</p>
+
+<p>
+In the environment model of evaluation, procedure is always a pair consisting of some code and a pointer to an environment. Procedures are created in one way only: by evaluating a lambda expression. This produces a procedure whose code is obtained from the text of the lambda expression, and whose environment is the environment in which the lambda expression was evaluated to produce a procedure.
+</p>
+
+<p>
+In general, <code>define</code> (which is a syntactic sugar for <code>lambda</code>) creates definitions by adding bindings to frames.
+</p>
+
+<p>
+Knowing how procedures are created, here's how to apply a procedure according to environment model: To apply a procedure to arguments, create a new environment containing a frame that binds the parameters to the values of arguments. The enclosing environment of this frame is the environment specified by the procedure. Now, within a new environment evaluate the procedure body.
+</p>
+
+<p>
+Summary for the environment model of procedure application:
+</p>
+<ul class="org-ul">
+<li>the procedure object is applied to a set of arguments by constructing a frame, binding the formal parameters to the values of the arguments of the call, and then evaluating the body of the procedure in the context of the new environment constructed</li>
+<li>a procedure is created by evaluating a <code>lambda</code> expression relative to a given environment. The resulting procedure is a pair constiting of the text of the <code>lambda</code> expression and the environment in which the procedure was created.</li>
+</ul>
+
+<p>
+<code>define</code> creates a binding in the current environment frame and assigns to the symbol the indicated value.
+Evaluating <code>set!</code> in some environment locates the binding of the variable in the environment and changes that binding to the new value. That is, it finds the first frame in the environment that contains a binding for the variable and modifies that frame. If the variable is unbound in the environment, <code>set!</code> signals an error.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgd279bd3" class="outline-3">
+<h3 id="orgd279bd3">3.2.2 Applying Simple Procedures</h3>
+<div class="outline-text-3" id="text-orgd279bd3">
+<p>
+&#x2026; using paper &#x2026;
+</p>
+</div>
+</div>
+
+<div id="outline-container-org1f4bd4b" class="outline-3">
+<h3 id="org1f4bd4b">3.2.3 Frames as the Repository of Local State</h3>
+<div class="outline-text-3" id="text-org1f4bd4b">
+<p>
+&#x2026; using paper &#x2026;
+</p>
+</div>
+</div>
+
+<div id="outline-container-org4d469a5" class="outline-3">
+<h3 id="org4d469a5">3.2.4 Internal Definitions</h3>
+<div class="outline-text-3" id="text-org4d469a5">
+<p>
+&#x2026; using paper &#x2026;
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgba38279" class="outline-2">
+<h2 id="orgba38279">3.3 Modeling with Mutable Data</h2>
+<div class="outline-text-2" id="text-orgba38279">
+<p>
+Chapter 2 introduced the discipline of data abstraction - when data structures are specified in terms of data constructors and data selectors. But that does not address the desire to model systems composed of objects with changing state.
+</p>
+
+<p>
+Thus, we also need to have means to update the state of compound object, in addition to constructing and selecting from them.
+</p>
+
+<p>
+Now data abstraction has one additional category:
+Constructors, selectors, <i>mutators</i>.
+</p>
+
+<p>
+Data objects with defined mutators are known as <i>mutable data objects</i>.
+</p>
+</div>
+
+<div id="outline-container-orgd4a7577" class="outline-3">
+<h3 id="orgd4a7577">3.3.1 Mutable List Structure</h3>
+<div class="outline-text-3" id="text-orgd4a7577">
+<p>
+<code>cons</code>, <code>car</code>, <code>cdr</code>, <code>append</code> and <code>list</code> allow to construct and get information from the objects, but not to update them.
+</p>
+
+<p>
+<code>set-car!</code> and <code>set-cdr!</code> are the primitives for updating pairs.
+</p>
+</div>
+
+<div id="outline-container-orgba0aab8" class="outline-4">
+<h4 id="orgba0aab8">Exercise 3.13</h4>
+<div class="outline-text-4" id="text-orgba0aab8">
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #0000FF;">#lang</span> <span style="color: #BA36A5;">sicp</span>
+
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">last-pair</span> x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">if</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">null?</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">cdr</span> x<span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+      x
+      <span style="color: #909183;">(</span><span style="color: #006FE0;">last-pair</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">cdr</span> x<span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-cycle</span> x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>set-cdr! <span style="color: #909183;">(</span><span style="color: #006FE0;">last-pair</span> x<span style="color: #909183;">)</span> x<span style="color: #7388D6;">)</span>
+  x<span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">z</span> <span style="color: #7388D6;">(</span>make-cycle <span style="color: #909183;">(</span><span style="color: #006FE0;">list</span> <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'b</span> <span style="color: #D0372D;">'c</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+z
+<span style="color: #707183;">(</span><span style="color: #006FE0;">last-pair</span> z<span style="color: #707183;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org925806e" class="outline-4">
+<h4 id="org925806e">Exercise 3.14</h4>
+<div class="outline-text-4" id="text-org925806e">
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #0000FF;">#lang</span> <span style="color: #BA36A5;">sicp</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">mystery</span> x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">loop</span> x y<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">if</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">null?</span> x<span style="color: #709870;">)</span>
+        y
+        <span style="color: #709870;">(</span><span style="color: #0000FF;">let</span> <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #BA36A5;">temp</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">cdr</span> x<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+          <span style="color: #907373;">(</span>set-cdr! x y<span style="color: #907373;">)</span>
+          <span style="color: #907373;">(</span>loop temp x<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>loop x '<span style="color: #909183;">()</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">v</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">list</span> <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'b</span> <span style="color: #D0372D;">'c</span> <span style="color: #D0372D;">'d</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">w</span> <span style="color: #7388D6;">(</span>mystery v<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+v
+
+w
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4e73553" class="outline-4">
+<h4 id="org4e73553">Sharing and Identity</h4>
+<div class="outline-text-4" id="text-org4e73553">
+<p>
+Theoretical issues of "sameness" and "change" arise in practice when individual pairs are <i>shared</i> among different data objects.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">x</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">list</span> <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'b</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">z1</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">cons</span> x x<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<p>
+<code>z1</code> is a pair whose <code>car</code> and <code>cdr</code> both point to the same pair <code>x</code>.
+</p>
+
+<p>
+In general, using <code>cons</code> to construct lists will result in an interlinked structure of pairs, in which many individual pairs are shared by many different structures.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">z2</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">cons</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">list</span> <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'b</span><span style="color: #909183;">)</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">list</span> <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'b</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<p>
+<code>z2</code> is a pair whose <code>car</code> and <code>cdr</code> point to two distinct pairs, each having <code>'a</code> and <code>'b</code> in its cells.
+In Scheme, there is a unique symbol with any given name, so symbols are shared.
+</p>
+
+<p>
+Sharing is undetectable until constructors and selectors are used, but with mutators added it becomes significant.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">set-to-wow!</span> x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>set-car! <span style="color: #909183;">(</span><span style="color: #006FE0;">car</span> x<span style="color: #909183;">)</span> <span style="color: #D0372D;">'wow</span><span style="color: #7388D6;">)</span>
+  x<span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<p>
+<code>(set-to-wow! z1)</code> will update <code>z1</code> to <code>((wow b) wow b)</code>.
+<code>(set-to-wow! z2)</code> will update <code>z2</code> to <code>((wow b) a b)</code>.
+</p>
+
+<p>
+<code>eq?</code> tests whether two objects are equal as pointers.
+</p>
+
+<p>
+In general, <code>set-car!</code> and <code>set-cdr!</code> should be used with full understanding how data objects are shared.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org605d9bf" class="outline-4">
+<h4 id="org605d9bf">Exercise 3.15, 3.16</h4>
+<div class="outline-text-4" id="text-org605d9bf">
+<p>
+&#x2026; using paper &#x2026;
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgf0a3616" class="outline-4">
+<h4 id="orgf0a3616">Exercise 3.17 - count pairs in structure</h4>
+<div class="outline-text-4" id="text-orgf0a3616">
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #0000FF;">#lang</span> <span style="color: #BA36A5;">sicp</span>
+
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">new-set</span><span style="color: #7388D6;">)</span> '<span style="color: #7388D6;">()</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">empty-set?</span> s<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">null?</span> s<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">size-set</span> s<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">if</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">null?</span> s<span style="color: #909183;">)</span>
+      <span style="color: #D0372D;">0</span>
+      <span style="color: #909183;">(</span><span style="color: #006FE0;">+</span> <span style="color: #D0372D;">1</span> <span style="color: #709870;">(</span>size-set <span style="color: #907373;">(</span><span style="color: #006FE0;">cdr</span> s<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">contains-set?</span> s x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #006FE0;">null?</span> s<span style="color: #709870;">)</span> <span style="color: #006FE0;">false</span><span style="color: #909183;">)</span>
+        <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #006FE0;">eq?</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">car</span> s<span style="color: #907373;">)</span> x<span style="color: #709870;">)</span> <span style="color: #006FE0;">true</span><span style="color: #909183;">)</span>
+        <span style="color: #909183;">(</span><span style="color: #0000FF;">else</span> <span style="color: #709870;">(</span>contains-set? <span style="color: #907373;">(</span><span style="color: #006FE0;">cdr</span> s<span style="color: #907373;">)</span> x<span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">add-set</span> s x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">if</span> <span style="color: #909183;">(</span>contains-set? s x<span style="color: #909183;">)</span>
+      s
+      <span style="color: #909183;">(</span><span style="color: #006FE0;">cons</span> x s<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">union-set</span> s1 s2<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #006FE0;">null?</span> s1<span style="color: #709870;">)</span> s2<span style="color: #909183;">)</span>
+        <span style="color: #909183;">(</span><span style="color: #709870;">(</span>contains-set? s2 <span style="color: #907373;">(</span><span style="color: #006FE0;">car</span> s1<span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+         <span style="color: #709870;">(</span>union-set <span style="color: #907373;">(</span><span style="color: #006FE0;">cdr</span> s1<span style="color: #907373;">)</span> s2<span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+        <span style="color: #909183;">(</span><span style="color: #0000FF;">else</span>
+         <span style="color: #709870;">(</span><span style="color: #006FE0;">cons</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">car</span> s1<span style="color: #907373;">)</span> <span style="color: #907373;">(</span>union-set <span style="color: #6276BA;">(</span><span style="color: #006FE0;">cdr</span> s1<span style="color: #6276BA;">)</span> s2<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">count-pairs</span> x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">recur</span> x seen<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #709870;">(</span><span style="color: #907373;">(</span><span style="color: #0000FF;">or</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">not</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">pair?</span> x<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+               <span style="color: #6276BA;">(</span>contains-set? seen x<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+           seen<span style="color: #709870;">)</span>
+          <span style="color: #709870;">(</span><span style="color: #0000FF;">else</span>
+           <span style="color: #907373;">(</span><span style="color: #0000FF;">let</span> <span style="color: #6276BA;">(</span><span style="color: #858580;">(</span><span style="color: #BA36A5;">new-seen</span> <span style="color: #80A880;">(</span>add-set seen x<span style="color: #80A880;">)</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+             <span style="color: #6276BA;">(</span>union-set <span style="color: #858580;">(</span>recur <span style="color: #80A880;">(</span><span style="color: #006FE0;">car</span> x<span style="color: #80A880;">)</span> new-seen<span style="color: #858580;">)</span>
+                        <span style="color: #858580;">(</span>recur <span style="color: #80A880;">(</span><span style="color: #006FE0;">cdr</span> x<span style="color: #80A880;">)</span> new-seen<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>size-set <span style="color: #909183;">(</span>recur x <span style="color: #709870;">(</span>new-set<span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span>count-pairs <span style="color: #7388D6;">(</span><span style="color: #006FE0;">list</span> <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'b</span> <span style="color: #D0372D;">'c</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>count-pairs <span style="color: #7388D6;">(</span><span style="color: #006FE0;">cons</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">list</span> <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'b</span><span style="color: #909183;">)</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">list</span> <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'b</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">x</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">list</span> <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'b</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>count-pairs <span style="color: #7388D6;">(</span><span style="color: #006FE0;">cons</span> x x<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">last-pair</span> xs<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">if</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">null?</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">cdr</span> xs<span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+      xs
+      <span style="color: #909183;">(</span><span style="color: #006FE0;">last-pair</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">cdr</span> xs<span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-cycle</span> x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>set-cdr! <span style="color: #909183;">(</span><span style="color: #006FE0;">last-pair</span> x<span style="color: #909183;">)</span> x<span style="color: #7388D6;">)</span>
+  x<span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>count-pairs <span style="color: #7388D6;">(</span>make-cycle x<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge1f775a" class="outline-4">
+<h4 id="orge1f775a">Exercise 3.18 - detect cycle</h4>
+<div class="outline-text-4" id="text-orge1f775a">
+<p>
+Write a procedure that examines a list and determines whether it contains a cycle.
+</p>
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #0000FF;">#lang</span> <span style="color: #BA36A5;">sicp</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">detect-cycle</span> x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">iter</span> y<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #709870;">(</span><span style="color: #907373;">(</span><span style="color: #006FE0;">null?</span> y<span style="color: #907373;">)</span> <span style="color: #006FE0;">false</span><span style="color: #709870;">)</span>
+          <span style="color: #709870;">(</span><span style="color: #907373;">(</span><span style="color: #006FE0;">eq?</span> y x<span style="color: #907373;">)</span> <span style="color: #006FE0;">true</span><span style="color: #709870;">)</span>
+          <span style="color: #709870;">(</span><span style="color: #0000FF;">else</span>
+           <span style="color: #907373;">(</span>iter <span style="color: #6276BA;">(</span><span style="color: #006FE0;">cdr</span> y<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">if</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">null?</span> x<span style="color: #909183;">)</span>
+      <span style="color: #006FE0;">false</span>
+      <span style="color: #909183;">(</span>iter <span style="color: #709870;">(</span><span style="color: #006FE0;">cdr</span> x<span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">last-pair</span> x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">if</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">null?</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">cdr</span> x<span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+      x
+      <span style="color: #909183;">(</span><span style="color: #006FE0;">last-pair</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">cdr</span> x<span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-cycle</span> x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>set-cdr! <span style="color: #909183;">(</span><span style="color: #006FE0;">last-pair</span> x<span style="color: #909183;">)</span> x<span style="color: #7388D6;">)</span>
+  x<span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span>detect-cycle <span style="color: #7388D6;">(</span>make-cycle '<span style="color: #909183;">(</span>a b c<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>detect-cycle '<span style="color: #7388D6;">(</span>a b c<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org7173d62" class="outline-4">
+<h4 id="org7173d62">Exercise 3.19 - detect cycle in constant space</h4>
+<div class="outline-text-4" id="text-org7173d62">
+<p>
+My solution in 3.18 already consumes constant space besides the size of the input list.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org57156c8" class="outline-4">
+<h4 id="org57156c8">Mutation is just assignment</h4>
+<div class="outline-text-4" id="text-org57156c8">
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">cons</span> x y<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">set-x!</span> v<span style="color: #909183;">)</span> <span style="color: #909183;">(</span><span style="color: #0000FF;">set!</span> x v<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">set-y!</span> v<span style="color: #909183;">)</span> <span style="color: #909183;">(</span><span style="color: #0000FF;">set!</span> y v<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">dispatch</span> m<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #709870;">(</span><span style="color: #907373;">(</span><span style="color: #006FE0;">eq?</span> m <span style="color: #D0372D;">'car</span><span style="color: #907373;">)</span> x<span style="color: #709870;">)</span>
+          <span style="color: #709870;">(</span><span style="color: #907373;">(</span><span style="color: #006FE0;">eq?</span> m <span style="color: #D0372D;">'cdr</span><span style="color: #907373;">)</span> y<span style="color: #709870;">)</span>
+          <span style="color: #709870;">(</span><span style="color: #907373;">(</span><span style="color: #006FE0;">eq?</span> m <span style="color: #D0372D;">'set-car!</span><span style="color: #907373;">)</span> set-x!<span style="color: #709870;">)</span>
+          <span style="color: #709870;">(</span><span style="color: #907373;">(</span><span style="color: #006FE0;">eq?</span> m <span style="color: #D0372D;">'set-cdr!</span><span style="color: #907373;">)</span> set-y!<span style="color: #709870;">)</span>
+          <span style="color: #709870;">(</span><span style="color: #0000FF;">else</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"Unknown message -- CONS"</span> m<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  dispatch<span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">car</span> x<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span>x <span style="color: #D0372D;">'car</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">cdr</span> x<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span>x <span style="color: #D0372D;">'cdr</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">set-car!</span> x v<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #909183;">(</span>x <span style="color: #D0372D;">'set-car!</span><span style="color: #909183;">)</span> v<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">set-cdr!</span> x v<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #909183;">(</span>x <span style="color: #D0372D;">'set-cdr!</span><span style="color: #909183;">)</span> v<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<p>
+<code>Cons</code> can be implemented using only <code>set!</code> and local state.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org53070f5" class="outline-4">
+<h4 id="org53070f5">Exercise 3.20 - environment diagrams for <code>cons</code></h4>
+<div class="outline-text-4" id="text-org53070f5">
+
+<div id="org1a71c39" class="figure">
+<p><img src="./images/Exercise-3.20.jpeg" alt="Exercise-3.20.jpeg" width="100%" />
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: LMG</p>
+<p class="date">Created: 2023-07-20 Thu 20:10</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

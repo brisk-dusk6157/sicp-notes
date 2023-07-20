@@ -1,0 +1,1172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2023-06-29 Thu 18:11 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2.5 Systems with Generic Operations</title>
+<meta name="author" content="LMG" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">2.5 Systems with Generic Operations</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#orga7431d3"><span class="todo TODO">TODO</span> Return and implement the system after <code>put</code> and <code>get</code> are discussed and available</a></li>
+<li><a href="#org02c27bf">Introduction</a></li>
+<li><a href="#orgbe60ab0">2.5.1 Generic Arithmetic Operations</a>
+<ul>
+<li><a href="#orgf85dfb3">Exercise 2.77</a></li>
+<li><a href="#org8837cfe">Exercise 2.78 - use Scheme type system</a></li>
+<li><a href="#org87d2d96">Exercise 2.79 - <code>equ?</code></a></li>
+<li><a href="#org5f0c86b">Exercise 2.80 - <code>=zero?</code></a></li>
+</ul>
+</li>
+<li><a href="#org616f34e">2.5.2 Combining Data of Different Types</a>
+<ul>
+<li><a href="#org794fe19">Coercion</a></li>
+<li><a href="#orgf5747f2">Exercise 2.81 - missing same-type implementation</a>
+<ul>
+<li><a href="#org7ac7b9a">a. With procedures installed, what happens if <code>apply-generic</code> is called with two arguments of type <code>scheme-number</code> for an operation that is not found in the table for those types?</a></li>
+<li><a href="#org4562c27">b. Is Louis correct that something had to be done about coercion with arguments of the same type, or does <code>apply-generic</code> work correctly as is?</a></li>
+<li><a href="#org24e424c">c. Modify <code>apply-generic</code> so that it doesn't try coercion if the two arguments have the same type</a></li>
+</ul>
+</li>
+<li><a href="#org3a7c5f0">Exercise 2.82 - not only 2 args</a></li>
+<li><a href="#org5c9120d">Exercise 2.83 - <code>raise</code> one level of tower</a></li>
+<li><a href="#org8065f83">Exercise 2.84 - coerce through raise</a></li>
+<li><a href="#org49f4ea8">Exercise 2.85</a></li>
+</ul>
+</li>
+<li><a href="#orgf9bd70b">2.5.3 Example: Symbolic Algebra</a>
+<ul>
+<li><a href="#orgf0e6cb6">Arithmetic on polynomials</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orga7431d3" class="outline-2">
+<h2 id="orga7431d3"><span class="todo TODO">TODO</span> Return and implement the system after <code>put</code> and <code>get</code> are discussed and available</h2>
+</div>
+<div id="outline-container-org02c27bf" class="outline-2">
+<h2 id="org02c27bf">Introduction</h2>
+<div class="outline-text-2" id="text-org02c27bf">
+<p>
+Section 2.4 discusses how to design systems where data can be represented in more than one way.
+The idea is to use generic interface procedures to link code that implements data operations to several representations.
+</p>
+
+<p>
+Section 2.5 will discuss how to use the same idea to not only define operations for different representations, but also to define operations over different kinds of arguments.
+</p>
+
+<p>
+System to be implemented is arithmetic package that operates on different types of numbers - built-in numbers, rational numbers and complex numbers.
+System is additive, so it's easy to add new numbers' representations.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgbe60ab0" class="outline-2">
+<h2 id="orgbe60ab0">2.5.1 Generic Arithmetic Operations</h2>
+<div class="outline-text-2" id="text-orgbe60ab0">
+<p>
+Generic interface:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket" id="orgb8a4f84"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">add</span> x y<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span>apply-generic <span style="color: #D0372D;">'add</span> x y<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">sub</span> x y<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span>apply-generic <span style="color: #D0372D;">'sub</span> x y<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">mul</span> x y<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span>apply-generic <span style="color: #D0372D;">'mul</span> x y<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">div</span> x y<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span>apply-generic <span style="color: #D0372D;">'div</span> x y<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<p>
+Implementation for built-in numbers:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket" id="org6127a99"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">install-scheme-number-package</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">tag</span> x<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span>attach-tag <span style="color: #D0372D;">'scheme-number</span> x<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'add</span> '<span style="color: #909183;">(</span>scheme-number scheme-number<span style="color: #909183;">)</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x y<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">+</span> x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'sub</span> '<span style="color: #909183;">(</span>scheme-number scheme-number<span style="color: #909183;">)</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x y<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">-</span> x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'mul</span> '<span style="color: #909183;">(</span>scheme-number scheme-number<span style="color: #909183;">)</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x y<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">*</span> x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'div</span> '<span style="color: #909183;">(</span>scheme-number scheme-number<span style="color: #909183;">)</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x y<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">/</span> x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'make</span> <span style="color: #D0372D;">'scheme-number</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> x<span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #D0372D;">'done</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-scheme-number</span> n<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #909183;">(</span>get <span style="color: #D0372D;">'make</span> <span style="color: #D0372D;">'scheme-number</span><span style="color: #909183;">)</span> n<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<p>
+Impelmentation for rational numbers:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket" id="orgf14926c"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">install-rational-package</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">numer</span> x<span style="color: #909183;">)</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">car</span> x<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">denom</span> x<span style="color: #909183;">)</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">cdr</span> x<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">make-rat</span> n d<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">let</span> <span style="color: #709870;">(</span><span style="color: #907373;">(</span><span style="color: #BA36A5;">g</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">gcd</span> n d<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #006FE0;">cons</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">/</span> n g<span style="color: #907373;">)</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">/</span> d g<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">add-rat</span> x y<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span>make-rat <span style="color: #709870;">(</span><span style="color: #006FE0;">+</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">*</span> <span style="color: #6276BA;">(</span>numer x<span style="color: #6276BA;">)</span> <span style="color: #6276BA;">(</span>denom y<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+                 <span style="color: #907373;">(</span><span style="color: #006FE0;">*</span> <span style="color: #6276BA;">(</span>numer y<span style="color: #6276BA;">)</span> <span style="color: #6276BA;">(</span>denom x<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+              <span style="color: #709870;">(</span><span style="color: #006FE0;">*</span> <span style="color: #907373;">(</span>denom x<span style="color: #907373;">)</span> <span style="color: #907373;">(</span>denom y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">sub-rat</span> x y<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span>make-rat <span style="color: #709870;">(</span><span style="color: #006FE0;">-</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">*</span> <span style="color: #6276BA;">(</span>numer x<span style="color: #6276BA;">)</span> <span style="color: #6276BA;">(</span>denom y<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+                 <span style="color: #907373;">(</span><span style="color: #006FE0;">*</span> <span style="color: #6276BA;">(</span>numer y<span style="color: #6276BA;">)</span> <span style="color: #6276BA;">(</span>denom x<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+              <span style="color: #709870;">(</span><span style="color: #006FE0;">*</span> <span style="color: #907373;">(</span>denom x<span style="color: #907373;">)</span> <span style="color: #907373;">(</span>denom y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">mul-rat</span> x y<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span>make-rat <span style="color: #709870;">(</span><span style="color: #006FE0;">*</span> <span style="color: #907373;">(</span>numer x<span style="color: #907373;">)</span> <span style="color: #907373;">(</span>numer y<span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+              <span style="color: #709870;">(</span><span style="color: #006FE0;">*</span> <span style="color: #907373;">(</span>denom x<span style="color: #907373;">)</span> <span style="color: #907373;">(</span>denom y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">div-rat</span> x y<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span>make-rat <span style="color: #709870;">(</span><span style="color: #006FE0;">*</span> <span style="color: #907373;">(</span>numer x<span style="color: #907373;">)</span> <span style="color: #907373;">(</span>denom y<span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+              <span style="color: #709870;">(</span><span style="color: #006FE0;">*</span> <span style="color: #907373;">(</span>denom x<span style="color: #907373;">)</span> <span style="color: #907373;">(</span>numer y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">tag</span> x<span style="color: #909183;">)</span> <span style="color: #909183;">(</span>attach-tag <span style="color: #D0372D;">'rational</span> x<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'add</span> '<span style="color: #909183;">(</span>rational rational<span style="color: #909183;">)</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x y<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span>add-rat x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'sub</span> '<span style="color: #909183;">(</span>rational rational<span style="color: #909183;">)</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x y<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span>sub-rat x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'mul</span> '<span style="color: #909183;">(</span>rational rational<span style="color: #909183;">)</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x y<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span>mul-rat x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'div</span> '<span style="color: #909183;">(</span>rational rational<span style="color: #909183;">)</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x y<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span>div-rat x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'make</span> <span style="color: #D0372D;">'rational</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>n d<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span>make-rat n d<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #D0372D;">'done</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-rational</span> n d<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #909183;">(</span>get <span style="color: #D0372D;">'make</span> <span style="color: #D0372D;">'rational</span><span style="color: #909183;">)</span> n d<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<p>
+Implementation for complex numbers, relies on the complex numbers package from s2.4:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket" id="orgaa3ba8d"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">install-complex-package</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">make-from-real-imag</span> x y<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #709870;">(</span>get <span style="color: #D0372D;">'make-from-real-imag</span> <span style="color: #D0372D;">'rectangular</span><span style="color: #709870;">)</span> x y<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">make-from-mag-ang</span> r a<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #709870;">(</span>get <span style="color: #D0372D;">'make-from-mag-ang</span> <span style="color: #D0372D;">'polar</span><span style="color: #709870;">)</span> r a<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">add-complex</span> z1 z2<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span>make-from-real-imag <span style="color: #709870;">(</span><span style="color: #006FE0;">+</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">real-part</span> z1<span style="color: #907373;">)</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">real-part</span> z2<span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+                         <span style="color: #709870;">(</span><span style="color: #006FE0;">+</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">imag-part</span> z1<span style="color: #907373;">)</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">imag-part</span> z2<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">sub-complex</span> z1 z2<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span>make-from-real-imag <span style="color: #709870;">(</span><span style="color: #006FE0;">-</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">real-part</span> z1<span style="color: #907373;">)</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">real-part</span> z2<span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+                         <span style="color: #709870;">(</span><span style="color: #006FE0;">-</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">imag-part</span> z1<span style="color: #907373;">)</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">imag-part</span> z2<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">mul-complex</span> z1 z2<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span>make-from-mag-ang <span style="color: #709870;">(</span><span style="color: #006FE0;">*</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">magnitude</span> z1<span style="color: #907373;">)</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">magnitude</span> z2<span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+                       <span style="color: #709870;">(</span><span style="color: #006FE0;">+</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">angle</span> z1<span style="color: #907373;">)</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">angle</span> z2<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">div-complex</span> z1 z2<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span>make-from-mag-ang <span style="color: #709870;">(</span><span style="color: #006FE0;">/</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">magnitude</span> z1<span style="color: #907373;">)</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">magnitude</span> z2<span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+                       <span style="color: #709870;">(</span><span style="color: #006FE0;">-</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">angle</span> z1<span style="color: #907373;">)</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">angle</span> z2<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">tag</span> z<span style="color: #909183;">)</span> <span style="color: #909183;">(</span>attach-tag <span style="color: #D0372D;">'complex</span> z<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'add</span> '<span style="color: #909183;">(</span>complex complex<span style="color: #909183;">)</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x y<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span>add-complex x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'sub</span> '<span style="color: #909183;">(</span>complex complex<span style="color: #909183;">)</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x y<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span>sub-complex x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'mul</span> '<span style="color: #909183;">(</span>complex complex<span style="color: #909183;">)</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x y<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span>mul-complex x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'div</span> '<span style="color: #909183;">(</span>complex complex<span style="color: #909183;">)</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x y<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span>div-complex x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'make-from-real-imag</span> <span style="color: #D0372D;">'complex</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x y<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span>make-from-real-imag x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'make-from-mag-ang</span> <span style="color: #D0372D;">'complex</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x y<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span>make-from-mag-ang x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #D0372D;">'done</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-complex-from-real-imag</span> x y<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #909183;">(</span>get <span style="color: #D0372D;">'make-from-real-imag</span> <span style="color: #D0372D;">'complex</span><span style="color: #909183;">)</span> x y<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-complex-from-mag-ang</span> x y<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #909183;">(</span>get <span style="color: #D0372D;">'make-from-mag-ang</span> <span style="color: #D0372D;">'complex</span><span style="color: #909183;">)</span> x y<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<p>
+Tags utils:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket" id="orge37e408"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">attach-tag</span> t x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #006FE0;">cons</span> t x<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">type-tag</span> x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">if</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">pair?</span> x<span style="color: #909183;">)</span>
+      <span style="color: #909183;">(</span><span style="color: #006FE0;">car</span> x<span style="color: #909183;">)</span>
+      <span style="color: #909183;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"Expected pair -- TYPE-TAG"</span> x<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">contents</span> x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">if</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">pair?</span> x<span style="color: #909183;">)</span>
+      <span style="color: #909183;">(</span><span style="color: #006FE0;">cdr</span> x<span style="color: #909183;">)</span>
+      <span style="color: #909183;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"Expected pair -- CONTENTS"</span> x<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">apply-generic</span> op . args<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">let</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #BA36A5;">type-tags</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">map</span> type-tag args<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">let</span> <span style="color: #709870;">(</span><span style="color: #907373;">(</span><span style="color: #BA36A5;">proc</span> <span style="color: #6276BA;">(</span>get op type-tags<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #0000FF;">if</span> proc
+          <span style="color: #907373;">(</span><span style="color: #0000FF;">apply</span> proc <span style="color: #6276BA;">(</span><span style="color: #006FE0;">map</span> contents args<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+          <span style="color: #907373;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"No method for these types -- APPLY-GENERIC"</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">list</span> op type-tags<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<p>
+All together:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket" id="org0cfe569"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">attach-tag</span> t x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #006FE0;">cons</span> t x<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">type-tag</span> x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">if</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">pair?</span> x<span style="color: #909183;">)</span>
+      <span style="color: #909183;">(</span><span style="color: #006FE0;">car</span> x<span style="color: #909183;">)</span>
+      <span style="color: #909183;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"Expected pair -- TYPE-TAG"</span> x<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">contents</span> x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">if</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">pair?</span> x<span style="color: #909183;">)</span>
+      <span style="color: #909183;">(</span><span style="color: #006FE0;">cdr</span> x<span style="color: #909183;">)</span>
+      <span style="color: #909183;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"Expected pair -- CONTENTS"</span> x<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">apply-generic</span> op . args<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">let</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #BA36A5;">type-tags</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">map</span> type-tag args<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">let</span> <span style="color: #709870;">(</span><span style="color: #907373;">(</span><span style="color: #BA36A5;">proc</span> <span style="color: #6276BA;">(</span>get op type-tags<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #0000FF;">if</span> proc
+          <span style="color: #907373;">(</span><span style="color: #0000FF;">apply</span> proc <span style="color: #6276BA;">(</span><span style="color: #006FE0;">map</span> contents args<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+          <span style="color: #907373;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"No method for these types -- APPLY-GENERIC"</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">list</span> op type-tags<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">install-rectangular-package</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">real-part</span> z<span style="color: #909183;">)</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">car</span> z<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">imag-part</span> z<span style="color: #909183;">)</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">cdr</span> z<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">make-from-real-imag</span> x y<span style="color: #909183;">)</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">cons</span> x y<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">magnitude</span> z<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #006FE0;">sqrt</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">+</span> <span style="color: #907373;">(</span>square <span style="color: #6276BA;">(</span><span style="color: #006FE0;">real-part</span> z<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+             <span style="color: #907373;">(</span>square <span style="color: #6276BA;">(</span><span style="color: #006FE0;">imag-part</span> z<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">angle</span> z<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #006FE0;">atan</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">imag-part</span> z<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">real-part</span> z<span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">make-from-mag-ang</span> r a<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #006FE0;">cons</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">*</span> r <span style="color: #907373;">(</span><span style="color: #006FE0;">cos</span> a<span style="color: #907373;">)</span><span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">*</span> r <span style="color: #907373;">(</span><span style="color: #006FE0;">sin</span> a<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">tag</span> x<span style="color: #909183;">)</span> <span style="color: #909183;">(</span>attach-tag <span style="color: #D0372D;">'rectangular</span> x<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'real-part</span> '<span style="color: #909183;">(</span>rectangular<span style="color: #909183;">)</span> <span style="color: #006FE0;">real-part</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'imag-part</span> '<span style="color: #909183;">(</span>rectangular<span style="color: #909183;">)</span> <span style="color: #006FE0;">imag-part</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'magnitude</span> '<span style="color: #909183;">(</span>rectangular<span style="color: #909183;">)</span> <span style="color: #006FE0;">magnitude</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'angle</span> '<span style="color: #909183;">(</span>rectangular<span style="color: #909183;">)</span> <span style="color: #006FE0;">angle</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'make-from-real-imag</span> <span style="color: #D0372D;">'rectangular</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x y<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span>make-from-real-imag x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'make-from-mag-ang</span> <span style="color: #D0372D;">'rectangular</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>r a<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span>make-from-mag-ang r a<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">install-polar-package</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">real-part</span> z<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #006FE0;">*</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">magnitude</span> z<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">cos</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">angle</span> z<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">imag-part</span> z<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #006FE0;">*</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">magnitude</span> z<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">sin</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">angle</span> z<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">make-from-real-imag</span> x y<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #006FE0;">cons</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">sqrt</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">+</span> <span style="color: #6276BA;">(</span>square x<span style="color: #6276BA;">)</span> <span style="color: #6276BA;">(</span>square y<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+          <span style="color: #709870;">(</span><span style="color: #006FE0;">atan</span> y x<span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">magnitude</span> z<span style="color: #909183;">)</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">car</span> z<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">angle</span> z<span style="color: #909183;">)</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">cdr</span> z<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">make-from-mag-ang</span> r a<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #006FE0;">cons</span> r a<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">tag</span> x<span style="color: #909183;">)</span> <span style="color: #909183;">(</span>attach-tag <span style="color: #D0372D;">'polar</span> x<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'real-part</span> '<span style="color: #909183;">(</span>polar<span style="color: #909183;">)</span> <span style="color: #006FE0;">real-part</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'imag-part</span> '<span style="color: #909183;">(</span>polar<span style="color: #909183;">)</span> <span style="color: #006FE0;">imag-part</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'magnitude</span> '<span style="color: #909183;">(</span>polar<span style="color: #909183;">)</span> <span style="color: #006FE0;">magnitude</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'angle</span> '<span style="color: #909183;">(</span>polar<span style="color: #909183;">)</span> <span style="color: #006FE0;">angle</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'make-from-real-imag</span> <span style="color: #D0372D;">'polar</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x y<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span>make-from-real-imag x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'make-from-mag-ang</span> <span style="color: #D0372D;">'polar</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>r a<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span>make-from-mag-ang r a<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">real-part</span> z<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span>apply-generic <span style="color: #D0372D;">'real-part</span> z<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">imag-part</span> z<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span>apply-generic <span style="color: #D0372D;">'imag-part</span> z<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">magnitude</span> z<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span>apply-generic <span style="color: #D0372D;">'magnitude</span> z<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">angle</span> z<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span>apply-generic <span style="color: #D0372D;">'angle</span> z<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-from-real-imag</span> x y<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #909183;">(</span>get <span style="color: #D0372D;">'make-from-real-imag</span> <span style="color: #D0372D;">'rectangular</span><span style="color: #909183;">)</span> x y<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-from-mag-ang</span> r a<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #909183;">(</span>get <span style="color: #D0372D;">'make-from-mag-ang</span> <span style="color: #D0372D;">'polar</span><span style="color: #909183;">)</span> r a<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">install-scheme-number-package</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">tag</span> x<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span>attach-tag <span style="color: #D0372D;">'scheme-number</span> x<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'add</span> '<span style="color: #909183;">(</span>scheme-number scheme-number<span style="color: #909183;">)</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x y<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">+</span> x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'sub</span> '<span style="color: #909183;">(</span>scheme-number scheme-number<span style="color: #909183;">)</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x y<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">-</span> x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'mul</span> '<span style="color: #909183;">(</span>scheme-number scheme-number<span style="color: #909183;">)</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x y<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">*</span> x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'div</span> '<span style="color: #909183;">(</span>scheme-number scheme-number<span style="color: #909183;">)</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x y<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">/</span> x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'make</span> <span style="color: #D0372D;">'scheme-number</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> x<span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #D0372D;">'done</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-scheme-number</span> n<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #909183;">(</span>get <span style="color: #D0372D;">'make</span> <span style="color: #D0372D;">'scheme-number</span><span style="color: #909183;">)</span> n<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">install-rational-package</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">numer</span> x<span style="color: #909183;">)</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">car</span> x<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">denom</span> x<span style="color: #909183;">)</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">cdr</span> x<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">make-rat</span> n d<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">let</span> <span style="color: #709870;">(</span><span style="color: #907373;">(</span><span style="color: #BA36A5;">g</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">gcd</span> n d<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #006FE0;">cons</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">/</span> n g<span style="color: #907373;">)</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">/</span> d g<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">add-rat</span> x y<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span>make-rat <span style="color: #709870;">(</span><span style="color: #006FE0;">+</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">*</span> <span style="color: #6276BA;">(</span>numer x<span style="color: #6276BA;">)</span> <span style="color: #6276BA;">(</span>denom y<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+                 <span style="color: #907373;">(</span><span style="color: #006FE0;">*</span> <span style="color: #6276BA;">(</span>numer y<span style="color: #6276BA;">)</span> <span style="color: #6276BA;">(</span>denom x<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+              <span style="color: #709870;">(</span><span style="color: #006FE0;">*</span> <span style="color: #907373;">(</span>denom x<span style="color: #907373;">)</span> <span style="color: #907373;">(</span>denom y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">sub-rat</span> x y<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span>make-rat <span style="color: #709870;">(</span><span style="color: #006FE0;">-</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">*</span> <span style="color: #6276BA;">(</span>numer x<span style="color: #6276BA;">)</span> <span style="color: #6276BA;">(</span>denom y<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+                 <span style="color: #907373;">(</span><span style="color: #006FE0;">*</span> <span style="color: #6276BA;">(</span>numer y<span style="color: #6276BA;">)</span> <span style="color: #6276BA;">(</span>denom x<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+              <span style="color: #709870;">(</span><span style="color: #006FE0;">*</span> <span style="color: #907373;">(</span>denom x<span style="color: #907373;">)</span> <span style="color: #907373;">(</span>denom y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">mul-rat</span> x y<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span>make-rat <span style="color: #709870;">(</span><span style="color: #006FE0;">*</span> <span style="color: #907373;">(</span>numer x<span style="color: #907373;">)</span> <span style="color: #907373;">(</span>numer y<span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+              <span style="color: #709870;">(</span><span style="color: #006FE0;">*</span> <span style="color: #907373;">(</span>denom x<span style="color: #907373;">)</span> <span style="color: #907373;">(</span>denom y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">div-rat</span> x y<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span>make-rat <span style="color: #709870;">(</span><span style="color: #006FE0;">*</span> <span style="color: #907373;">(</span>numer x<span style="color: #907373;">)</span> <span style="color: #907373;">(</span>denom y<span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+              <span style="color: #709870;">(</span><span style="color: #006FE0;">*</span> <span style="color: #907373;">(</span>denom x<span style="color: #907373;">)</span> <span style="color: #907373;">(</span>numer y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">tag</span> x<span style="color: #909183;">)</span> <span style="color: #909183;">(</span>attach-tag <span style="color: #D0372D;">'rational</span> x<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'add</span> '<span style="color: #909183;">(</span>rational rational<span style="color: #909183;">)</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x y<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span>add-rat x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'sub</span> '<span style="color: #909183;">(</span>rational rational<span style="color: #909183;">)</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x y<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span>sub-rat x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'mul</span> '<span style="color: #909183;">(</span>rational rational<span style="color: #909183;">)</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x y<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span>mul-rat x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'div</span> '<span style="color: #909183;">(</span>rational rational<span style="color: #909183;">)</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x y<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span>div-rat x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'make</span> <span style="color: #D0372D;">'rational</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>n d<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span>make-rat n d<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #D0372D;">'done</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-rational</span> n d<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #909183;">(</span>get <span style="color: #D0372D;">'make</span> <span style="color: #D0372D;">'rational</span><span style="color: #909183;">)</span> n d<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">install-complex-package</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">make-from-real-imag</span> x y<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #709870;">(</span>get <span style="color: #D0372D;">'make-from-real-imag</span> <span style="color: #D0372D;">'rectangular</span><span style="color: #709870;">)</span> x y<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">make-from-mag-ang</span> r a<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #709870;">(</span>get <span style="color: #D0372D;">'make-from-mag-ang</span> <span style="color: #D0372D;">'polar</span><span style="color: #709870;">)</span> r a<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">add-complex</span> z1 z2<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span>make-from-real-imag <span style="color: #709870;">(</span><span style="color: #006FE0;">+</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">real-part</span> z1<span style="color: #907373;">)</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">real-part</span> z2<span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+                         <span style="color: #709870;">(</span><span style="color: #006FE0;">+</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">imag-part</span> z1<span style="color: #907373;">)</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">imag-part</span> z2<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">sub-complex</span> z1 z2<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span>make-from-real-imag <span style="color: #709870;">(</span><span style="color: #006FE0;">-</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">real-part</span> z1<span style="color: #907373;">)</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">real-part</span> z2<span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+                         <span style="color: #709870;">(</span><span style="color: #006FE0;">-</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">imag-part</span> z1<span style="color: #907373;">)</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">imag-part</span> z2<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">mul-complex</span> z1 z2<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span>make-from-mag-ang <span style="color: #709870;">(</span><span style="color: #006FE0;">*</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">magnitude</span> z1<span style="color: #907373;">)</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">magnitude</span> z2<span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+                       <span style="color: #709870;">(</span><span style="color: #006FE0;">+</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">angle</span> z1<span style="color: #907373;">)</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">angle</span> z2<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">div-complex</span> z1 z2<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span>make-from-mag-ang <span style="color: #709870;">(</span><span style="color: #006FE0;">/</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">magnitude</span> z1<span style="color: #907373;">)</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">magnitude</span> z2<span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+                       <span style="color: #709870;">(</span><span style="color: #006FE0;">-</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">angle</span> z1<span style="color: #907373;">)</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">angle</span> z2<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">tag</span> z<span style="color: #909183;">)</span> <span style="color: #909183;">(</span>attach-tag <span style="color: #D0372D;">'complex</span> z<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'add</span> '<span style="color: #909183;">(</span>complex complex<span style="color: #909183;">)</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x y<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span>add-complex x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'sub</span> '<span style="color: #909183;">(</span>complex complex<span style="color: #909183;">)</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x y<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span>sub-complex x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'mul</span> '<span style="color: #909183;">(</span>complex complex<span style="color: #909183;">)</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x y<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span>mul-complex x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'div</span> '<span style="color: #909183;">(</span>complex complex<span style="color: #909183;">)</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x y<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span>div-complex x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'make-from-real-imag</span> <span style="color: #D0372D;">'complex</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x y<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span>make-from-real-imag x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>put <span style="color: #D0372D;">'make-from-mag-ang</span> <span style="color: #D0372D;">'complex</span>
+       <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x y<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #907373;">(</span>make-from-mag-ang x y<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #D0372D;">'done</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-complex-from-real-imag</span> x y<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #909183;">(</span>get <span style="color: #D0372D;">'make-from-real-imag</span> <span style="color: #D0372D;">'complex</span><span style="color: #909183;">)</span> x y<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-complex-from-mag-ang</span> x y<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #909183;">(</span>get <span style="color: #D0372D;">'make-from-mag-ang</span> <span style="color: #D0372D;">'complex</span><span style="color: #909183;">)</span> x y<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">add</span> x y<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span>apply-generic <span style="color: #D0372D;">'add</span> x y<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">sub</span> x y<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span>apply-generic <span style="color: #D0372D;">'sub</span> x y<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">mul</span> x y<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span>apply-generic <span style="color: #D0372D;">'mul</span> x y<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">div</span> x y<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span>apply-generic <span style="color: #D0372D;">'div</span> x y<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgf85dfb3" class="outline-3">
+<h3 id="orgf85dfb3">Exercise 2.77</h3>
+<div class="outline-text-3" id="text-orgf85dfb3">
+<p>
+Let <code>z</code> be <code>('complex ('rectangular (3 4)))</code>, and evaluate <code>(magnitude z)</code>.
+It raises an error from <code>apply-generic</code>, saying there is no method for the operation <code>magnitude</code> on the types <code>(complex)</code>.
+</p>
+
+<p>
+The problem is that the complex-number selectors were never defined for <code>complex</code> numbers, only for <code>polar</code> and <code>rectangular</code> numbers. To fix this add to the <code>complex</code> package:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #707183;">(</span>put <span style="color: #D0372D;">'real-part</span> '<span style="color: #7388D6;">(</span>complex<span style="color: #7388D6;">)</span> <span style="color: #006FE0;">real-part</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>put <span style="color: #D0372D;">'imag-part</span> '<span style="color: #7388D6;">(</span>complex<span style="color: #7388D6;">)</span> <span style="color: #006FE0;">imag-part</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>put <span style="color: #D0372D;">'magnitude</span> '<span style="color: #7388D6;">(</span>complex<span style="color: #7388D6;">)</span> <span style="color: #006FE0;">magnitude</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>put <span style="color: #D0372D;">'angle</span> '<span style="color: #7388D6;">(</span>complex<span style="color: #7388D6;">)</span> <span style="color: #006FE0;">angle</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<p>
+Describe in detail why this works.
+</p>
+
+<hr />
+
+<p>
+Consider the calls made to evaluate <code>(magnitude z)</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">magnitude</span> z<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span>apply-generic <span style="color: #D0372D;">'magnitude</span> z<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">z</span> <span style="color: #7388D6;">(</span>make-from-real-imag <span style="color: #D0372D;">3</span> <span style="color: #D0372D;">4</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span> <span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">('complex ('rectangular (3 4)))</span>
+
+<span style="color: #707183;">(</span><span style="color: #006FE0;">magnitude</span> <span style="color: #7388D6;">(</span><span style="color: #D0372D;">'complex</span> <span style="color: #909183;">(</span><span style="color: #D0372D;">'rectangular</span> <span style="color: #709870;">(</span><span style="color: #D0372D;">3</span> <span style="color: #D0372D;">4</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>apply-generic <span style="color: #D0372D;">'magnitude</span> <span style="color: #7388D6;">(</span><span style="color: #D0372D;">'complex</span> <span style="color: #909183;">(</span><span style="color: #D0372D;">'rectangular</span> <span style="color: #709870;">(</span><span style="color: #D0372D;">3</span> <span style="color: #D0372D;">4</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">apply</span> <span style="color: #7388D6;">(</span>get <span style="color: #D0372D;">'magnitude</span> '<span style="color: #909183;">(</span>complex<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #909183;">(</span><span style="color: #D0372D;">'rectangular</span> <span style="color: #709870;">(</span><span style="color: #D0372D;">3</span> <span style="color: #D0372D;">4</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">apply</span> <span style="color: #006FE0;">magnitude</span> <span style="color: #7388D6;">(</span><span style="color: #909183;">(</span><span style="color: #D0372D;">'rectangular</span> <span style="color: #709870;">(</span><span style="color: #D0372D;">3</span> <span style="color: #D0372D;">4</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #006FE0;">magnitude</span> <span style="color: #7388D6;">(</span><span style="color: #D0372D;">'rectangular</span> <span style="color: #909183;">(</span><span style="color: #D0372D;">3</span> <span style="color: #D0372D;">4</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>apply-generic <span style="color: #D0372D;">'magnitude</span> <span style="color: #7388D6;">(</span><span style="color: #D0372D;">'rectangular</span> <span style="color: #909183;">(</span><span style="color: #D0372D;">3</span> <span style="color: #D0372D;">4</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">apply</span> <span style="color: #7388D6;">(</span>get <span style="color: #D0372D;">'magnitude</span> <span style="color: #D0372D;">'rectangular</span><span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #D0372D;">3</span> <span style="color: #D0372D;">4</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">apply</span> install-rectangular-package/magnitude <span style="color: #7388D6;">(</span><span style="color: #909183;">(</span><span style="color: #D0372D;">3</span> <span style="color: #D0372D;">4</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>install-rectangular-package/magnitude <span style="color: #7388D6;">(</span><span style="color: #D0372D;">3</span> <span style="color: #D0372D;">4</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #006FE0;">sqrt</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">+</span> <span style="color: #D0372D;">9</span> <span style="color: #D0372D;">16</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #D0372D;">5</span>
+</pre>
+</div>
+
+<p>
+In rectangular/polar packages, <code>magnitude</code> has generic definition as <code>(define (magnitude z) (apply-generic 'magnitude z))</code>.
+</p>
+
+<p>
+<code>(put 'magnitude '(complex) magnitude)</code> registers <code>magnitude</code> to be invoked also for <code>'(complex)</code> type. When <code>magnitude</code> is called, <code>apply-generic</code> peels the <code>'complex</code> tag off and again finds <code>magnitude</code> in the dispatch table. Second call peels of the <code>'rectangular</code> tag and finds an implementation from the <code>install-rectangular-package</code> internals.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org8837cfe" class="outline-3">
+<h3 id="org8837cfe">Exercise 2.78 - use Scheme type system</h3>
+<div class="outline-text-3" id="text-org8837cfe">
+<div class="org-src-container">
+<pre class="src src-racket" id="org77a5736"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">attach-tag</span> t x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #006FE0;">eq?</span> t <span style="color: #D0372D;">'scheme-number</span><span style="color: #709870;">)</span> x<span style="color: #909183;">)</span>
+        <span style="color: #909183;">(</span><span style="color: #0000FF;">else</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">cons</span> t x<span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">type-tag</span> x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #006FE0;">number?</span> x<span style="color: #709870;">)</span> <span style="color: #D0372D;">'scheme-number</span><span style="color: #909183;">)</span>
+        <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #006FE0;">pair?</span> x<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">car</span> x<span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+        <span style="color: #909183;">(</span><span style="color: #0000FF;">else</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"Expected pair -- TYPE-TAG"</span> x<span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">contents</span> x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #006FE0;">number?</span> x<span style="color: #709870;">)</span> x<span style="color: #909183;">)</span>
+        <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #006FE0;">pair?</span> x<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">cdr</span> x<span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+        <span style="color: #909183;">(</span><span style="color: #0000FF;">else</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"Expected pair -- CONTENTS"</span> x<span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">apply-generic</span> op . args<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">let</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #BA36A5;">type-tags</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">map</span> type-tag args<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">let</span> <span style="color: #709870;">(</span><span style="color: #907373;">(</span><span style="color: #BA36A5;">proc</span> <span style="color: #6276BA;">(</span>get op type-tags<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #0000FF;">if</span> proc
+          <span style="color: #907373;">(</span><span style="color: #0000FF;">apply</span> proc <span style="color: #6276BA;">(</span><span style="color: #006FE0;">map</span> contents args<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+          <span style="color: #907373;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"No method for these types -- APPLY-GENERIC"</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">list</span> op type-tags<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org87d2d96" class="outline-3">
+<h3 id="org87d2d96">Exercise 2.79 - <code>equ?</code></h3>
+<div class="outline-text-3" id="text-org87d2d96">
+<ul class="org-ul">
+<li>For every type, add concrete implementation of <code>equ?</code> and register it with the dispatch table</li>
+<li>Add a generic operation <code>equ?</code> that applies an implementation from the dispatch table</li>
+</ul>
+
+<p>
+These should be put into corresponding packages:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">equ?-scheme-number</span> x y<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #006FE0;">=</span> x y<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>put <span style="color: #D0372D;">'equ?</span> '<span style="color: #7388D6;">(</span>scheme-number scheme-number<span style="color: #7388D6;">)</span> equ?-scheme-number<span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">equ?-rat</span> x y<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">and</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">=</span> <span style="color: #709870;">(</span>numer x<span style="color: #709870;">)</span> <span style="color: #709870;">(</span>numer y<span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+       <span style="color: #909183;">(</span><span style="color: #006FE0;">=</span> <span style="color: #709870;">(</span>denom x<span style="color: #709870;">)</span> <span style="color: #709870;">(</span>denom y<span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>put <span style="color: #D0372D;">'equ?</span> '<span style="color: #7388D6;">(</span>rational rational<span style="color: #7388D6;">)</span> equ?-rational<span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">equ?-complex</span> x y<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span>rectangular? x<span style="color: #709870;">)</span>
+         <span style="color: #709870;">(</span><span style="color: #0000FF;">and</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">=</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">real-part</span> x<span style="color: #6276BA;">)</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">real-part</span> y<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+              <span style="color: #907373;">(</span><span style="color: #006FE0;">=</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">imag-part</span> x<span style="color: #6276BA;">)</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">imag-part</span> y<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+        <span style="color: #909183;">(</span><span style="color: #709870;">(</span>polar? x<span style="color: #709870;">)</span>
+         <span style="color: #709870;">(</span><span style="color: #0000FF;">and</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">=</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">magnitude</span> x<span style="color: #6276BA;">)</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">magnitude</span> y<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+              <span style="color: #907373;">(</span><span style="color: #006FE0;">=</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">angle</span> x<span style="color: #6276BA;">)</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">angle</span> y<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>put <span style="color: #D0372D;">'equ?</span> '<span style="color: #7388D6;">(</span>complex complex<span style="color: #7388D6;">)</span> equ?-complex<span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">equ?</span> x y<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span>apply-generic <span style="color: #D0372D;">'equ?</span> x y<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5f0c86b" class="outline-3">
+<h3 id="org5f0c86b">Exercise 2.80 - <code>=zero?</code></h3>
+<div class="outline-text-3" id="text-org5f0c86b">
+<p>
+These should be put into corresponding packages:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">=zero?-scheme-number</span> x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #006FE0;">zero?</span> x<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>put <span style="color: #D0372D;">'=zero?</span> '<span style="color: #7388D6;">(</span>scheme-number<span style="color: #7388D6;">)</span> =zero?-scheme-number<span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">=zero?-rational</span> x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #006FE0;">zero?</span> <span style="color: #909183;">(</span>numer x<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>put <span style="color: #D0372D;">'=zero?</span> '<span style="color: #7388D6;">(</span>rational<span style="color: #7388D6;">)</span> =zero?-rational<span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">=zero?-complex</span> x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span>rectangular? x<span style="color: #709870;">)</span>
+         <span style="color: #709870;">(</span><span style="color: #0000FF;">and</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">zero?</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">real-part</span> x<span style="color: #6276BA;">)</span>
+                     <span style="color: #6276BA;">(</span><span style="color: #006FE0;">imag-part</span> x<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+        <span style="color: #909183;">(</span><span style="color: #709870;">(</span>polar? x<span style="color: #709870;">)</span>
+         <span style="color: #709870;">(</span><span style="color: #006FE0;">zero?</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">magnitude</span> x<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>put <span style="color: #D0372D;">'=zero?</span> '<span style="color: #7388D6;">(</span>complex<span style="color: #7388D6;">)</span> =zero?-complex<span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">=zero?</span> x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>apply-generic <span style="color: #D0372D;">'=zero?</span> x<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org616f34e" class="outline-2">
+<h2 id="org616f34e">2.5.2 Combining Data of Different Types</h2>
+<div class="outline-text-2" id="text-org616f34e">
+<p>
+Currently, the arith system operations work only if the arguments are of the same type. Careful abstraction barriers were erected for this, but it'd be nice to be able to mix the types for richer possibilities. E.g. adding an ordinary and a complex number is a valid use case.
+</p>
+
+<p>
+We would like to introduce cross-type operations in a carefully controlled way, so the existing modules boundaries are not violated seriously.
+</p>
+
+<p>
+One way to handle cross-type operations is to implement internal procedures for every possible combination of arguments' types.
+</p>
+<ul class="org-ul">
+<li>increased cost of introducing a new type - should add not only the new package, but also construct the procedures for cross-type operations for every other type in the system</li>
+<li>undermined ability to combine separate packages additively
+<ul class="org-ul">
+<li>undermined ability to limit the extent to which the implementors of the individual packages need to take account of other packages
+<ul class="org-ul">
+<li>(violated goal: simplify the reasoning for package's implementor: they should have minimal worries about sibling packages)</li>
+<li>e.g., where to put procedures for complex/rational operations?</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+
+<div id="outline-container-org794fe19" class="outline-3">
+<h3 id="org794fe19">Coercion</h3>
+<div class="outline-text-3" id="text-org794fe19">
+<p>
+If types are completely unrelated and operations are completely unrelated, explicit cross-type operations is the best way forward.
+But observe that arith package has some latent additional structure: types are not completely independent, and there may be ways by which objects of one type can be viewed as objects of another.
+This process is called <i>coercion</i>. E.g. we can view an ordinary number as a complex number.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">scheme-number-&gt;complex</span> n<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>make-complex-from-real-imag <span style="color: #909183;">(</span>contents n<span style="color: #909183;">)</span> <span style="color: #D0372D;">0</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span>put-coercion <span style="color: #D0372D;">'scheme-number</span> <span style="color: #D0372D;">'complex</span> scheme-number-&gt;complex<span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<p>
+Assume <code>put-coercion</code> and <code>get-coercion</code> are available to manipulate coersions table.
+</p>
+
+<p>
+Coercion procedure:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">apply-generic</span> op . args<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">let</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #BA36A5;">type-tags</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">map</span> type-tag args<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">let</span> <span style="color: #709870;">(</span><span style="color: #907373;">(</span><span style="color: #BA36A5;">proc</span> <span style="color: #6276BA;">(</span>get op type-tags<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #0000FF;">if</span> proc
+          <span style="color: #907373;">(</span><span style="color: #0000FF;">apply</span> proc <span style="color: #6276BA;">(</span><span style="color: #006FE0;">map</span> contents args<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+          <span style="color: #907373;">(</span><span style="color: #0000FF;">if</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">=</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">length</span> args<span style="color: #858580;">)</span> <span style="color: #D0372D;">2</span><span style="color: #6276BA;">)</span>
+              <span style="color: #6276BA;">(</span><span style="color: #0000FF;">let</span> <span style="color: #858580;">(</span><span style="color: #80A880;">(</span><span style="color: #BA36A5;">type1</span> <span style="color: #887070;">(</span><span style="color: #006FE0;">car</span> type-tags<span style="color: #887070;">)</span><span style="color: #80A880;">)</span>
+                    <span style="color: #80A880;">(</span><span style="color: #BA36A5;">type2</span> <span style="color: #887070;">(</span><span style="color: #006FE0;">cadr</span> type-tags<span style="color: #887070;">)</span><span style="color: #80A880;">)</span>
+                    <span style="color: #80A880;">(</span><span style="color: #BA36A5;">a1</span> <span style="color: #887070;">(</span><span style="color: #006FE0;">car</span> args<span style="color: #887070;">)</span><span style="color: #80A880;">)</span>
+                    <span style="color: #80A880;">(</span><span style="color: #BA36A5;">a2</span> <span style="color: #887070;">(</span><span style="color: #006FE0;">cadr</span> args<span style="color: #887070;">)</span><span style="color: #80A880;">)</span><span style="color: #858580;">)</span>
+                <span style="color: #858580;">(</span><span style="color: #0000FF;">let</span> <span style="color: #80A880;">(</span><span style="color: #887070;">(</span><span style="color: #BA36A5;">t1-&gt;t2</span> <span style="color: #707183;">(</span>get-coercion type1 type2<span style="color: #707183;">)</span><span style="color: #887070;">)</span>
+                      <span style="color: #887070;">(</span><span style="color: #BA36A5;">t2-&gt;t1</span> <span style="color: #707183;">(</span>get-coercion type2 type1<span style="color: #707183;">)</span><span style="color: #887070;">)</span><span style="color: #80A880;">)</span>
+                  <span style="color: #80A880;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #887070;">(</span>t1-&gt;t2
+                         <span style="color: #707183;">(</span>apply-generic op <span style="color: #7388D6;">(</span>t1-&gt;t2 a1<span style="color: #7388D6;">)</span> a2<span style="color: #707183;">)</span><span style="color: #887070;">)</span>
+                        <span style="color: #887070;">(</span>t2-&gt;t1
+                         <span style="color: #707183;">(</span>apply-generic op a1 <span style="color: #7388D6;">(</span>t2-&gt;t1 a2<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span><span style="color: #887070;">)</span>
+                        <span style="color: #887070;">(</span><span style="color: #0000FF;">else</span>
+                         <span style="color: #707183;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"No method for these types"</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">list</span> op type-tags<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span><span style="color: #887070;">)</span><span style="color: #80A880;">)</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+              <span style="color: #6276BA;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"No method for these types"</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">list</span> op type-tags<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf5747f2" class="outline-3">
+<h3 id="orgf5747f2">Exercise 2.81 - missing same-type implementation</h3>
+<div class="outline-text-3" id="text-orgf5747f2">
+<p>
+Louis Reasoner has noticed that <code>apply-generic</code> may try to coerce the arguments to each other's type even if they already have the same type. Therefore, he reasons, we need to put procedures in the coercion table to "coerce" arguments of each type to their own type.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">scheme-number-&gt;scheme-number</span> n<span style="color: #7388D6;">)</span> n<span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">complex-&gt;complex</span> n<span style="color: #7388D6;">)</span> n<span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>put-coercion <span style="color: #D0372D;">'scheme-number</span> <span style="color: #D0372D;">'scheme-number</span>
+              scheme-number-&gt;scheme-number<span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>put-coercion <span style="color: #D0372D;">'complex</span> <span style="color: #D0372D;">'complex</span>
+              complex-&gt;complex<span style="color: #707183;">)</span>
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org7ac7b9a" class="outline-4">
+<h4 id="org7ac7b9a">a. With procedures installed, what happens if <code>apply-generic</code> is called with two arguments of type <code>scheme-number</code> for an operation that is not found in the table for those types?</h4>
+<div class="outline-text-4" id="text-org7ac7b9a">
+<p>
+For example, assume the we've define a generic exponentiation operation:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">exp</span> x y<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span>apply-generic <span style="color: #D0372D;">'exp</span> x y<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<p>
+and have put a procedure for exponentiation in the Scheme-number package but not any other package:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #707183;">(</span>put <span style="color: #D0372D;">'exp</span> '<span style="color: #7388D6;">(</span>scheme-number scheme-number<span style="color: #7388D6;">)</span>
+     <span style="color: #7388D6;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #909183;">(</span>x y<span style="color: #909183;">)</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">tag</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">expt</span> x y<span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<p>
+What happens if we call <code>exp</code> with two complex numbers as arguments?
+</p>
+
+<hr />
+<p>
+It will be an infinite recursion:
+</p>
+<ol class="org-ol">
+<li><code>'complex 'complex</code> is type-args, so <code>proc</code> will be <code>false</code></li>
+<li><code>t1-&gt;t2</code> will return <code>complex-&gt;complex</code></li>
+<li>so <code>apply-generic</code> will be called again with <code>'complex 'complex</code> args, and step 1 will repeat</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-org4562c27" class="outline-4">
+<h4 id="org4562c27">b. Is Louis correct that something had to be done about coercion with arguments of the same type, or does <code>apply-generic</code> work correctly as is?</h4>
+<div class="outline-text-4" id="text-org4562c27">
+<p>
+This is a correct observation that if <code>proc</code> was not found for two arguments of the same type, it's unnecessary to perform coercion lookup - it's guaranteed there is no implementation for given args, otherwise <code>proc</code> would have been found.
+</p>
+
+<p>
+That being said, it's not a correctness question, but a performance question - as is, the <code>apply-generic</code> will fail as expected, but only after two coercion table lookups, which is not optimal.
+</p>
+
+<p>
+That's why something better be done.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org24e424c" class="outline-4">
+<h4 id="org24e424c">c. Modify <code>apply-generic</code> so that it doesn't try coercion if the two arguments have the same type</h4>
+<div class="outline-text-4" id="text-org24e424c">
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">apply-generic</span> op . args<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">let</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #BA36A5;">type-tags</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">map</span> type-arg args<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">let</span> <span style="color: #709870;">(</span><span style="color: #907373;">(</span><span style="color: #BA36A5;">proc</span> <span style="color: #6276BA;">(</span>get op type-tags<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #907373;">(</span>proc <span style="color: #6276BA;">(</span><span style="color: #0000FF;">apply</span> proc <span style="color: #858580;">(</span><span style="color: #006FE0;">map</span> contents args<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+            <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #006FE0;">not</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">=</span> <span style="color: #80A880;">(</span><span style="color: #006FE0;">length</span> args<span style="color: #80A880;">)</span> <span style="color: #D0372D;">2</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+             <span style="color: #6276BA;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"No method for these types"</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">list</span> op type-tags<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+            <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #006FE0;">=</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">car</span> type-tags<span style="color: #858580;">)</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">cadr</span> type-tags<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+             <span style="color: #6276BA;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"No method for these types"</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">list</span> op type-tags<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+            <span style="color: #907373;">(</span><span style="color: #0000FF;">else</span>
+             <span style="color: #6276BA;">(</span><span style="color: #0000FF;">let</span> <span style="color: #858580;">(</span><span style="color: #80A880;">(</span><span style="color: #BA36A5;">type1</span> <span style="color: #887070;">(</span><span style="color: #006FE0;">car</span> type-tags<span style="color: #887070;">)</span><span style="color: #80A880;">)</span>
+                   <span style="color: #80A880;">(</span><span style="color: #BA36A5;">type2</span> <span style="color: #887070;">(</span><span style="color: #006FE0;">cadr</span> type-tags<span style="color: #887070;">)</span><span style="color: #80A880;">)</span>
+                   <span style="color: #80A880;">(</span><span style="color: #BA36A5;">a1</span> <span style="color: #887070;">(</span><span style="color: #006FE0;">car</span> args<span style="color: #887070;">)</span><span style="color: #80A880;">)</span>
+                   <span style="color: #80A880;">(</span><span style="color: #BA36A5;">a2</span> <span style="color: #887070;">(</span><span style="color: #006FE0;">cadr</span> args<span style="color: #887070;">)</span><span style="color: #80A880;">)</span><span style="color: #858580;">)</span>
+               <span style="color: #858580;">(</span><span style="color: #0000FF;">let</span> <span style="color: #80A880;">(</span><span style="color: #887070;">(</span><span style="color: #BA36A5;">t1-&gt;t2</span> <span style="color: #707183;">(</span>get-coercion type1 type2<span style="color: #707183;">)</span><span style="color: #887070;">)</span>
+                     <span style="color: #887070;">(</span><span style="color: #BA36A5;">t2-&gt;t1</span> <span style="color: #707183;">(</span>get-coercion type2 type1<span style="color: #707183;">)</span><span style="color: #887070;">)</span><span style="color: #80A880;">)</span>
+                 <span style="color: #80A880;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #887070;">(</span>t1-&gt;t2
+                        <span style="color: #707183;">(</span>apply-generic op <span style="color: #7388D6;">(</span>t1-&gt;t2 a1<span style="color: #7388D6;">)</span> a2<span style="color: #707183;">)</span><span style="color: #887070;">)</span>
+                       <span style="color: #887070;">(</span>t2-&gt;t1
+                        <span style="color: #707183;">(</span>apply-generic op a1 <span style="color: #7388D6;">(</span>t2-&gt;t1 a2<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span><span style="color: #887070;">)</span>
+                       <span style="color: #887070;">(</span><span style="color: #0000FF;">else</span>
+                        <span style="color: #707183;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"No method for these types"</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">list</span> op type-tags<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span><span style="color: #887070;">)</span><span style="color: #80A880;">)</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3a7c5f0" class="outline-3">
+<h3 id="org3a7c5f0">Exercise 2.82 - not only 2 args</h3>
+<div class="outline-text-3" id="text-org3a7c5f0">
+<p>
+Show how to generalize <code>apply-generic</code> to handle coercion in the general case of multiple arguments.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">all-same</span> xs<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #006FE0;">null?</span> xs<span style="color: #709870;">)</span> <span style="color: #006FE0;">true</span><span style="color: #909183;">)</span>
+        <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #006FE0;">null?</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">cdr</span> xs<span style="color: #907373;">)</span><span style="color: #709870;">)</span> <span style="color: #006FE0;">true</span><span style="color: #909183;">)</span>
+        <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #006FE0;">not</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">=</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">car</span> xs<span style="color: #6276BA;">)</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">cadr</span> xs<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span> <span style="color: #006FE0;">false</span><span style="color: #909183;">)</span>
+        <span style="color: #909183;">(</span><span style="color: #0000FF;">else</span> <span style="color: #709870;">(</span>all-same <span style="color: #907373;">(</span><span style="color: #006FE0;">cdr</span> xs<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">reverse</span> xs<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">iter</span> xs acc<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">if</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">null?</span> xs<span style="color: #709870;">)</span>
+        acc
+        <span style="color: #709870;">(</span>iter <span style="color: #907373;">(</span><span style="color: #006FE0;">cdr</span> xs<span style="color: #907373;">)</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">cons</span> xs acc<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>iter xs '<span style="color: #909183;">()</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">apply-generic</span> op . args<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">let</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #BA36A5;">type-tags</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">map</span> type-tag args<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">let</span> <span style="color: #709870;">(</span><span style="color: #907373;">(</span><span style="color: #BA36A5;">proc</span> <span style="color: #6276BA;">(</span>get op type-tags<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #907373;">(</span>proc <span style="color: #6276BA;">(</span><span style="color: #0000FF;">apply</span> proc <span style="color: #858580;">(</span><span style="color: #006FE0;">map</span> contents args<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+            <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span>all-same type-tags<span style="color: #6276BA;">)</span>
+             <span style="color: #6276BA;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"No method for these types"</span>
+                    <span style="color: #858580;">(</span><span style="color: #006FE0;">list</span> op type-tags<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+            <span style="color: #907373;">(</span><span style="color: #0000FF;">else</span>
+             <span style="color: #6276BA;">(</span><span style="color: #0000FF;">define</span> <span style="color: #858580;">(</span><span style="color: #006699;">coerce-args</span> args to-tag coerced-args<span style="color: #858580;">)</span>
+               <span style="color: #858580;">(</span><span style="color: #0000FF;">if</span> <span style="color: #80A880;">(</span><span style="color: #006FE0;">null?</span> args<span style="color: #80A880;">)</span>
+                   <span style="color: #80A880;">(</span><span style="color: #006FE0;">reverse</span> coerced-args<span style="color: #80A880;">)</span>
+                   <span style="color: #80A880;">(</span><span style="color: #0000FF;">let</span> <span style="color: #887070;">(</span><span style="color: #707183;">(</span><span style="color: #BA36A5;">coerce</span> <span style="color: #7388D6;">(</span>get-coercion <span style="color: #909183;">(</span>type-tag <span style="color: #709870;">(</span><span style="color: #006FE0;">car</span> args<span style="color: #709870;">)</span><span style="color: #909183;">)</span> to-tag<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span><span style="color: #887070;">)</span>
+                     <span style="color: #887070;">(</span><span style="color: #0000FF;">if</span> coerce
+                         <span style="color: #707183;">(</span>coerce-args <span style="color: #7388D6;">(</span><span style="color: #006FE0;">cdr</span> args<span style="color: #7388D6;">)</span>
+                                      to-tag
+                                      <span style="color: #7388D6;">(</span><span style="color: #006FE0;">cons</span> <span style="color: #909183;">(</span>coerce <span style="color: #709870;">(</span><span style="color: #006FE0;">car</span> args<span style="color: #709870;">)</span><span style="color: #909183;">)</span> coerced-args<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+                         <span style="color: #006FE0;">false</span><span style="color: #887070;">)</span><span style="color: #80A880;">)</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+             <span style="color: #6276BA;">(</span><span style="color: #0000FF;">define</span> <span style="color: #858580;">(</span><span style="color: #006699;">search-coercion</span> rest-pivot-tags<span style="color: #858580;">)</span>
+               <span style="color: #858580;">(</span><span style="color: #0000FF;">if</span> <span style="color: #80A880;">(</span><span style="color: #006FE0;">null?</span> rest-pivot-tags<span style="color: #80A880;">)</span>
+                   <span style="color: #80A880;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"No method for these types"</span> <span style="color: #887070;">(</span><span style="color: #006FE0;">list</span> op type-tags<span style="color: #887070;">)</span><span style="color: #80A880;">)</span>
+                   <span style="color: #80A880;">(</span><span style="color: #0000FF;">let</span> <span style="color: #887070;">(</span><span style="color: #707183;">(</span><span style="color: #BA36A5;">pivot-tag</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">car</span> rest-pivot-tags<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span><span style="color: #887070;">)</span>
+                     <span style="color: #887070;">(</span><span style="color: #0000FF;">let</span> <span style="color: #707183;">(</span><span style="color: #7388D6;">(</span><span style="color: #BA36A5;">coerced</span> <span style="color: #909183;">(</span>coerce-args args pivot-tag '<span style="color: #709870;">()</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+                       <span style="color: #707183;">(</span><span style="color: #0000FF;">if</span> coerced
+                           <span style="color: #7388D6;">(</span><span style="color: #0000FF;">apply</span> apply-generic <span style="color: #909183;">(</span><span style="color: #006FE0;">cons</span> op coerced<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+                           <span style="color: #7388D6;">(</span>search-coercion <span style="color: #909183;">(</span><span style="color: #006FE0;">cdr</span> rest-tags<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span><span style="color: #887070;">)</span><span style="color: #80A880;">)</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+             <span style="color: #6276BA;">(</span>search-coercion type-tags<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org5c9120d" class="outline-3">
+<h3 id="org5c9120d">Exercise 2.83 - <code>raise</code> one level of tower</h3>
+<div class="outline-text-3" id="text-org5c9120d">
+<p>
+Suppose you are designing a generic arithmetic system for dealing with the tower of types shown in figure 2.25: integer, rational, real, complex. For each type (except complex), design a procedure that raises objects of that type one level in the tower. Show how to install a generic <code>raise</code> operation that will work for each type (except complex)
+</p>
+
+<hr />
+
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">raise-integer</span> x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>make-rat x <span style="color: #D0372D;">1</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>put <span style="color: #D0372D;">'raise</span> '<span style="color: #7388D6;">(</span>integer<span style="color: #7388D6;">)</span> raise-integer<span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">raise-rational</span> x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #006FE0;">/</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">*</span> <span style="color: #D0372D;">1.0</span> <span style="color: #709870;">(</span>numer x<span style="color: #709870;">)</span><span style="color: #909183;">)</span> <span style="color: #909183;">(</span>denom x<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>put <span style="color: #D0372D;">'raise</span> '<span style="color: #7388D6;">(</span>rational<span style="color: #7388D6;">)</span> raise-rational<span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">raise-real</span> x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>make-complex-real-imag x <span style="color: #D0372D;">0</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>put <span style="color: #D0372D;">'raise</span> '<span style="color: #7388D6;">(</span>real<span style="color: #7388D6;">)</span> raise-real<span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">raise</span> x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>apply-generic <span style="color: #D0372D;">'raise</span> x<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8065f83" class="outline-3">
+<h3 id="org8065f83">Exercise 2.84 - coerce through raise</h3>
+<div class="outline-text-3" id="text-org8065f83">
+<p>
+Using the <code>raise</code> operation of exercise 2.83, modify the <code>apply-generic</code> procedure so that it coerces its arguments to have the same type by the method of succesive raising.
+</p>
+
+<p>
+You will need to devise a way to test which of two types is higher in the tower. Do this in a mannger that is "compatible" with the rest of the system and will not lead to problems in adding new levels to the tower.
+</p>
+
+<hr />
+
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">type-tower</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">list</span> <span style="color: #D0372D;">'integer</span> <span style="color: #D0372D;">'rational</span> <span style="color: #D0372D;">'real</span> <span style="color: #D0372D;">'complex</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">lower</span> t1 t2<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">iter</span> ts<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #709870;">(</span><span style="color: #907373;">(</span><span style="color: #006FE0;">null?</span> ts<span style="color: #907373;">)</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"Unknown tags"</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">list</span> t1 t2 type-tower<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+          <span style="color: #709870;">(</span><span style="color: #907373;">(</span><span style="color: #006FE0;">=</span> t1 <span style="color: #6276BA;">(</span><span style="color: #006FE0;">car</span> ts<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span> <span style="color: #006FE0;">true</span><span style="color: #709870;">)</span>
+          <span style="color: #709870;">(</span><span style="color: #907373;">(</span><span style="color: #006FE0;">=</span> t2 <span style="color: #6276BA;">(</span><span style="color: #006FE0;">car</span> ts<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span> <span style="color: #006FE0;">false</span><span style="color: #709870;">)</span>
+          <span style="color: #709870;">(</span><span style="color: #0000FF;">else</span> <span style="color: #907373;">(</span>iter <span style="color: #6276BA;">(</span><span style="color: #006FE0;">cdr</span> ts<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>iter type-tower<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">accumulate</span> op <span style="color: #006FE0;">init</span> xs<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">if</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">null?</span> xs<span style="color: #909183;">)</span>
+      <span style="color: #006FE0;">init</span>
+      <span style="color: #909183;">(</span>op <span style="color: #709870;">(</span><span style="color: #006FE0;">car</span> xs<span style="color: #709870;">)</span>
+          <span style="color: #709870;">(</span>accumulate op <span style="color: #006FE0;">init</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">cdr</span> xs<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">highest-tag</span> tags<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">if</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">null?</span> tags<span style="color: #909183;">)</span>
+      <span style="color: #909183;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"Empty tags -- HIGHEST-TAG"</span><span style="color: #909183;">)</span>
+      <span style="color: #909183;">(</span>accumulate <span style="color: #709870;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">tag</span> so-far<span style="color: #907373;">)</span>
+                    <span style="color: #907373;">(</span><span style="color: #0000FF;">if</span> <span style="color: #6276BA;">(</span>lower so-far <span style="color: #006FE0;">tag</span><span style="color: #6276BA;">)</span>
+                        <span style="color: #006FE0;">tag</span>
+                        so-far<span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+                  <span style="color: #D0372D;">'integer</span>
+                  tags<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">raise-up-to</span> x <span style="color: #006FE0;">tag</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">if</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">=</span> <span style="color: #709870;">(</span>type-tag x<span style="color: #709870;">)</span> <span style="color: #006FE0;">tag</span><span style="color: #909183;">)</span>
+      x
+      <span style="color: #909183;">(</span>raise-up-to <span style="color: #709870;">(</span><span style="color: #006FE0;">raise</span> x<span style="color: #709870;">)</span> <span style="color: #006FE0;">tag</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">apply-generic</span> op . args<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">let</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #BA36A5;">type-tags</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">map</span> type-tag args<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">let</span> <span style="color: #709870;">(</span><span style="color: #907373;">(</span><span style="color: #BA36A5;">proc</span> <span style="color: #6276BA;">(</span>get op type-tags<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #907373;">(</span>proc <span style="color: #6276BA;">(</span><span style="color: #0000FF;">apply</span> proc <span style="color: #858580;">(</span><span style="color: #006FE0;">map</span> contents args<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+            <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span>all-same type-tags<span style="color: #6276BA;">)</span>
+             <span style="color: #6276BA;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"No method for these types"</span>
+                    <span style="color: #858580;">(</span><span style="color: #006FE0;">list</span> op type-tags<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+            <span style="color: #907373;">(</span><span style="color: #0000FF;">else</span>
+             <span style="color: #6276BA;">(</span><span style="color: #0000FF;">let</span> <span style="color: #858580;">(</span><span style="color: #80A880;">(</span><span style="color: #BA36A5;">highest-level</span> <span style="color: #887070;">(</span>highest-tag type-tags<span style="color: #887070;">)</span><span style="color: #80A880;">)</span><span style="color: #858580;">)</span>
+               <span style="color: #858580;">(</span><span style="color: #0000FF;">apply</span> apply-generic <span style="color: #80A880;">(</span><span style="color: #006FE0;">cons</span> op
+                                          <span style="color: #887070;">(</span><span style="color: #006FE0;">map</span> <span style="color: #707183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #7388D6;">(</span>x<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span>raise-up-to x highest-level<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+                                               args<span style="color: #887070;">)</span><span style="color: #80A880;">)</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org49f4ea8" class="outline-3">
+<h3 id="org49f4ea8">Exercise 2.85</h3>
+<div class="outline-text-3" id="text-org49f4ea8">
+<p>
+Design a procedure <code>drop</code> that "simplifies" a data object by lowering it in the towser of types as far as possible.
+The key is to decide, in some general way, whether an object can be lowered.
+Plan to decide whether the project can be lowered: Begin by defining a generic operation <code>project</code> that "pushes" an object down in the tower. Then a number can be dropped if, when <code>project</code> + <code>raise</code> to initial is applied, the result is the same as the initial value.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">type-tower</span> '<span style="color: #7388D6;">(</span>integer rational real complex<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span>put <span style="color: #D0372D;">'project</span> '<span style="color: #7388D6;">(</span>integer<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #909183;">(</span>x<span style="color: #909183;">)</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"Nothing lower to project to -- PROJECT-INTEGER"</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>put <span style="color: #D0372D;">'project</span> '<span style="color: #7388D6;">(</span>rational<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #909183;">(</span>x<span style="color: #909183;">)</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">quotient</span> <span style="color: #709870;">(</span>numer x<span style="color: #709870;">)</span> <span style="color: #709870;">(</span>denom x<span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>put <span style="color: #D0372D;">'project</span> '<span style="color: #7388D6;">(</span>real<span style="color: #7388D6;">)</span> <span style="color: #006FE0;">round</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>put <span style="color: #D0372D;">'project</span> '<span style="color: #7388D6;">(</span>complex<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #909183;">(</span>x<span style="color: #909183;">)</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">real-part</span> x<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">project</span> x<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>apply-generic <span style="color: #D0372D;">'project</span> x<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">drop</span> n<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">iter</span> x best-known<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">if</span> <span style="color: #709870;">(</span>equ? <span style="color: #907373;">(</span>raise-up-to x <span style="color: #6276BA;">(</span>type-tag n<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+              n<span style="color: #709870;">)</span>
+        <span style="color: #709870;">(</span><span style="color: #0000FF;">if</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">=</span> <span style="color: #6276BA;">(</span>type-tag x<span style="color: #6276BA;">)</span> <span style="color: #D0372D;">'integer</span><span style="color: #907373;">)</span>
+            x
+            <span style="color: #907373;">(</span>iter <span style="color: #6276BA;">(</span>project x<span style="color: #6276BA;">)</span> x<span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+        best-known<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span>iter n n<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgf9bd70b" class="outline-2">
+<h2 id="orgf9bd70b">2.5.3 Example: Symbolic Algebra</h2>
+<div class="outline-text-2" id="text-orgf9bd70b">
+<p>
+The manipulation of symbolic algebraic expressions is a complex process that illustrates many of the hardest problems that occur in the design of large-scale systems.
+</p>
+
+<p>
+Section demonstrates the arithmetic of polynomials.
+</p>
+</div>
+
+<div id="outline-container-orgf0e6cb6" class="outline-3">
+<h3 id="orgf0e6cb6">Arithmetic on polynomials</h3>
+<div class="outline-text-3" id="text-orgf0e6cb6">
+<p>
+Polynomial are normally defined relative to certain variables (the <i>indeterminates</i> of the polynomial).
+We will restrict ourselves to polynomials having just one indeterminate (<i>univariate polynomials</i>).
+Polynomial is a sum of terms, each of which is either a coefficient, a power of indeterminate, or a product of a coefficient and a power of indeterminate.
+A coefficient is defined as an algebraic expression that is not dependent on indeterminate of the polynomial.
+</p>
+
+<p>
+\[ 5x^2+3x+7 \]
+</p>
+
+<p>
+\[ (y^2+1)x^3+(2y)x+1 \]
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: LMG</p>
+<p class="date">Created: 2023-06-29 Thu 18:11</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

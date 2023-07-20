@@ -3,6 +3,7 @@
 #+PROPERTY: header-args+  :noweb strip-export
 #+TITLE: 2.4 Multiple Representations for Abstract Data
 #+options: num:nil
+** TODO Return and implement the system after ~put~ and ~get~ are discussed and available
 ** Introduction
 
 Data objects may have several representations, each of which might be useful for different use-cases.

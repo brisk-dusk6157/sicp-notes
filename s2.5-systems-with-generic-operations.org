@@ -1,0 +1,692 @@
+#+PROPERTY: header-args  :cache yes
+#+PROPERTY: header-args+  :exports code
+#+PROPERTY: header-args+  :noweb strip-export
+#+TITLE: 2.5 Systems with Generic Operations
+#+options: num:nil
+
+** TODO Return and implement the system after ~put~ and ~get~ are discussed and available
+** Introduction
+Section 2.4 discusses how to design systems where data can be represented in more than one way.
+The idea is to use generic interface procedures to link code that implements data operations to several representations.
+
+Section 2.5 will discuss how to use the same idea to not only define operations for different representations, but also to define operations over different kinds of arguments.
+
+System to be implemented is arithmetic package that operates on different types of numbers - built-in numbers, rational numbers and complex numbers.
+System is additive, so it's easy to add new numbers' representations.
+
+** 2.5.1 Generic Arithmetic Operations
+Generic interface:
+#+name: arith-generic-interface
+#+begin_src racket
+  (define (add x y) (apply-generic 'add x y))
+  (define (sub x y) (apply-generic 'sub x y))
+  (define (mul x y) (apply-generic 'mul x y))
+  (define (div x y) (apply-generic 'div x y))
+#+end_src
+
+Implementation for built-in numbers:
+#+name: arith-package-scheme-number
+#+begin_src racket
+  (define (install-scheme-number-package)
+    (define (tag x)
+      (attach-tag 'scheme-number x))
+    (put 'add '(scheme-number scheme-number)
+	 (lambda (x y) (tag (+ x y))))
+    (put 'sub '(scheme-number scheme-number)
+	 (lambda (x y) (tag (- x y))))
+    (put 'mul '(scheme-number scheme-number)
+	 (lambda (x y) (tag (* x y))))
+    (put 'div '(scheme-number scheme-number)
+	 (lambda (x y) (tag (/ x y))))
+    (put 'make 'scheme-number
+	 (lambda (x) (tag x)))
+    'done)
+
+  (define (make-scheme-number n)
+    ((get 'make 'scheme-number) n))
+#+end_src
+
+Impelmentation for rational numbers:
+#+name: arith-package-rational
+#+begin_src racket
+  (define (install-rational-package)
+    (define (numer x) (car x))
+    (define (denom x) (cdr x))
+    (define (make-rat n d)
+      (let ((g (gcd n d)))
+	(cons (/ n g) (/ d g))))
+  
+    (define (add-rat x y)
+      (make-rat (+ (* (numer x) (denom y))
+		   (* (numer y) (denom x)))
+		(* (denom x) (denom y))))
+    (define (sub-rat x y)
+      (make-rat (- (* (numer x) (denom y))
+		   (* (numer y) (denom x)))
+		(* (denom x) (denom y))))
+    (define (mul-rat x y)
+      (make-rat (* (numer x) (numer y))
+		(* (denom x) (denom y))))
+    (define (div-rat x y)
+      (make-rat (* (numer x) (denom y))
+		(* (denom x) (numer y))))
+
+    (define (tag x) (attach-tag 'rational x))
+    (put 'add '(rational rational)
+	 (lambda (x y) (tag (add-rat x y))))
+    (put 'sub '(rational rational)
+	 (lambda (x y) (tag (sub-rat x y))))
+    (put 'mul '(rational rational)
+	 (lambda (x y) (tag (mul-rat x y))))
+    (put 'div '(rational rational)
+	 (lambda (x y) (tag (div-rat x y))))
+    (put 'make 'rational
+	 (lambda (n d) (tag (make-rat n d))))
+    'done)
+
+  (define (make-rational n d)
+    ((get 'make 'rational) n d))
+#+end_src
+
+Implementation for complex numbers, relies on the complex numbers package from s2.4:
+#+name: arith-package-complex
+#+begin_src racket
+  (define (install-complex-package)
+    (define (make-from-real-imag x y)
+      ((get 'make-from-real-imag 'rectangular) x y))
+    (define (make-from-mag-ang r a)
+      ((get 'make-from-mag-ang 'polar) r a))
+
+    (define (add-complex z1 z2)
+      (make-from-real-imag (+ (real-part z1) (real-part z2))
+			   (+ (imag-part z1) (imag-part z2))))
+    (define (sub-complex z1 z2)
+      (make-from-real-imag (- (real-part z1) (real-part z2))
+			   (- (imag-part z1) (imag-part z2))))
+    (define (mul-complex z1 z2)
+      (make-from-mag-ang (* (magnitude z1) (magnitude z2))
+			 (+ (angle z1) (angle z2))))
+    (define (div-complex z1 z2)
+      (make-from-mag-ang (/ (magnitude z1) (magnitude z2))
+			 (- (angle z1) (angle z2))))
+
+    (define (tag z) (attach-tag 'complex z))
+    (put 'add '(complex complex)
+	 (lambda (x y) (tag (add-complex x y))))
+    (put 'sub '(complex complex)
+	 (lambda (x y) (tag (sub-complex x y))))
+    (put 'mul '(complex complex)
+	 (lambda (x y) (tag (mul-complex x y))))
+    (put 'div '(complex complex)
+	 (lambda (x y) (tag (div-complex x y))))
+    (put 'make-from-real-imag 'complex
+	 (lambda (x y) (tag (make-from-real-imag x y))))
+    (put 'make-from-mag-ang 'complex
+	 (lambda (x y) (tag (make-from-mag-ang x y))))
+    'done)
+
+  (define (make-complex-from-real-imag x y)
+    ((get 'make-from-real-imag 'complex) x y))
+
+  (define (make-complex-from-mag-ang x y)
+    ((get 'make-from-mag-ang 'complex) x y))
+#+end_src
+
+Tags utils:
+#+name: utils
+#+begin_src racket
+  (define (attach-tag t x)
+    (cons t x))
+
+  (define (type-tag x)
+    (if (pair? x)
+	(car x)
+	(error "Expected pair -- TYPE-TAG" x)))
+
+  (define (contents x)
+    (if (pair? x)
+	(cdr x)
+	(error "Expected pair -- CONTENTS" x)))
+
+  (define (apply-generic op . args)
+    (let ((type-tags (map type-tag args)))
+      (let ((proc (get op type-tags)))
+	(if proc
+	    (apply proc (map contents args))
+	    (error "No method for these types -- APPLY-GENERIC" (list op type-tags))))))
+#+end_src
+
+#+name: complex-package
+#+begin_src racket :exports none
+  (define (install-rectangular-package)
+    (define (real-part z) (car z))
+    (define (imag-part z) (cdr z))
+    (define (make-from-real-imag x y) (cons x y))
+    (define (magnitude z)
+      (sqrt (+ (square (real-part z))
+	       (square (imag-part z)))))
+    (define (angle z)
+      (atan (imag-part z) (real-part z)))
+    (define (make-from-mag-ang r a)
+      (cons (* r (cos a)) (* r (sin a))))
+
+    (define (tag x) (attach-tag 'rectangular x))
+    (put 'real-part '(rectangular) real-part)
+    (put 'imag-part '(rectangular) imag-part)
+    (put 'magnitude '(rectangular) magnitude)
+    (put 'angle '(rectangular) angle)
+    (put 'make-from-real-imag 'rectangular
+	 (lambda (x y) (tag (make-from-real-imag x y))))
+    (put 'make-from-mag-ang 'rectangular
+	 (lambda (r a) (tag (make-from-mag-ang r a)))))
+
+  (define (install-polar-package)
+    (define (real-part z)
+      (* (magnitude z) (cos (angle z))))
+    (define (imag-part z)
+      (* (magnitude z) (sin (angle z))))
+    (define (make-from-real-imag x y)
+      (cons (sqrt (+ (square x) (square y)))
+	    (atan y x)))
+    (define (magnitude z) (car z))
+    (define (angle z) (cdr z))
+    (define (make-from-mag-ang r a)
+      (cons r a))
+
+    (define (tag x) (attach-tag 'polar x))
+    (put 'real-part '(polar) real-part)
+    (put 'imag-part '(polar) imag-part)
+    (put 'magnitude '(polar) magnitude)
+    (put 'angle '(polar) angle)
+    (put 'make-from-real-imag 'polar
+	 (lambda (x y) (tag (make-from-real-imag x y))))
+    (put 'make-from-mag-ang 'polar
+	 (lambda (r a) (tag (make-from-mag-ang r a)))))
+
+  (define (real-part z) (apply-generic 'real-part z))
+  (define (imag-part z) (apply-generic 'imag-part z))
+  (define (magnitude z) (apply-generic 'magnitude z))
+  (define (angle z) (apply-generic 'angle z))
+
+  (define (make-from-real-imag x y)
+    ((get 'make-from-real-imag 'rectangular) x y))
+
+  (define (make-from-mag-ang r a)
+    ((get 'make-from-mag-ang 'polar) r a))
+#+end_src
+
+All together:
+#+name: arith
+#+begin_src racket :noweb yes
+  <<utils>>
+
+  <<complex-package>>
+
+  <<arith-package-scheme-number>>
+
+  <<arith-package-rational>>
+
+  <<arith-package-complex>>
+
+  <<arith-generic-interface>>
+#+end_src
+
+*** Exercise 2.77
+Let ~z~ be ~('complex ('rectangular (3 4)))~, and evaluate ~(magnitude z)~.
+It raises an error from ~apply-generic~, saying there is no method for the operation ~magnitude~ on the types ~(complex)~.
+
+The problem is that the complex-number selectors were never defined for ~complex~ numbers, only for ~polar~ and ~rectangular~ numbers. To fix this add to the ~complex~ package:
+
+#+begin_src racket
+  (put 'real-part '(complex) real-part)
+  (put 'imag-part '(complex) imag-part)
+  (put 'magnitude '(complex) magnitude)
+  (put 'angle '(complex) angle)
+#+end_src
+
+Describe in detail why this works.
+
+-----
+
+Consider the calls made to evaluate ~(magnitude z)~:
+
+#+begin_src racket
+  (define (magnitude z) (apply-generic 'magnitude z))
+  (define z (make-from-real-imag 3 4)) ;; ('complex ('rectangular (3 4)))
+  
+  (magnitude ('complex ('rectangular (3 4))))
+  (apply-generic 'magnitude ('complex ('rectangular (3 4))))
+  (apply (get 'magnitude '(complex)) (('rectangular (3 4))))
+  (apply magnitude (('rectangular (3 4))))
+  (magnitude ('rectangular (3 4)))
+  (apply-generic 'magnitude ('rectangular (3 4)))
+  (apply (get 'magnitude 'rectangular) (3 4))
+  (apply install-rectangular-package/magnitude ((3 4)))
+  (install-rectangular-package/magnitude (3 4))
+  (sqrt (+ 9 16))
+  5
+#+end_src
+
+In rectangular/polar packages, ~magnitude~ has generic definition as ~(define (magnitude z) (apply-generic 'magnitude z))~.
+
+~(put 'magnitude '(complex) magnitude)~ registers ~magnitude~ to be invoked also for ~'(complex)~ type. When ~magnitude~ is called, ~apply-generic~ peels the ~'complex~ tag off and again finds ~magnitude~ in the dispatch table. Second call peels of the ~'rectangular~ tag and finds an implementation from the ~install-rectangular-package~ internals.
+
+*** Exercise 2.78 - use Scheme type system
+
+#+name: utils-v2
+#+begin_src racket
+  (define (attach-tag t x)
+    (cond ((eq? t 'scheme-number) x)
+	  (else (cons t x))))
+
+  (define (type-tag x)
+    (cond ((number? x) 'scheme-number)
+	  ((pair? x) (car x))
+	  (else (error "Expected pair -- TYPE-TAG" x))))
+
+  (define (contents x)
+    (cond ((number? x) x)
+	  ((pair? x) (cdr x))
+	  (else (error "Expected pair -- CONTENTS" x))))
+
+  (define (apply-generic op . args)
+    (let ((type-tags (map type-tag args)))
+      (let ((proc (get op type-tags)))
+	(if proc
+	    (apply proc (map contents args))
+	    (error "No method for these types -- APPLY-GENERIC" (list op type-tags))))))
+#+end_src
+
+*** Exercise 2.79 - ~equ?~
+- For every type, add concrete implementation of ~equ?~ and register it with the dispatch table
+- Add a generic operation ~equ?~ that applies an implementation from the dispatch table
+
+These should be put into corresponding packages:
+#+begin_src racket
+  (define (equ?-scheme-number x y)
+    (= x y))
+  (put 'equ? '(scheme-number scheme-number) equ?-scheme-number)
+
+  (define (equ?-rat x y)
+    (and (= (numer x) (numer y))
+	 (= (denom x) (denom y))))
+  (put 'equ? '(rational rational) equ?-rational)
+
+  (define (equ?-complex x y)
+    (cond ((rectangular? x)
+	   (and (= (real-part x) (real-part y))
+		(= (imag-part x) (imag-part y))))
+	  ((polar? x)
+	   (and (= (magnitude x) (magnitude y))
+		(= (angle x) (angle y))))))
+  (put 'equ? '(complex complex) equ?-complex)
+
+  (define (equ? x y) (apply-generic 'equ? x y))
+#+end_src
+
+*** Exercise 2.80 - ~=zero?~
+
+These should be put into corresponding packages:
+#+begin_src racket
+  (define (=zero?-scheme-number x)
+    (zero? x))
+  (put '=zero? '(scheme-number) =zero?-scheme-number)
+
+  (define (=zero?-rational x)
+    (zero? (numer x)))
+  (put '=zero? '(rational) =zero?-rational)
+
+  (define (=zero?-complex x)
+    (cond ((rectangular? x)
+	   (and (zero? (real-part x)
+		       (imag-part x))))
+	  ((polar? x)
+	   (zero? (magnitude x)))))
+  (put '=zero? '(complex) =zero?-complex)
+
+  (define (=zero? x)
+    (apply-generic '=zero? x))
+#+end_src
+
+** 2.5.2 Combining Data of Different Types
+
+Currently, the arith system operations work only if the arguments are of the same type. Careful abstraction barriers were erected for this, but it'd be nice to be able to mix the types for richer possibilities. E.g. adding an ordinary and a complex number is a valid use case.
+
+We would like to introduce cross-type operations in a carefully controlled way, so the existing modules boundaries are not violated seriously.
+
+One way to handle cross-type operations is to implement internal procedures for every possible combination of arguments' types.
+- increased cost of introducing a new type - should add not only the new package, but also construct the procedures for cross-type operations for every other type in the system
+- undermined ability to combine separate packages additively
+  - undermined ability to limit the extent to which the implementors of the individual packages need to take account of other packages
+    - (violated goal: simplify the reasoning for package's implementor: they should have minimal worries about sibling packages)
+    - e.g., where to put procedures for complex/rational operations?
+
+*** Coercion
+
+If types are completely unrelated and operations are completely unrelated, explicit cross-type operations is the best way forward.
+But observe that arith package has some latent additional structure: types are not completely independent, and there may be ways by which objects of one type can be viewed as objects of another.
+This process is called /coercion/. E.g. we can view an ordinary number as a complex number.
+
+#+begin_src racket
+  (define (scheme-number->complex n)
+    (make-complex-from-real-imag (contents n) 0))
+
+  (put-coercion 'scheme-number 'complex scheme-number->complex)
+#+end_src
+
+Assume ~put-coercion~ and ~get-coercion~ are available to manipulate coersions table.
+
+Coercion procedure:
+
+#+begin_src racket
+  (define (apply-generic op . args)
+    (let ((type-tags (map type-tag args)))
+      (let ((proc (get op type-tags)))
+	(if proc
+	    (apply proc (map contents args))
+	    (if (= (length args) 2)
+		(let ((type1 (car type-tags))
+		      (type2 (cadr type-tags))
+		      (a1 (car args))
+		      (a2 (cadr args)))
+		  (let ((t1->t2 (get-coercion type1 type2))
+			(t2->t1 (get-coercion type2 type1)))
+		    (cond (t1->t2
+			   (apply-generic op (t1->t2 a1) a2))
+			  (t2->t1
+			   (apply-generic op a1 (t2->t1 a2)))
+			  (else
+			   (error "No method for these types" (list op type-tags))))))
+		(error "No method for these types" (list op type-tags)))))))
+#+end_src
+
+*** Exercise 2.81 - missing same-type implementation
+
+Louis Reasoner has noticed that ~apply-generic~ may try to coerce the arguments to each other's type even if they already have the same type. Therefore, he reasons, we need to put procedures in the coercion table to "coerce" arguments of each type to their own type.
+
+#+begin_src racket
+  (define (scheme-number->scheme-number n) n)
+  (define (complex->complex n) n)
+  (put-coercion 'scheme-number 'scheme-number
+		scheme-number->scheme-number)
+  (put-coercion 'complex 'complex
+		complex->complex)
+#+end_src
+
+**** a. With procedures installed, what happens if ~apply-generic~ is called with two arguments of type ~scheme-number~ for an operation that is not found in the table for those types?
+
+For example, assume the we've define a generic exponentiation operation:
+#+begin_src racket
+  (define (exp x y) (apply-generic 'exp x y))
+#+end_src
+
+and have put a procedure for exponentiation in the Scheme-number package but not any other package:
+#+begin_src racket
+  (put 'exp '(scheme-number scheme-number)
+       (lambda (x y) (tag (expt x y))))
+#+end_src
+
+What happens if we call ~exp~ with two complex numbers as arguments?
+
+-----
+It will be an infinite recursion:
+1. ~'complex 'complex~ is type-args, so ~proc~ will be ~false~
+2. ~t1->t2~ will return ~complex->complex~
+3. so ~apply-generic~ will be called again with ~'complex 'complex~ args, and step 1 will repeat
+
+**** b. Is Louis correct that something had to be done about coercion with arguments of the same type, or does ~apply-generic~ work correctly as is?
+
+This is a correct observation that if ~proc~ was not found for two arguments of the same type, it's unnecessary to perform coercion lookup - it's guaranteed there is no implementation for given args, otherwise ~proc~ would have been found.
+
+That being said, it's not a correctness question, but a performance question - as is, the ~apply-generic~ will fail as expected, but only after two coercion table lookups, which is not optimal.
+
+That's why something better be done.
+
+**** c. Modify ~apply-generic~ so that it doesn't try coercion if the two arguments have the same type
+
+#+begin_src racket
+  (define (apply-generic op . args)
+    (let ((type-tags (map type-arg args)))
+      (let ((proc (get op type-tags)))
+	(cond (proc (apply proc (map contents args)))
+	      ((not (= (length args) 2))
+	       (error "No method for these types" (list op type-tags)))
+	      ((= (car type-tags) (cadr type-tags))
+	       (error "No method for these types" (list op type-tags)))
+	      (else
+	       (let ((type1 (car type-tags))
+		     (type2 (cadr type-tags))
+		     (a1 (car args))
+		     (a2 (cadr args)))
+		 (let ((t1->t2 (get-coercion type1 type2))
+		       (t2->t1 (get-coercion type2 type1)))
+		   (cond (t1->t2
+			  (apply-generic op (t1->t2 a1) a2))
+			 (t2->t1
+			  (apply-generic op a1 (t2->t1 a2)))
+			 (else
+			  (error "No method for these types" (list op type-tags)))))))))))
+#+end_src
+
+*** Exercise 2.82 - not only 2 args
+
+Show how to generalize ~apply-generic~ to handle coercion in the general case of multiple arguments.
+
+#+begin_src racket
+  (define (all-same xs)
+    (cond ((null? xs) true)
+	  ((null? (cdr xs)) true)
+	  ((not (= (car xs) (cadr xs))) false)
+	  (else (all-same (cdr xs)))))
+
+  (define (reverse xs)
+    (define (iter xs acc)
+      (if (null? xs)
+	  acc
+	  (iter (cdr xs) (cons xs acc))))
+    (iter xs '()))
+
+  (define (apply-generic op . args)
+    (let ((type-tags (map type-tag args)))
+      (let ((proc (get op type-tags)))
+	(cond (proc (apply proc (map contents args)))
+	      ((all-same type-tags)
+	       (error "No method for these types"
+		      (list op type-tags)))
+	      (else
+	       (define (coerce-args args to-tag coerced-args)
+		 (if (null? args)
+		     (reverse coerced-args)
+		     (let ((coerce (get-coercion (type-tag (car args)) to-tag)))
+		       (if coerce
+			   (coerce-args (cdr args)
+					to-tag
+					(cons (coerce (car args)) coerced-args))
+			   false))))
+	       (define (search-coercion rest-pivot-tags)
+		 (if (null? rest-pivot-tags)
+		     (error "No method for these types" (list op type-tags))
+		     (let ((pivot-tag (car rest-pivot-tags)))
+		       (let ((coerced (coerce-args args pivot-tag '())))
+			 (if coerced
+			     (apply apply-generic (cons op coerced))
+			     (search-coercion (cdr rest-tags)))))))
+	       (search-coercion type-tags))))))
+#+end_src
+
+
+*** Exercise 2.83 - ~raise~ one level of tower
+
+Suppose you are designing a generic arithmetic system for dealing with the tower of types shown in figure 2.25: integer, rational, real, complex. For each type (except complex), design a procedure that raises objects of that type one level in the tower. Show how to install a generic ~raise~ operation that will work for each type (except complex)
+
+-----
+
+#+begin_src racket
+  (define (raise-integer x)
+    (make-rat x 1))
+  (put 'raise '(integer) raise-integer)
+
+  (define (raise-rational x)
+    (/ (* 1.0 (numer x)) (denom x)))
+  (put 'raise '(rational) raise-rational)
+
+  (define (raise-real x)
+    (make-complex-real-imag x 0))
+  (put 'raise '(real) raise-real)
+
+  (define (raise x)
+    (apply-generic 'raise x))
+#+end_src
+
+*** Exercise 2.84 - coerce through raise
+
+Using the ~raise~ operation of exercise 2.83, modify the ~apply-generic~ procedure so that it coerces its arguments to have the same type by the method of succesive raising.
+
+You will need to devise a way to test which of two types is higher in the tower. Do this in a mannger that is "compatible" with the rest of the system and will not lead to problems in adding new levels to the tower.
+
+------
+
+#+begin_src racket
+  (define type-tower (list 'integer 'rational 'real 'complex))
+
+  (define (lower t1 t2)
+    (define (iter ts)
+      (cond ((null? ts) (error "Unknown tags" (list t1 t2 type-tower)))
+	    ((= t1 (car ts)) true)
+	    ((= t2 (car ts)) false)
+	    (else (iter (cdr ts)))))
+    (iter type-tower))
+
+  (define (accumulate op init xs)
+    (if (null? xs)
+	init
+	(op (car xs)
+	    (accumulate op init (cdr xs)))))
+
+  (define (highest-tag tags)
+    (if (null? tags)
+	(error "Empty tags -- HIGHEST-TAG")
+	(accumulate (lambda (tag so-far)
+		      (if (lower so-far tag)
+			  tag
+			  so-far))
+		    'integer
+		    tags)))
+
+  (define (raise-up-to x tag)
+    (if (= (type-tag x) tag)
+	x
+	(raise-up-to (raise x) tag)))
+
+  (define (apply-generic op . args)
+    (let ((type-tags (map type-tag args)))
+      (let ((proc (get op type-tags)))
+	(cond (proc (apply proc (map contents args)))
+	      ((all-same type-tags)
+	       (error "No method for these types"
+		      (list op type-tags)))
+	      (else
+	       (let ((highest-level (highest-tag type-tags)))
+		 (apply apply-generic (cons op
+					    (map (lambda (x) (raise-up-to x highest-level))
+						 args)))))))))
+#+end_src
+
+*** Exercise 2.85
+
+Design a procedure ~drop~ that "simplifies" a data object by lowering it in the towser of types as far as possible.
+The key is to decide, in some general way, whether an object can be lowered.
+Plan to decide whether the project can be lowered: Begin by defining a generic operation ~project~ that "pushes" an object down in the tower. Then a number can be dropped if, when ~project~ + ~raise~ to initial is applied, the result is the same as the initial value.
+
+#+begin_src racket
+  (define type-tower '(integer rational real complex))
+
+  (put 'project '(integer) (lambda (x) (error "Nothing lower to project to -- PROJECT-INTEGER")))
+  (put 'project '(rational) (lambda (x) (quotient (numer x) (denom x))))
+  (put 'project '(real) round)
+  (put 'project '(complex) (lambda (x) (real-part x)))
+
+  (define (project x)
+    (apply-generic 'project x))
+
+  (define (drop n)
+    (define (iter x best-known)
+      (if (equ? (raise-up-to x (type-tag n))
+		n)
+	  (if (= (type-tag x) 'integer)
+	      x
+	      (iter (project x) x))
+	  best-known))
+    (iter n n))
+#+end_src
+
+*** TODO Exercise 2.86
+
+Suppose we want to handle complex numbers whose real parts, imaginary parts, magnitudes, and angles can be either ordinary numbers, rational numbers or other numbers we might wish to add to the system. Describe and impement the changes to the system needed to accomodate this. You will have to define operations such as ~sine~ and ~cosine~ that are generic over ordinary numbers and rational numbers.
+
+** 2.5.3 Example: Symbolic Algebra
+
+The manipulation of symbolic algebraic expressions is a complex process that illustrates many of the hardest problems that occur in the design of large-scale systems.
+
+Section demonstrates the arithmetic of polynomials.
+
+*** Arithmetic on polynomials
+
+Polynomial are normally defined relative to certain variables (the /indeterminates/ of the polynomial).
+We will restrict ourselves to polynomials having just one indeterminate (/univariate polynomials/).
+Polynomial is a sum of terms, each of which is either a coefficient, a power of indeterminate, or a product of a coefficient and a power of indeterminate.
+A coefficient is defined as an algebraic expression that is not dependent on indeterminate of the polynomial.
+
+$$ 5x^2+3x+7 $$
+
+$$ (y^2+1)x^3+(2y)x+1 $$
+
+We consider a "polynomial" will be a particular syntactic form, not its underlying mathematical meaning.
+
+We will consider only addition and multiplication. Moreover, we will insist that two polynomials to be combined must have the same indetermante.
+
+Design approach uses data abstraction.
+Assume we have a data structure ~poly~, which constists of a variable and a collection of terms.
+Assume we have selectors ~variable~ and ~term-list~, and a constructor ~make-poly~.
+
+#+begin_src racket
+  (define (add-poly p1 p2)
+    (if (same-variable? (variable p1) (variable p2))
+	(make-poly (variable p1)
+		   (add-terms (term-list p1)
+			      (term-list p2)))
+	(error "Polys not in same var -- ADD-POLY"
+	       (list p1 p2))))
+
+  (define (mul-poly p1 p2)
+    (if (same-variable? (variable p1) (variable p2))
+	(make-poly (variable p1)
+		   (mul-terms (term-list p1)
+			      (term-list p2)))
+	(error "Polys not in same var -- MUL-POLY"
+	       (list p1 p2))))
+#+end_src
+
+Package to install into arithmetic system:
+#+begin_src racket
+  (define (install-polynomial-package)
+    (define (make-poly variable term-list)
+      (cons variable term-list))
+    (define (variable p) (car p))
+    (define (term-list p) (cdr p))
+
+    (define (same-variable?))
+    (define (variable?))
+    (define (adjoin-term))
+    (define (coeff))
+    (define (add-poly p1 p2))
+    (define (mul-ply p1 p2))
+
+    (define (tag p) (attach-tag 'polynomial p))
+    (put 'add '(polynomial polynomial)
+	 (lambda (p1 p2 (tag (add-poly p1 p2)))))
+    (put 'mul '(polynomial polynomial)
+	 (lambda (p1 p2 (tag (mul-poly p1 p2)))))
+    (put 'make 'polynomial
+	 (lambda (var terms) (tag (make-poly var terms)))))
+#+end_src
