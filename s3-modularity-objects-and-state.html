@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2023-07-20 Thu 20:10 -->
+<!-- 2023-07-23 Sun 23:49 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>3 Modularity, Objects and State</title>
@@ -222,54 +222,69 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org68f98cb">Intro</a></li>
-<li><a href="#org825d4f7">3.1 Assignment and Local State</a>
+<li><a href="#org3474207">Intro</a></li>
+<li><a href="#orga4272e3">3.1 Assignment and Local State</a>
 <ul>
-<li><a href="#org83b1c97">3.1.1 Local State Variables</a>
+<li><a href="#org2f67169">3.1.1 Local State Variables</a>
 <ul>
-<li><a href="#orgde8d36f">Exercise 3.1 - accumulator</a></li>
-<li><a href="#org5c58f8e">Exercise 3.2 - <code>make-monitored</code></a></li>
-<li><a href="#org5f03013">Exercise 3.3 - password-protected accounts</a></li>
-<li><a href="#org98a2240">Exercise 3.4 - password-protected accounts with cops</a></li>
+<li><a href="#org0ff72c3">Exercise 3.1 - accumulator</a></li>
+<li><a href="#orged6b536">Exercise 3.2 - <code>make-monitored</code></a></li>
+<li><a href="#orgc59203b">Exercise 3.3 - password-protected accounts</a></li>
+<li><a href="#org1fbf9f4">Exercise 3.4 - password-protected accounts with cops</a></li>
 </ul>
 </li>
-<li><a href="#org4d8f12d">3.1.2 The Benefits of Introducing Assignment</a>
+<li><a href="#org5583c9b">3.1.2 The Benefits of Introducing Assignment</a>
 <ul>
-<li><a href="#org2876ae3">Exercise 3.5 - Monte Carlo integration</a></li>
-<li><a href="#orge2b716b">Exercise 3.6 - rand reset</a></li>
+<li><a href="#org522463f">Exercise 3.5 - Monte Carlo integration</a></li>
+<li><a href="#org07736d3">Exercise 3.6 - rand reset</a></li>
 </ul>
 </li>
-<li><a href="#org011d057">3.1.2 The Costs of Introducing Assignment</a>
+<li><a href="#org0add444">3.1.2 The Costs of Introducing Assignment</a>
 <ul>
-<li><a href="#org0918982">Sameness and change</a></li>
-<li><a href="#org6f9c40e">Pitfalls of imperative programming</a></li>
-<li><a href="#org9c831f3">Exercise 3.7 - joint account</a></li>
-<li><a href="#orgc9fb00e">Exercise 3.8 - order of evaluation</a></li>
+<li><a href="#orgfcc4304">Sameness and change</a></li>
+<li><a href="#orge5fd51d">Pitfalls of imperative programming</a></li>
+<li><a href="#org2c19e1a">Exercise 3.7 - joint account</a></li>
+<li><a href="#org727f42c">Exercise 3.8 - order of evaluation</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#orga052b12">3.2 The Environment Model of Evaluation</a>
+<li><a href="#orgf2a2c4f">3.2 The Environment Model of Evaluation</a>
 <ul>
-<li><a href="#org25f891b">3.2.1 The Rules for Evaluation</a></li>
-<li><a href="#orgd279bd3">3.2.2 Applying Simple Procedures</a></li>
-<li><a href="#org1f4bd4b">3.2.3 Frames as the Repository of Local State</a></li>
-<li><a href="#org4d469a5">3.2.4 Internal Definitions</a></li>
+<li><a href="#org89e2e53">3.2.1 The Rules for Evaluation</a></li>
+<li><a href="#org1a6fa67">3.2.2 Applying Simple Procedures</a></li>
+<li><a href="#orgbb51c4e">3.2.3 Frames as the Repository of Local State</a></li>
+<li><a href="#org018f5f1">3.2.4 Internal Definitions</a></li>
 </ul>
 </li>
-<li><a href="#orgba38279">3.3 Modeling with Mutable Data</a>
+<li><a href="#org9f1ce79">3.3 Modeling with Mutable Data</a>
 <ul>
-<li><a href="#orgd4a7577">3.3.1 Mutable List Structure</a>
+<li><a href="#org3b304fd">3.3.1 Mutable List Structure</a>
 <ul>
-<li><a href="#orgba0aab8">Exercise 3.13</a></li>
-<li><a href="#org925806e">Exercise 3.14</a></li>
-<li><a href="#org4e73553">Sharing and Identity</a></li>
-<li><a href="#org605d9bf">Exercise 3.15, 3.16</a></li>
-<li><a href="#orgf0a3616">Exercise 3.17 - count pairs in structure</a></li>
-<li><a href="#orge1f775a">Exercise 3.18 - detect cycle</a></li>
-<li><a href="#org7173d62">Exercise 3.19 - detect cycle in constant space</a></li>
-<li><a href="#org57156c8">Mutation is just assignment</a></li>
-<li><a href="#org53070f5">Exercise 3.20 - environment diagrams for <code>cons</code></a></li>
+<li><a href="#orgd731660">Exercise 3.13</a></li>
+<li><a href="#org8633553">Exercise 3.14</a></li>
+<li><a href="#org342f5c8">Sharing and Identity</a></li>
+<li><a href="#org6301f3f">Exercise 3.15, 3.16</a></li>
+<li><a href="#orge2cbf81">Exercise 3.17 - count pairs in structure</a></li>
+<li><a href="#org1446cc1">Exercise 3.18 - detect cycle</a></li>
+<li><a href="#org71f8dab">Exercise 3.19 - detect cycle in constant space</a></li>
+<li><a href="#org5d95462">Mutation is just assignment</a></li>
+<li><a href="#org8112892">Exercise 3.20 - environment diagrams for <code>cons</code></a></li>
+</ul>
+</li>
+<li><a href="#org39e1014">3.3.2 Representing Queues</a>
+<ul>
+<li><a href="#org98ef365">Exercise 3.21 - queue print representation</a></li>
+<li><a href="#orgf5ded57">Exercise 3.23 - <i>deque</i></a></li>
+</ul>
+</li>
+<li><a href="#org5359ded">3.3.3 Representing Tables</a>
+<ul>
+<li><a href="#org60db020">One-dimensional table</a></li>
+<li><a href="#org9ffdc0d">Two-dimensional tables</a></li>
+<li><a href="#org099459c">Creating local tables</a></li>
+<li><a href="#orgcc67343">Exercise 3.24 - user-provided key comparison function</a></li>
+<li><a href="#orgd0a542d">Exercise 3.25 - table-x</a></li>
 </ul>
 </li>
 </ul>
@@ -278,9 +293,9 @@
 </div>
 </div>
 
-<div id="outline-container-org68f98cb" class="outline-2">
-<h2 id="org68f98cb">Intro</h2>
-<div class="outline-text-2" id="text-org68f98cb">
+<div id="outline-container-org3474207" class="outline-2">
+<h2 id="org3474207">Intro</h2>
+<div class="outline-text-2" id="text-org3474207">
 <p>
 In previous chapters we introduced:
 </p>
@@ -329,9 +344,9 @@ An alternative organizational strategy concentrates on the <i>streams</i> of inf
 </div>
 </div>
 
-<div id="outline-container-org825d4f7" class="outline-2">
-<h2 id="org825d4f7">3.1 Assignment and Local State</h2>
-<div class="outline-text-2" id="text-org825d4f7">
+<div id="outline-container-orga4272e3" class="outline-2">
+<h2 id="orga4272e3">3.1 Assignment and Local State</h2>
+<div class="outline-text-2" id="text-orga4272e3">
 <p>
 We ordinarily view the world as populated by independent objects, each of which has a state that changes over time. An object is said to "have state" if its history influences its behavior. Object's state can be characterized by one or more <i>state variables</i>.
 </p>
@@ -345,9 +360,9 @@ If we choose to model the flow of time in the system by the elapsed time in the 
 </p>
 </div>
 
-<div id="outline-container-org83b1c97" class="outline-3">
-<h3 id="org83b1c97">3.1.1 Local State Variables</h3>
-<div class="outline-text-3" id="text-org83b1c97">
+<div id="outline-container-org2f67169" class="outline-3">
+<h3 id="org2f67169">3.1.1 Local State Variables</h3>
+<div class="outline-text-3" id="text-org2f67169">
 <div class="org-src-container">
 <pre class="src src-racket"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">balance</span> <span style="color: #D0372D;">100</span><span style="color: #707183;">)</span>
 
@@ -421,9 +436,9 @@ If we choose to model the flow of time in the system by the elapsed time in the 
 </div>
 </div>
 
-<div id="outline-container-orgde8d36f" class="outline-4">
-<h4 id="orgde8d36f">Exercise 3.1 - accumulator</h4>
-<div class="outline-text-4" id="text-orgde8d36f">
+<div id="outline-container-org0ff72c3" class="outline-4">
+<h4 id="org0ff72c3">Exercise 3.1 - accumulator</h4>
+<div class="outline-text-4" id="text-org0ff72c3">
 <p>
 An <i>accumulator</i> is a function of one numeric argument, when called repeatedly accumulates it's arguments into a sum. Each time it is called it returns the currently accumulated sum.
 </p>
@@ -442,9 +457,9 @@ An <i>accumulator</i> is a function of one numeric argument, when called repeate
 </div>
 </div>
 
-<div id="outline-container-org5c58f8e" class="outline-4">
-<h4 id="org5c58f8e">Exercise 3.2 - <code>make-monitored</code></h4>
-<div class="outline-text-4" id="text-org5c58f8e">
+<div id="outline-container-orged6b536" class="outline-4">
+<h4 id="orged6b536">Exercise 3.2 - <code>make-monitored</code></h4>
+<div class="outline-text-4" id="text-orged6b536">
 <p>
 Write a procedure <code>make-monitored</code> that takes as input a procedure, f, that itself takes one input. The result returned by <code>make-monitored</code> is a third procedure, say <code>mf</code>, tat keeps track of the number of times it has been called by maintaining an internal counter.
 </p>
@@ -455,7 +470,7 @@ If the input to <code>mf</code> is the special symbol <code>reset-count</code> t
 </p>
 
 <div class="org-src-container">
-<pre class="src src-racket" id="org785695d"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-monitored</span> f<span style="color: #7388D6;">)</span>
+<pre class="src src-racket" id="org061d3c0"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-monitored</span> f<span style="color: #7388D6;">)</span>
   <span style="color: #7388D6;">(</span><span style="color: #0000FF;">let</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #BA36A5;">cnt</span> <span style="color: #D0372D;">0</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
     <span style="color: #909183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #709870;">(</span><span style="color: #006699;">mf</span> x<span style="color: #709870;">)</span>
       <span style="color: #709870;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #006FE0;">eq?</span> x <span style="color: #D0372D;">'how-many-calls?</span><span style="color: #6276BA;">)</span> cnt<span style="color: #907373;">)</span>
@@ -488,9 +503,9 @@ If the input to <code>mf</code> is the special symbol <code>reset-count</code> t
 </div>
 </div>
 
-<div id="outline-container-org5f03013" class="outline-4">
-<h4 id="org5f03013">Exercise 3.3 - password-protected accounts</h4>
-<div class="outline-text-4" id="text-org5f03013">
+<div id="outline-container-orgc59203b" class="outline-4">
+<h4 id="orgc59203b">Exercise 3.3 - password-protected accounts</h4>
+<div class="outline-text-4" id="text-orgc59203b">
 <div class="org-src-container">
 <pre class="src src-racket"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-account</span> amount password<span style="color: #7388D6;">)</span>
   <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">withdraw</span> a<span style="color: #909183;">)</span>
@@ -523,9 +538,9 @@ If the input to <code>mf</code> is the special symbol <code>reset-count</code> t
 </div>
 </div>
 
-<div id="outline-container-org98a2240" class="outline-4">
-<h4 id="org98a2240">Exercise 3.4 - password-protected accounts with cops</h4>
-<div class="outline-text-4" id="text-org98a2240">
+<div id="outline-container-org1fbf9f4" class="outline-4">
+<h4 id="org1fbf9f4">Exercise 3.4 - password-protected accounts with cops</h4>
+<div class="outline-text-4" id="text-org1fbf9f4">
 <div class="org-src-container">
 <pre class="src src-racket"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">call-the-cops</span><span style="color: #7388D6;">)</span>
   <span style="color: #7388D6;">(</span><span style="color: #006FE0;">display</span> <span style="color: #008000;">"[police called]"</span><span style="color: #7388D6;">)</span>
@@ -581,9 +596,9 @@ If the input to <code>mf</code> is the special symbol <code>reset-count</code> t
 </div>
 </div>
 
-<div id="outline-container-org4d8f12d" class="outline-3">
-<h3 id="org4d8f12d">3.1.2 The Benefits of Introducing Assignment</h3>
-<div class="outline-text-3" id="text-org4d8f12d">
+<div id="outline-container-org5583c9b" class="outline-3">
+<h3 id="org5583c9b">3.1.2 The Benefits of Introducing Assignment</h3>
+<div class="outline-text-3" id="text-org5583c9b">
 <p>
 Introducing assignment leads us into a thicket of difficult conceptual issues. Nevertheless, viewing our system as a collection of objects with local state is a powerful technique for maintaining a modular design.
 </p>
@@ -652,6 +667,11 @@ For example, we can appoximate \(\pi\) using the fact that \(6/\pi^2\) is the pr
 </pre>
 </div>
 
+<pre class="example">
+3.141585423607398
+</pre>
+
+
 <p>
 Alternatively, using <code>rand-update</code>:
 </p>
@@ -695,9 +715,9 @@ From the point of view of one part of a complex system, the other parts appear t
 </p>
 </div>
 
-<div id="outline-container-org2876ae3" class="outline-4">
-<h4 id="org2876ae3">Exercise 3.5 - Monte Carlo integration</h4>
-<div class="outline-text-4" id="text-org2876ae3">
+<div id="outline-container-org522463f" class="outline-4">
+<h4 id="org522463f">Exercise 3.5 - Monte Carlo integration</h4>
+<div class="outline-text-4" id="text-org522463f">
 <p>
 Space described by a predicate \(P(x,y)\) that is true for all points inside the region and false otherwise.
 </p>
@@ -756,9 +776,9 @@ We can estimate the integral by picking, at random, points \((x, y)\) that lie i
 </div>
 </div>
 
-<div id="outline-container-orge2b716b" class="outline-4">
-<h4 id="orge2b716b">Exercise 3.6 - rand reset</h4>
-<div class="outline-text-4" id="text-orge2b716b">
+<div id="outline-container-org07736d3" class="outline-4">
+<h4 id="org07736d3">Exercise 3.6 - rand reset</h4>
+<div class="outline-text-4" id="text-org07736d3">
 <p>
 It is useful to be able to reset a random-number generator to produce a sequence starting from a given value.
 </p>
@@ -803,9 +823,9 @@ Design a new <code>rand</code> procedure that is called with an argument that is
 </div>
 </div>
 
-<div id="outline-container-org011d057" class="outline-3">
-<h3 id="org011d057">3.1.2 The Costs of Introducing Assignment</h3>
-<div class="outline-text-3" id="text-org011d057">
+<div id="outline-container-org0add444" class="outline-3">
+<h3 id="org0add444">3.1.2 The Costs of Introducing Assignment</h3>
+<div class="outline-text-3" id="text-org0add444">
 <p>
 As we have seen, the <code>set!</code> operation enables us to model objects that have local state. However, this advantage comes at a price.
 Substitution model of procedure application is no longer adequate for interpreting programs. Moreover, no simple model with "nice" mathematical properties can be an adequate framework for dealing with objects and assignment in programming languages.
@@ -830,9 +850,9 @@ Now, variable refer to some place where the value is stored and can be changed. 
 </p>
 </div>
 
-<div id="outline-container-org0918982" class="outline-4">
-<h4 id="org0918982">Sameness and change</h4>
-<div class="outline-text-4" id="text-org0918982">
+<div id="outline-container-orgfcc4304" class="outline-4">
+<h4 id="orgfcc4304">Sameness and change</h4>
+<div class="outline-text-4" id="text-orgfcc4304">
 <p>
 Introducing change into computational model renders what was previously straightforward as problematic. Consider the concept of two things being "the same".
 </p>
@@ -856,9 +876,9 @@ In real world, to decide if two apparently identical objects are the "same", one
 </div>
 </div>
 
-<div id="outline-container-org6f9c40e" class="outline-4">
-<h4 id="org6f9c40e">Pitfalls of imperative programming</h4>
-<div class="outline-text-4" id="text-org6f9c40e">
+<div id="outline-container-orge5fd51d" class="outline-4">
+<h4 id="orge5fd51d">Pitfalls of imperative programming</h4>
+<div class="outline-text-4" id="text-orge5fd51d">
 <p>
 Programming that makes extensive use of assignment is called <i>imperative programming</i>.
 </p>
@@ -870,9 +890,9 @@ Programming that makes extensive use of assignment is called <i>imperative progr
 </div>
 </div>
 
-<div id="outline-container-org9c831f3" class="outline-4">
-<h4 id="org9c831f3">Exercise 3.7 - joint account</h4>
-<div class="outline-text-4" id="text-org9c831f3">
+<div id="outline-container-org2c19e1a" class="outline-4">
+<h4 id="org2c19e1a">Exercise 3.7 - joint account</h4>
+<div class="outline-text-4" id="text-org2c19e1a">
 <p>
 Define a procedue <code>make-joint</code> that takes three arguments:
 </p>
@@ -939,15 +959,15 @@ Probably a better one would be to provide a restricted version of dispatch to th
 </div>
 
 
-<div id="outline-container-orgc9fb00e" class="outline-4">
-<h4 id="orgc9fb00e">Exercise 3.8 - order of evaluation</h4>
-<div class="outline-text-4" id="text-orgc9fb00e">
+<div id="outline-container-org727f42c" class="outline-4">
+<h4 id="org727f42c">Exercise 3.8 - order of evaluation</h4>
+<div class="outline-text-4" id="text-org727f42c">
 <p>
 Define a simple procedure <code>f</code> the evaluating <code>(+ (f 0) (f 1))</code> will return 0 if the arguments evaluated left to right, and 1 if the arguments evaluated right to left.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-racket" id="orgcc0d655"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">f</span>
+<pre class="src src-racket" id="org7e4a71a"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">f</span>
   <span style="color: #7388D6;">(</span><span style="color: #0000FF;">let</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #BA36A5;">s</span> <span style="color: #006FE0;">null</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
     <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>x<span style="color: #709870;">)</span>
       <span style="color: #709870;">(</span><span style="color: #0000FF;">if</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">null?</span> s<span style="color: #907373;">)</span>
@@ -964,19 +984,28 @@ Define a simple procedure <code>f</code> the evaluating <code>(+ (f 0) (f 1))</c
 </pre>
 </div>
 
+<pre class="example">
+0
+</pre>
+
+
 <div class="org-src-container">
 <pre class="src src-racket">
 <span style="color: #707183;">(</span><span style="color: #006FE0;">+</span> <span style="color: #7388D6;">(</span>f <span style="color: #D0372D;">1</span><span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span>f <span style="color: #D0372D;">0</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
 </pre>
 </div>
+
+<pre class="example">
+1
+</pre>
 </div>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orga052b12" class="outline-2">
-<h2 id="orga052b12">3.2 The Environment Model of Evaluation</h2>
-<div class="outline-text-2" id="text-orga052b12">
+<div id="outline-container-orgf2a2c4f" class="outline-2">
+<h2 id="orgf2a2c4f">3.2 The Environment Model of Evaluation</h2>
+<div class="outline-text-2" id="text-orgf2a2c4f">
 <p>
 Substitution model of expression evaluation:
 </p>
@@ -1010,9 +1039,9 @@ Expressions in a programming language have no meaning on its own, only within so
 </p>
 </div>
 
-<div id="outline-container-org25f891b" class="outline-3">
-<h3 id="org25f891b">3.2.1 The Rules for Evaluation</h3>
-<div class="outline-text-3" id="text-org25f891b">
+<div id="outline-container-org89e2e53" class="outline-3">
+<h3 id="org89e2e53">3.2.1 The Rules for Evaluation</h3>
+<div class="outline-text-3" id="text-org89e2e53">
 <p>
 The overall specification for how the interpreter evaluates a combination is not changed:
 </p>
@@ -1052,27 +1081,27 @@ Evaluating <code>set!</code> in some environment locates the binding of the vari
 </div>
 </div>
 
-<div id="outline-container-orgd279bd3" class="outline-3">
-<h3 id="orgd279bd3">3.2.2 Applying Simple Procedures</h3>
-<div class="outline-text-3" id="text-orgd279bd3">
+<div id="outline-container-org1a6fa67" class="outline-3">
+<h3 id="org1a6fa67">3.2.2 Applying Simple Procedures</h3>
+<div class="outline-text-3" id="text-org1a6fa67">
 <p>
 &#x2026; using paper &#x2026;
 </p>
 </div>
 </div>
 
-<div id="outline-container-org1f4bd4b" class="outline-3">
-<h3 id="org1f4bd4b">3.2.3 Frames as the Repository of Local State</h3>
-<div class="outline-text-3" id="text-org1f4bd4b">
+<div id="outline-container-orgbb51c4e" class="outline-3">
+<h3 id="orgbb51c4e">3.2.3 Frames as the Repository of Local State</h3>
+<div class="outline-text-3" id="text-orgbb51c4e">
 <p>
 &#x2026; using paper &#x2026;
 </p>
 </div>
 </div>
 
-<div id="outline-container-org4d469a5" class="outline-3">
-<h3 id="org4d469a5">3.2.4 Internal Definitions</h3>
-<div class="outline-text-3" id="text-org4d469a5">
+<div id="outline-container-org018f5f1" class="outline-3">
+<h3 id="org018f5f1">3.2.4 Internal Definitions</h3>
+<div class="outline-text-3" id="text-org018f5f1">
 <p>
 &#x2026; using paper &#x2026;
 </p>
@@ -1080,9 +1109,9 @@ Evaluating <code>set!</code> in some environment locates the binding of the vari
 </div>
 </div>
 
-<div id="outline-container-orgba38279" class="outline-2">
-<h2 id="orgba38279">3.3 Modeling with Mutable Data</h2>
-<div class="outline-text-2" id="text-orgba38279">
+<div id="outline-container-org9f1ce79" class="outline-2">
+<h2 id="org9f1ce79">3.3 Modeling with Mutable Data</h2>
+<div class="outline-text-2" id="text-org9f1ce79">
 <p>
 Chapter 2 introduced the discipline of data abstraction - when data structures are specified in terms of data constructors and data selectors. But that does not address the desire to model systems composed of objects with changing state.
 </p>
@@ -1101,9 +1130,9 @@ Data objects with defined mutators are known as <i>mutable data objects</i>.
 </p>
 </div>
 
-<div id="outline-container-orgd4a7577" class="outline-3">
-<h3 id="orgd4a7577">3.3.1 Mutable List Structure</h3>
-<div class="outline-text-3" id="text-orgd4a7577">
+<div id="outline-container-org3b304fd" class="outline-3">
+<h3 id="org3b304fd">3.3.1 Mutable List Structure</h3>
+<div class="outline-text-3" id="text-org3b304fd">
 <p>
 <code>cons</code>, <code>car</code>, <code>cdr</code>, <code>append</code> and <code>list</code> allow to construct and get information from the objects, but not to update them.
 </p>
@@ -1113,9 +1142,9 @@ Data objects with defined mutators are known as <i>mutable data objects</i>.
 </p>
 </div>
 
-<div id="outline-container-orgba0aab8" class="outline-4">
-<h4 id="orgba0aab8">Exercise 3.13</h4>
-<div class="outline-text-4" id="text-orgba0aab8">
+<div id="outline-container-orgd731660" class="outline-4">
+<h4 id="orgd731660">Exercise 3.13</h4>
+<div class="outline-text-4" id="text-orgd731660">
 <div class="org-src-container">
 <pre class="src src-racket"><span style="color: #0000FF;">#lang</span> <span style="color: #BA36A5;">sicp</span>
 
@@ -1138,9 +1167,9 @@ z
 </div>
 </div>
 
-<div id="outline-container-org925806e" class="outline-4">
-<h4 id="org925806e">Exercise 3.14</h4>
-<div class="outline-text-4" id="text-org925806e">
+<div id="outline-container-org8633553" class="outline-4">
+<h4 id="org8633553">Exercise 3.14</h4>
+<div class="outline-text-4" id="text-org8633553">
 <div class="org-src-container">
 <pre class="src src-racket"><span style="color: #0000FF;">#lang</span> <span style="color: #BA36A5;">sicp</span>
 
@@ -1166,9 +1195,9 @@ w
 </div>
 </div>
 
-<div id="outline-container-org4e73553" class="outline-4">
-<h4 id="org4e73553">Sharing and Identity</h4>
-<div class="outline-text-4" id="text-org4e73553">
+<div id="outline-container-org342f5c8" class="outline-4">
+<h4 id="org342f5c8">Sharing and Identity</h4>
+<div class="outline-text-4" id="text-org342f5c8">
 <p>
 Theoretical issues of "sameness" and "change" arise in practice when individual pairs are <i>shared</i> among different data objects.
 </p>
@@ -1223,18 +1252,18 @@ In general, <code>set-car!</code> and <code>set-cdr!</code> should be used with 
 </div>
 </div>
 
-<div id="outline-container-org605d9bf" class="outline-4">
-<h4 id="org605d9bf">Exercise 3.15, 3.16</h4>
-<div class="outline-text-4" id="text-org605d9bf">
+<div id="outline-container-org6301f3f" class="outline-4">
+<h4 id="org6301f3f">Exercise 3.15, 3.16</h4>
+<div class="outline-text-4" id="text-org6301f3f">
 <p>
 &#x2026; using paper &#x2026;
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgf0a3616" class="outline-4">
-<h4 id="orgf0a3616">Exercise 3.17 - count pairs in structure</h4>
-<div class="outline-text-4" id="text-orgf0a3616">
+<div id="outline-container-orge2cbf81" class="outline-4">
+<h4 id="orge2cbf81">Exercise 3.17 - count pairs in structure</h4>
+<div class="outline-text-4" id="text-orge2cbf81">
 <div class="org-src-container">
 <pre class="src src-racket"><span style="color: #0000FF;">#lang</span> <span style="color: #BA36A5;">sicp</span>
 
@@ -1290,9 +1319,9 @@ In general, <code>set-car!</code> and <code>set-cdr!</code> should be used with 
 </div>
 </div>
 
-<div id="outline-container-orge1f775a" class="outline-4">
-<h4 id="orge1f775a">Exercise 3.18 - detect cycle</h4>
-<div class="outline-text-4" id="text-orge1f775a">
+<div id="outline-container-org1446cc1" class="outline-4">
+<h4 id="org1446cc1">Exercise 3.18 - detect cycle</h4>
+<div class="outline-text-4" id="text-org1446cc1">
 <p>
 Write a procedure that examines a list and determines whether it contains a cycle.
 </p>
@@ -1325,18 +1354,18 @@ Write a procedure that examines a list and determines whether it contains a cycl
 </div>
 </div>
 
-<div id="outline-container-org7173d62" class="outline-4">
-<h4 id="org7173d62">Exercise 3.19 - detect cycle in constant space</h4>
-<div class="outline-text-4" id="text-org7173d62">
+<div id="outline-container-org71f8dab" class="outline-4">
+<h4 id="org71f8dab">Exercise 3.19 - detect cycle in constant space</h4>
+<div class="outline-text-4" id="text-org71f8dab">
 <p>
 My solution in 3.18 already consumes constant space besides the size of the input list.
 </p>
 </div>
 </div>
 
-<div id="outline-container-org57156c8" class="outline-4">
-<h4 id="org57156c8">Mutation is just assignment</h4>
-<div class="outline-text-4" id="text-org57156c8">
+<div id="outline-container-org5d95462" class="outline-4">
+<h4 id="org5d95462">Mutation is just assignment</h4>
+<div class="outline-text-4" id="text-org5d95462">
 <div class="org-src-container">
 <pre class="src src-racket"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">cons</span> x y<span style="color: #7388D6;">)</span>
   <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">set-x!</span> v<span style="color: #909183;">)</span> <span style="color: #909183;">(</span><span style="color: #0000FF;">set!</span> x v<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
@@ -1362,14 +1391,909 @@ My solution in 3.18 already consumes constant space besides the size of the inpu
 </div>
 </div>
 
-<div id="outline-container-org53070f5" class="outline-4">
-<h4 id="org53070f5">Exercise 3.20 - environment diagrams for <code>cons</code></h4>
-<div class="outline-text-4" id="text-org53070f5">
+<div id="outline-container-org8112892" class="outline-4">
+<h4 id="org8112892">Exercise 3.20 - environment diagrams for <code>cons</code></h4>
+<div class="outline-text-4" id="text-org8112892">
 
-<div id="org1a71c39" class="figure">
+<div id="orge11688c" class="figure">
 <p><img src="./images/Exercise-3.20.jpeg" alt="Exercise-3.20.jpeg" width="100%" />
 </p>
 </div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org39e1014" class="outline-3">
+<h3 id="org39e1014">3.3.2 Representing Queues</h3>
+<div class="outline-text-3" id="text-org39e1014">
+<p>
+A <i>queue</i> is a sequence in which items are inserted at one end (the <i>rear</i> of the queue) and deleted from the other end (the <i>front</i>).
+</p>
+
+<p>
+Queue operations:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">q</span> <span style="color: #7388D6;">(</span>make-queue<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span>insert-queue! q <span style="color: #D0372D;">'a</span><span style="color: #707183;">)</span>  <span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">a</span>
+<span style="color: #707183;">(</span>insert-queue! q <span style="color: #D0372D;">'b</span><span style="color: #707183;">)</span>  <span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">a b</span>
+<span style="color: #707183;">(</span>delete-queue! q<span style="color: #707183;">)</span>     <span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">b</span>
+<span style="color: #707183;">(</span>insert-queue! q <span style="color: #D0372D;">'c</span><span style="color: #707183;">)</span>  <span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">b c</span>
+<span style="color: #707183;">(</span>insert-queue! q <span style="color: #D0372D;">'d</span><span style="color: #707183;">)</span>  <span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">b c d</span>
+<span style="color: #707183;">(</span>delete-queue! q<span style="color: #707183;">)</span>     <span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">c d</span>
+</pre>
+</div>
+
+<p>
+Data abstraction:
+</p>
+<ul class="org-ul">
+<li><p>
+a constructor
+</p>
+
+<p>
+<code>(make-queue)</code> - returns an empty queue
+</p></li>
+<li><p>
+two selectors
+</p>
+
+<p>
+<code>(empty-queue? &lt;queue&gt;)</code> - tests if the queue is empty
+<code>(front-queue &lt;queue&gt;)</code> - returns the object at the front of the queue, or signals an error if the queue is empty; does not modify the queue
+</p></li>
+<li><p>
+two mutators
+</p>
+
+<p>
+<code>(insert-queue! &lt;queue&gt; &lt;item&gt;)</code> - insert the item at the rear of the queue and return mutated queue
+<code>(delete-queue! &lt;queue&gt;)</code> - remove the item at the front of the queue and return mutated queue; signals an error if the queue is empty before the deletion
+</p></li>
+</ul>
+
+<p>
+We could represent a queue as a list - let the <code>car</code> of the list be the front end of the queue, and the last item of the lis be the rear end of the queue. Then to delete an item would just mean taking <code>car</code> of a list, and inserting a new element would mean appending it at the end of the list.
+</p>
+
+<p>
+With list, though, it would take \(O(n)\) steps to find append an element, which is inefficient.
+</p>
+
+<p>
+To overcome this inefficiency we can store the pointer to the last pair of the list. Then to insert an element we can consult the rear pointer and avoid scanning the list.
+</p>
+
+<p>
+A queue represented then as a pair of pointers <code>front-ptr</code> and <code>rear-ptr</code>, which indicate, respectively, the first and the last pair in the queue. We can use <code>cons</code> to combine two pointers.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="org5129342"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">front-ptr</span> queue<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">car</span> queue<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">rear-ptr</span> queue<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">cdr</span> queue<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">set-front-ptr!</span> queue item<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span>set-car! queue item<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">set-rear-ptr!</span> queue item<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span>set-cdr! queue item<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="orga088abd">
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-queue</span><span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">cons</span> '<span style="color: #909183;">()</span> '<span style="color: #909183;">()</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">empty-queue?</span> queue<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">null?</span> <span style="color: #909183;">(</span>front-ptr queue<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">front-queue</span> queue<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">if</span> <span style="color: #909183;">(</span>empty-queue? queue<span style="color: #909183;">)</span>
+      <span style="color: #909183;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"FRONT called with an empty queue"</span> queue<span style="color: #909183;">)</span>
+      <span style="color: #909183;">(</span><span style="color: #006FE0;">car</span> <span style="color: #709870;">(</span>front-ptr queue<span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">insert-queue!</span> queue element<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">let</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #BA36A5;">item</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">cons</span> element '<span style="color: #6276BA;">()</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #709870;">(</span><span style="color: #907373;">(</span>empty-queue? queue<span style="color: #907373;">)</span>
+           <span style="color: #907373;">(</span>set-front-ptr! queue item<span style="color: #907373;">)</span>
+           <span style="color: #907373;">(</span>set-rear-ptr! queue item<span style="color: #907373;">)</span>
+           queue<span style="color: #709870;">)</span>
+          <span style="color: #709870;">(</span><span style="color: #0000FF;">else</span>
+           <span style="color: #907373;">(</span>set-cdr! <span style="color: #6276BA;">(</span>rear-ptr queue<span style="color: #6276BA;">)</span> item<span style="color: #907373;">)</span>
+           <span style="color: #907373;">(</span>set-rear-ptr! queue item<span style="color: #907373;">)</span>
+           queue<span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">delete-queue!</span> queue<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">if</span> <span style="color: #909183;">(</span>empty-queue? queue<span style="color: #909183;">)</span>
+      <span style="color: #909183;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"DELETE called with an empty queue"</span> queue<span style="color: #909183;">)</span>
+      <span style="color: #909183;">(</span><span style="color: #0000FF;">begin</span>
+        <span style="color: #709870;">(</span>set-front-ptr! queue <span style="color: #907373;">(</span><span style="color: #006FE0;">cdr</span> <span style="color: #6276BA;">(</span>front-ptr queue<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+        queue<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">q</span> <span style="color: #7388D6;">(</span>make-queue<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #0000FF;">#lang</span> <span style="color: #BA36A5;">sicp</span>
+
+<span style="color: #707183;">(</span>insert-queue! q <span style="color: #D0372D;">'a</span><span style="color: #707183;">)</span>  <span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">a</span>
+<span style="color: #707183;">(</span>insert-queue! q <span style="color: #D0372D;">'b</span><span style="color: #707183;">)</span>  <span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">a b</span>
+<span style="color: #707183;">(</span>delete-queue! q<span style="color: #707183;">)</span>     <span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">b</span>
+<span style="color: #707183;">(</span>insert-queue! q <span style="color: #D0372D;">'c</span><span style="color: #707183;">)</span>  <span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">b c</span>
+<span style="color: #707183;">(</span>insert-queue! q <span style="color: #D0372D;">'d</span><span style="color: #707183;">)</span>  <span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">b c d</span>
+<span style="color: #707183;">(</span>delete-queue! q<span style="color: #707183;">)</span>     <span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">c d</span>
+</pre>
+</div>
+
+<pre class="example">
+((a) a)
+((a b) b)
+((b) b)
+((b c) c)
+((b c d) d)
+((c d) d)
+</pre>
+</div>
+
+<div id="outline-container-org98ef365" class="outline-4">
+<h4 id="org98ef365">Exercise 3.21 - queue print representation</h4>
+<div class="outline-text-4" id="text-org98ef365">
+<p>
+Problem: "Last element inserted into the queue twice. After deleting all items, <code>'b</code> is still there, so queue is not empty".
+</p>
+
+<p>
+Problem reproduction example:
+</p>
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #0000FF;">#lang</span> <span style="color: #BA36A5;">sicp</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">q1</span> <span style="color: #7388D6;">(</span>make-queue<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>insert-queue! q1 <span style="color: #D0372D;">'a</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>insert-queue! q1 <span style="color: #D0372D;">'b</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>delete-queue! q1<span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>delete-queue! q1<span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<pre class="example">
+((a) a)
+((a b) b)
+((b) b)
+(() b)
+</pre>
+</div>
+
+<ul class="org-ul">
+<li><a id="org2400592"></a>Show why example produces the output it does<br />
+<div class="outline-text-5" id="text-org2400592">
+<p>
+Queue is represented as a cons, with the cdr being the pointer to the rear of the queue. While the rear-ptr is not cleaned up after deleting the last element of the queue, there is no way to access it through the public interface.
+</p>
+</div>
+</li>
+
+<li><a id="org75a8d63"></a>Define a <code>print-queue</code> procedure<br />
+<div class="outline-text-5" id="text-org75a8d63">
+<div class="org-src-container">
+<pre class="src src-racket" id="orge59bf0c"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">print-queue</span> queue<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #006FE0;">display</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">car</span> queue<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #006FE0;">newline</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #0000FF;">#lang</span> <span style="color: #BA36A5;">sicp</span>
+
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">q1</span> <span style="color: #7388D6;">(</span>make-queue<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>print-queue <span style="color: #7388D6;">(</span>insert-queue! q1 <span style="color: #D0372D;">'a</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>print-queue <span style="color: #7388D6;">(</span>insert-queue! q1 <span style="color: #D0372D;">'b</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>print-queue <span style="color: #7388D6;">(</span>delete-queue! q1<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>print-queue <span style="color: #7388D6;">(</span>delete-queue! q1<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<pre class="example">
+(a)
+(a b)
+(b)
+()
+</pre>
+</div>
+</li>
+</ul>
+</div>
+
+<div id="outline-container-orgf5ded57" class="outline-4">
+<h4 id="orgf5ded57">Exercise 3.23 - <i>deque</i></h4>
+<div class="outline-text-4" id="text-orgf5ded57">
+<p>
+Interface:
+</p>
+<ul class="org-ul">
+<li><code>(make-deque)</code></li>
+<li><code>(front-deque q)</code></li>
+<li><code>(rear-deque q)</code></li>
+<li><code>(insert-front-deque q)</code></li>
+<li><code>(delete-front-deque q)</code></li>
+<li><code>(insert-rear-deque q)</code></li>
+<li><code>(delete-rear-deque q)</code></li>
+</ul>
+
+<p>
+All operations should take \(O(1)\) time.
+</p>
+
+<p>
+Similarly to the queue list-based implementation, we need to store the rear pointer. Unlike in the queue, each spot should also store the pointer to the previous spot, so in <code>(delete-rear-deque q)</code> we can efficiently update the rear pointer.
+</p>
+
+
+
+<div class="org-src-container">
+<pre class="src src-racket" id="org3546cc6"><span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">private procedures</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">front-ptr</span> d<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">car</span> d<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">rear-ptr</span> d<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">cdr</span> d<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">set-front-ptr!</span> d spot<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span>set-car! d spot<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">set-rear-ptr!</span> d spot<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span>set-cdr! d spot<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">(define (make-spot v prev next) (cons v (cons prev next)))</span>
+<span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">(define (value spot) (car spot))</span>
+<span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">(define (prev-spot spot) (cadr spot))</span>
+<span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">(define (next-spot spot) (cddr spot))</span>
+<span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">(define (set-prev-spot! spot prev) (set-car! (cdr spot) prev))</span>
+<span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">(define (set-next-spot! spot next) (set-cdr! (cdr spot) next))</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-spot</span> v prev next<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">cons</span> v <span style="color: #909183;">(</span><span style="color: #006FE0;">cons</span> prev <span style="color: #709870;">(</span><span style="color: #006FE0;">cons</span> next '<span style="color: #907373;">()</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">value</span> spot<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">car</span> spot<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">prev-spot</span> spot<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">cadr</span> spot<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">next-spot</span> spot<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">caddr</span> spot<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">set-prev-spot!</span> spot prev<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span>set-car! <span style="color: #909183;">(</span><span style="color: #006FE0;">cdr</span> spot<span style="color: #909183;">)</span> prev<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">set-next-spot!</span> spot next<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span>set-car! <span style="color: #909183;">(</span><span style="color: #006FE0;">cddr</span> spot<span style="color: #909183;">)</span> next<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">public interface</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-deque</span><span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">cons</span> '<span style="color: #909183;">()</span> '<span style="color: #909183;">()</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">empty-deque?</span> d<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">null?</span> <span style="color: #909183;">(</span>front-ptr d<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">front-deque</span> d<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span>value <span style="color: #909183;">(</span>front-ptr d<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">rear-deque</span> d<span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span>value <span style="color: #909183;">(</span>rear-ptr d<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">insert-front-deque!</span> d v<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">let</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #BA36A5;">spot</span> <span style="color: #907373;">(</span>make-spot v '<span style="color: #6276BA;">()</span> '<span style="color: #6276BA;">()</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">if</span> <span style="color: #709870;">(</span>empty-deque? d<span style="color: #709870;">)</span>
+        <span style="color: #709870;">(</span><span style="color: #0000FF;">begin</span>
+          <span style="color: #907373;">(</span>set-front-ptr! d spot<span style="color: #907373;">)</span>
+          <span style="color: #907373;">(</span>set-rear-ptr! d spot<span style="color: #907373;">)</span>
+          d<span style="color: #709870;">)</span>
+        <span style="color: #709870;">(</span><span style="color: #0000FF;">begin</span>
+          <span style="color: #907373;">(</span>set-next-spot! spot <span style="color: #6276BA;">(</span>front-ptr d<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+          <span style="color: #907373;">(</span>set-prev-spot! <span style="color: #6276BA;">(</span>front-ptr d<span style="color: #6276BA;">)</span> spot<span style="color: #907373;">)</span>
+          <span style="color: #907373;">(</span>set-front-ptr! d spot<span style="color: #907373;">)</span>
+          d<span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">insert-rear-deque!</span> d v<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">let</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #BA36A5;">spot</span> <span style="color: #907373;">(</span>make-spot v '<span style="color: #6276BA;">()</span> '<span style="color: #6276BA;">()</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">if</span> <span style="color: #709870;">(</span>empty-deque? d<span style="color: #709870;">)</span>
+        <span style="color: #709870;">(</span><span style="color: #0000FF;">begin</span>
+          <span style="color: #907373;">(</span>set-front-ptr! d spot<span style="color: #907373;">)</span>
+          <span style="color: #907373;">(</span>set-rear-ptr! d spot<span style="color: #907373;">)</span>
+          d<span style="color: #709870;">)</span>
+        <span style="color: #709870;">(</span><span style="color: #0000FF;">begin</span>
+          <span style="color: #907373;">(</span>set-prev-spot! spot <span style="color: #6276BA;">(</span>rear-ptr d<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+          <span style="color: #907373;">(</span>set-next-spot! <span style="color: #6276BA;">(</span>rear-ptr d<span style="color: #6276BA;">)</span> spot<span style="color: #907373;">)</span>
+          <span style="color: #907373;">(</span>set-rear-ptr! d spot<span style="color: #907373;">)</span>
+          d<span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">delete-front-deque!</span> d<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span>empty-deque? d<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"DELETE called with empty queue"</span> d<span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+        <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #006FE0;">null?</span> <span style="color: #907373;">(</span>next-spot <span style="color: #6276BA;">(</span>front-ptr d<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+         <span style="color: #709870;">(</span>set-front-ptr! d '<span style="color: #907373;">()</span><span style="color: #709870;">)</span>
+         <span style="color: #709870;">(</span>set-rear-ptr! d '<span style="color: #907373;">()</span><span style="color: #709870;">)</span>
+         d<span style="color: #909183;">)</span>
+        <span style="color: #909183;">(</span><span style="color: #0000FF;">else</span>
+         <span style="color: #709870;">(</span><span style="color: #0000FF;">let</span> <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #BA36A5;">new-front</span> <span style="color: #858580;">(</span>next-spot <span style="color: #80A880;">(</span>front-ptr d<span style="color: #80A880;">)</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+           <span style="color: #907373;">(</span>set-next-spot! <span style="color: #6276BA;">(</span>front-ptr d<span style="color: #6276BA;">)</span> '<span style="color: #6276BA;">()</span><span style="color: #907373;">)</span>
+           <span style="color: #907373;">(</span>set-prev-spot! new-front '<span style="color: #6276BA;">()</span><span style="color: #907373;">)</span>
+           <span style="color: #907373;">(</span>set-front-ptr! d new-front<span style="color: #907373;">)</span>
+           d<span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">delete-rear-deque!</span> d<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span>empty-deque? d<span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"DELETE called with empty queue"</span> d<span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+        <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #006FE0;">null?</span> <span style="color: #907373;">(</span>prev-spot <span style="color: #6276BA;">(</span>rear-ptr d<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+         <span style="color: #709870;">(</span>set-front-ptr! d '<span style="color: #907373;">()</span><span style="color: #709870;">)</span>
+         <span style="color: #709870;">(</span>set-rear-ptr! d '<span style="color: #907373;">()</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+        <span style="color: #909183;">(</span><span style="color: #0000FF;">else</span>
+         <span style="color: #709870;">(</span><span style="color: #0000FF;">let</span> <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #BA36A5;">new-rear</span> <span style="color: #858580;">(</span>prev-spot <span style="color: #80A880;">(</span>rear-ptr d<span style="color: #80A880;">)</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+           <span style="color: #907373;">(</span>set-prev-spot! <span style="color: #6276BA;">(</span>rear-ptr d<span style="color: #6276BA;">)</span> '<span style="color: #6276BA;">()</span><span style="color: #907373;">)</span>
+           <span style="color: #907373;">(</span>set-next-spot! new-rear '<span style="color: #6276BA;">()</span><span style="color: #907373;">)</span>
+           <span style="color: #907373;">(</span>set-rear-ptr! d new-rear<span style="color: #907373;">)</span>
+           d<span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">print-deque</span> d<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">iter</span> spot vals<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">if</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">null?</span> spot<span style="color: #709870;">)</span>
+        vals
+        <span style="color: #709870;">(</span>iter <span style="color: #907373;">(</span>prev-spot spot<span style="color: #907373;">)</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">cons</span> <span style="color: #6276BA;">(</span>value spot<span style="color: #6276BA;">)</span> vals<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #006FE0;">display</span> <span style="color: #909183;">(</span>iter <span style="color: #709870;">(</span>rear-ptr d<span style="color: #709870;">)</span> '<span style="color: #709870;">()</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #006FE0;">newline</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #0000FF;">#lang</span> <span style="color: #BA36A5;">sicp</span>
+
+
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">d</span> <span style="color: #7388D6;">(</span>make-deque<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+d
+<span style="color: #707183;">(</span>print-deque <span style="color: #7388D6;">(</span>insert-front-deque! d <span style="color: #D0372D;">'a</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>print-deque <span style="color: #7388D6;">(</span>insert-rear-deque! d <span style="color: #D0372D;">'b</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>print-deque <span style="color: #7388D6;">(</span>insert-rear-deque! d <span style="color: #D0372D;">'c</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>print-deque <span style="color: #7388D6;">(</span>delete-front-deque! d<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>print-deque <span style="color: #7388D6;">(</span>delete-rear-deque! d<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>print-deque <span style="color: #7388D6;">(</span>delete-front-deque! d<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+d
+<span style="color: #8D8D84;">;; </span><span style="color: #8D8D84; font-style: italic;">(print-deque (delete-front-deque! d))</span>
+<span style="color: #707183;">(</span>print-deque <span style="color: #7388D6;">(</span>insert-front-deque! d <span style="color: #D0372D;">'a</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>print-deque <span style="color: #7388D6;">(</span>insert-front-deque! d <span style="color: #D0372D;">'b</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>print-deque <span style="color: #7388D6;">(</span>insert-front-deque! d <span style="color: #D0372D;">'c</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>print-deque <span style="color: #7388D6;">(</span>insert-front-deque! d <span style="color: #D0372D;">'d</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>print-deque <span style="color: #7388D6;">(</span>insert-front-deque! d <span style="color: #D0372D;">'e</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>print-deque <span style="color: #7388D6;">(</span>insert-front-deque! d <span style="color: #D0372D;">'f</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>front-deque d<span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>rear-deque d<span style="color: #707183;">)</span>
+d
+<span style="color: #707183;">(</span>print-deque <span style="color: #7388D6;">(</span>insert-rear-deque! d '<span style="color: #D0372D;">0</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>print-deque <span style="color: #7388D6;">(</span>delete-front-deque! d<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>print-deque <span style="color: #7388D6;">(</span>delete-front-deque! d<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>print-deque <span style="color: #7388D6;">(</span>delete-front-deque! d<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>print-deque <span style="color: #7388D6;">(</span>delete-front-deque! d<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>print-deque <span style="color: #7388D6;">(</span>delete-front-deque! d<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>print-deque <span style="color: #7388D6;">(</span>delete-front-deque! d<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>print-deque <span style="color: #7388D6;">(</span>delete-front-deque! d<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+d
+</pre>
+</div>
+
+<pre class="example" id="orgdca7b40">
+(())
+(a)
+(a b)
+(a b c)
+(b c)
+(b)
+()
+(())
+(a)
+(b a)
+(c b a)
+(d c b a)
+(e d c b a)
+(f e d c b a)
+f
+a
+(#0=(f () #1=(e #0# #2=(d #1# #3=(c #2# #4=(b #3# #5=(a #4# ())))))) . #5#)
+(f e d c b a 0)
+(e d c b a 0)
+(d c b a 0)
+(c b a 0)
+(b a 0)
+(a 0)
+(0)
+()
+(())
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5359ded" class="outline-3">
+<h3 id="org5359ded">3.3.3 Representing Tables</h3>
+<div class="outline-text-3" id="text-org5359ded">
+<p>
+How to build tables as mutable data structures (e.g. as used in 2.4.3).
+</p>
+
+<p>
+We implement the table as a list of records, each of which is implemented as a pair consisting of a key and the associated value.
+</p>
+</div>
+
+<div id="outline-container-org60db020" class="outline-4">
+<h4 id="org60db020">One-dimensional table</h4>
+<div class="outline-text-4" id="text-org60db020">
+<p>
+The records are glued together to form a list by pairs whose <code>cars</code> point to successive records. These gluing paris are called the <i>backbone</i> of the table.
+</p>
+
+<p>
+In order to have a place that we can change when we add a new record to the table, we build the table as a <i>headed list</i> - it has a special backbone pair at the beginning, which holds a dummy "record".
+</p>
+
+<p>
+To find a value by key, <code>(lookup key table)</code> procedure is used. It returns the value or <code>false</code> if no key exists in the table. <code>lookup</code> uses <code>assoc</code> procedure that find the record associated with the key. <code>assoc</code> scans through the backbone pairs checking if each pair's record is associated with the key. In no such records exist, it returns false. <code>assoc</code> never touches the head of the list, working only on backbone pairs that point to real records.
+</p>
+
+<p>
+To insert <code>(insert! key value table)</code> procedure is used. It also uses <code>assoc</code> to locate the record. If it exists then the value is updated using <code>set-cdr!</code>. Otherwise a new record and a backbone pair created and inserted after the head of the list. Head of the list is important to have a stable position a table variable can point to: if the new record is inserted at the beginning of the list, <code>insert!</code> would have to return a new pointer to the start of the table when adding a new record.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="org53040a5"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">assoc</span> key records<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">cond</span>
+    <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #006FE0;">null?</span> records<span style="color: #709870;">)</span> <span style="color: #006FE0;">false</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #006FE0;">eq?</span> key <span style="color: #907373;">(</span><span style="color: #006FE0;">caar</span> records<span style="color: #907373;">)</span><span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">car</span> records<span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">else</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">assoc</span> key <span style="color: #907373;">(</span><span style="color: #006FE0;">cdr</span> records<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">lookup</span> key table<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">let</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #BA36A5;">record</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">assoc</span> key <span style="color: #6276BA;">(</span><span style="color: #006FE0;">cdr</span> table<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">if</span> record
+        <span style="color: #709870;">(</span><span style="color: #006FE0;">cdr</span> record<span style="color: #709870;">)</span>
+        <span style="color: #006FE0;">false</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">insert!</span> key value table<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">let</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #BA36A5;">record</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">assoc</span> key <span style="color: #6276BA;">(</span><span style="color: #006FE0;">cdr</span> table<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">if</span> record
+        <span style="color: #709870;">(</span>set-cdr! record value<span style="color: #709870;">)</span>
+        <span style="color: #709870;">(</span>set-cdr! table
+                  <span style="color: #907373;">(</span><span style="color: #006FE0;">cons</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">cons</span> key value<span style="color: #6276BA;">)</span>
+                        <span style="color: #6276BA;">(</span><span style="color: #006FE0;">cdr</span> table<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-table</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #006FE0;">cons</span> <span style="color: #D0372D;">'*table*</span> '<span style="color: #909183;">()</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #0000FF;">#lang</span> <span style="color: #BA36A5;">sicp</span>
+
+
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">t</span> <span style="color: #7388D6;">(</span>make-table<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>insert! <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">1</span> t<span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>insert! <span style="color: #D0372D;">'b</span> <span style="color: #D0372D;">2</span> t<span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>insert! <span style="color: #D0372D;">'c</span> <span style="color: #D0372D;">3</span> t<span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>insert! <span style="color: #D0372D;">'d</span> <span style="color: #D0372D;">4</span> t<span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span>lookup <span style="color: #D0372D;">'a</span> t<span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>lookup <span style="color: #D0372D;">'d</span> t<span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>lookup <span style="color: #D0372D;">'e</span> t<span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<pre class="example">
+1
+4
+#f
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org9ffdc0d" class="outline-4">
+<h4 id="org9ffdc0d">Two-dimensional tables</h4>
+<div class="outline-text-4" id="text-org9ffdc0d">
+<p>
+Each value is indexed by two keys. We can construct such table by having a single-key table indexing the first key whose <code>car</code> are single-key subtables indexing the second key. The subtables does not need a special header pair, as the key pair of the main table serves as one.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="orga76a544"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">assoc</span> key records<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #006FE0;">null?</span> records<span style="color: #709870;">)</span> <span style="color: #006FE0;">false</span><span style="color: #909183;">)</span>
+        <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #006FE0;">eq?</span> key <span style="color: #907373;">(</span><span style="color: #006FE0;">caar</span> records<span style="color: #907373;">)</span><span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">car</span> records<span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+        <span style="color: #909183;">(</span><span style="color: #0000FF;">else</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">assoc</span> key <span style="color: #907373;">(</span><span style="color: #006FE0;">cdr</span> records<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">lookup</span> key-1 key-2 table<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">let</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #BA36A5;">subtable</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">assoc</span> key-1 <span style="color: #6276BA;">(</span><span style="color: #006FE0;">cdr</span> table<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">if</span> subtable
+        <span style="color: #709870;">(</span><span style="color: #0000FF;">let</span> <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #BA36A5;">record</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">assoc</span> key-2 <span style="color: #80A880;">(</span><span style="color: #006FE0;">cdr</span> subtable<span style="color: #80A880;">)</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+          <span style="color: #907373;">(</span><span style="color: #0000FF;">if</span> record
+              <span style="color: #6276BA;">(</span><span style="color: #006FE0;">cdr</span> record<span style="color: #6276BA;">)</span>
+              <span style="color: #006FE0;">false</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+        <span style="color: #006FE0;">false</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">insert!</span> key-1 key-2 value table<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">let</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #BA36A5;">subtable</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">assoc</span> key-1 <span style="color: #6276BA;">(</span><span style="color: #006FE0;">cdr</span> table<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">if</span> subtable
+        <span style="color: #709870;">(</span><span style="color: #0000FF;">let</span> <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #BA36A5;">record</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">assoc</span> key-2 <span style="color: #80A880;">(</span><span style="color: #006FE0;">cdr</span> subtable<span style="color: #80A880;">)</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+          <span style="color: #907373;">(</span><span style="color: #0000FF;">if</span> record
+              <span style="color: #6276BA;">(</span>set-cdr! record value<span style="color: #6276BA;">)</span>
+              <span style="color: #6276BA;">(</span>set-cdr! subtable
+                        <span style="color: #858580;">(</span><span style="color: #006FE0;">cons</span> <span style="color: #80A880;">(</span><span style="color: #006FE0;">cons</span> key-2 value<span style="color: #80A880;">)</span>
+                              <span style="color: #80A880;">(</span><span style="color: #006FE0;">cdr</span> subtable<span style="color: #80A880;">)</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+        <span style="color: #709870;">(</span>set-cdr! table
+                  <span style="color: #907373;">(</span><span style="color: #0000FF;">let*</span> <span style="color: #6276BA;">(</span><span style="color: #858580;">(</span><span style="color: #BA36A5;">new-record</span> <span style="color: #80A880;">(</span><span style="color: #006FE0;">cons</span> key-2 value<span style="color: #80A880;">)</span><span style="color: #858580;">)</span>
+                         <span style="color: #858580;">(</span><span style="color: #BA36A5;">new-subtable</span> <span style="color: #80A880;">(</span><span style="color: #006FE0;">cons</span> new-record '<span style="color: #887070;">()</span><span style="color: #80A880;">)</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+                    <span style="color: #6276BA;">(</span><span style="color: #006FE0;">cons</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">cons</span> key-1 new-subtable<span style="color: #858580;">)</span>
+                          <span style="color: #858580;">(</span><span style="color: #006FE0;">cdr</span> table<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #D0372D;">'ok</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-table</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #006FE0;">cons</span> <span style="color: #D0372D;">'*table*</span> '<span style="color: #909183;">()</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #0000FF;">#lang</span> <span style="color: #BA36A5;">sicp</span>
+
+
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">t</span> <span style="color: #7388D6;">(</span>make-table<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>insert! <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'a1</span> <span style="color: #D0372D;">10</span> t<span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>insert! <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'a2</span> <span style="color: #D0372D;">11</span> t<span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>insert! <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'a3</span> <span style="color: #D0372D;">12</span> t<span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>insert! <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'a4</span> <span style="color: #D0372D;">13</span> t<span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>insert! <span style="color: #D0372D;">'b</span> <span style="color: #D0372D;">'b1</span> <span style="color: #D0372D;">20</span> t<span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>insert! <span style="color: #D0372D;">'b</span> <span style="color: #D0372D;">'b2</span> <span style="color: #D0372D;">21</span> t<span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>insert! <span style="color: #D0372D;">'b</span> <span style="color: #D0372D;">'b3</span> <span style="color: #D0372D;">22</span> t<span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span>lookup <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'a1</span> t<span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>lookup <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'a4</span> t<span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>lookup <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'a5</span> t<span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>lookup <span style="color: #D0372D;">'b</span> <span style="color: #D0372D;">'b1</span> t<span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>lookup <span style="color: #D0372D;">'b</span> <span style="color: #D0372D;">'b3</span> t<span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>lookup <span style="color: #D0372D;">'b</span> <span style="color: #D0372D;">'b4</span> t<span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>lookup <span style="color: #D0372D;">'c</span> <span style="color: #D0372D;">'c1</span> t<span style="color: #707183;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org099459c" class="outline-4">
+<h4 id="org099459c">Creating local tables</h4>
+<div class="outline-text-4" id="text-org099459c">
+<div class="org-src-container">
+<pre class="src src-racket" id="org492fd7e"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">assoc</span> key records<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #006FE0;">null?</span> records<span style="color: #709870;">)</span> <span style="color: #006FE0;">false</span><span style="color: #909183;">)</span>
+        <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #006FE0;">eq?</span> key <span style="color: #907373;">(</span><span style="color: #006FE0;">caar</span> records<span style="color: #907373;">)</span><span style="color: #709870;">)</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">car</span> records<span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+        <span style="color: #909183;">(</span><span style="color: #0000FF;">else</span> <span style="color: #709870;">(</span><span style="color: #006FE0;">assoc</span> key <span style="color: #907373;">(</span><span style="color: #006FE0;">cdr</span> records<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-table</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">let</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #BA36A5;">table</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">cons</span> <span style="color: #D0372D;">'*table*</span> '<span style="color: #6276BA;">()</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #709870;">(</span><span style="color: #006699;">lookup</span> key-1 key-2<span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #0000FF;">let</span> <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #BA36A5;">subtable</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">assoc</span> key-1 <span style="color: #80A880;">(</span><span style="color: #006FE0;">cdr</span> table<span style="color: #80A880;">)</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+        <span style="color: #907373;">(</span><span style="color: #0000FF;">if</span> subtable
+            <span style="color: #6276BA;">(</span><span style="color: #0000FF;">let</span> <span style="color: #858580;">(</span><span style="color: #80A880;">(</span><span style="color: #BA36A5;">record</span> <span style="color: #887070;">(</span><span style="color: #006FE0;">assoc</span> key-2 <span style="color: #707183;">(</span><span style="color: #006FE0;">cdr</span> subtable<span style="color: #707183;">)</span><span style="color: #887070;">)</span><span style="color: #80A880;">)</span><span style="color: #858580;">)</span>
+              <span style="color: #858580;">(</span><span style="color: #0000FF;">if</span> record
+                  <span style="color: #80A880;">(</span><span style="color: #006FE0;">cdr</span> record<span style="color: #80A880;">)</span>
+                  <span style="color: #006FE0;">false</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+            <span style="color: #006FE0;">false</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #709870;">(</span><span style="color: #006699;">insert!</span> key-1 key-2 value<span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #0000FF;">let</span> <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #BA36A5;">subtable</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">assoc</span> key-1 <span style="color: #80A880;">(</span><span style="color: #006FE0;">cdr</span> table<span style="color: #80A880;">)</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+        <span style="color: #907373;">(</span><span style="color: #0000FF;">if</span> subtable
+            <span style="color: #6276BA;">(</span><span style="color: #0000FF;">let</span> <span style="color: #858580;">(</span><span style="color: #80A880;">(</span><span style="color: #BA36A5;">record</span> <span style="color: #887070;">(</span><span style="color: #006FE0;">assoc</span> key-2 <span style="color: #707183;">(</span><span style="color: #006FE0;">cdr</span> subtable<span style="color: #707183;">)</span><span style="color: #887070;">)</span><span style="color: #80A880;">)</span><span style="color: #858580;">)</span>
+              <span style="color: #858580;">(</span><span style="color: #0000FF;">if</span> record
+                  <span style="color: #80A880;">(</span>set-cdr! record value<span style="color: #80A880;">)</span>
+                  <span style="color: #80A880;">(</span>set-cdr! subtable <span style="color: #887070;">(</span><span style="color: #006FE0;">cons</span> <span style="color: #707183;">(</span><span style="color: #006FE0;">cons</span> key-2 value<span style="color: #707183;">)</span>
+                                           <span style="color: #707183;">(</span><span style="color: #006FE0;">cdr</span> subtable<span style="color: #707183;">)</span><span style="color: #887070;">)</span><span style="color: #80A880;">)</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+            <span style="color: #6276BA;">(</span>set-cdr! table
+                      <span style="color: #858580;">(</span><span style="color: #0000FF;">let*</span> <span style="color: #80A880;">(</span><span style="color: #887070;">(</span><span style="color: #BA36A5;">new-record</span> <span style="color: #707183;">(</span><span style="color: #006FE0;">cons</span> key-2 value<span style="color: #707183;">)</span><span style="color: #887070;">)</span>
+                             <span style="color: #887070;">(</span><span style="color: #BA36A5;">new-subtable-records</span> <span style="color: #707183;">(</span><span style="color: #006FE0;">cons</span> new-record '<span style="color: #7388D6;">()</span><span style="color: #707183;">)</span><span style="color: #887070;">)</span>
+                             <span style="color: #887070;">(</span><span style="color: #BA36A5;">new-subtable</span> <span style="color: #707183;">(</span><span style="color: #006FE0;">cons</span> key-1 new-subtable-records<span style="color: #707183;">)</span><span style="color: #887070;">)</span><span style="color: #80A880;">)</span>
+                        <span style="color: #80A880;">(</span><span style="color: #006FE0;">cons</span> new-subtable
+                              <span style="color: #887070;">(</span><span style="color: #006FE0;">cdr</span> table<span style="color: #887070;">)</span><span style="color: #80A880;">)</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #709870;">(</span><span style="color: #006699;">dispatch</span> m<span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #006FE0;">eq?</span> m <span style="color: #D0372D;">'lookup</span><span style="color: #6276BA;">)</span> lookup<span style="color: #907373;">)</span>
+            <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #006FE0;">eq?</span> m <span style="color: #D0372D;">'insert!</span><span style="color: #6276BA;">)</span> insert!<span style="color: #907373;">)</span>
+            <span style="color: #907373;">(</span><span style="color: #0000FF;">else</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"Unknown method -- TABLE"</span> m<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    dispatch<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #0000FF;">#lang</span> <span style="color: #BA36A5;">sicp</span>
+
+
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">t</span> <span style="color: #7388D6;">(</span>make-table<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t <span style="color: #D0372D;">'insert!</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'a1</span> <span style="color: #D0372D;">10</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t <span style="color: #D0372D;">'insert!</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'a2</span> <span style="color: #D0372D;">11</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t <span style="color: #D0372D;">'insert!</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'a3</span> <span style="color: #D0372D;">12</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t <span style="color: #D0372D;">'insert!</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'a4</span> <span style="color: #D0372D;">13</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t <span style="color: #D0372D;">'insert!</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">'b</span> <span style="color: #D0372D;">'b1</span> <span style="color: #D0372D;">20</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t <span style="color: #D0372D;">'insert!</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">'b</span> <span style="color: #D0372D;">'b2</span> <span style="color: #D0372D;">21</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t <span style="color: #D0372D;">'insert!</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">'b</span> <span style="color: #D0372D;">'b3</span> <span style="color: #D0372D;">22</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t <span style="color: #D0372D;">'lookup</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'a1</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t <span style="color: #D0372D;">'lookup</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'a4</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t <span style="color: #D0372D;">'lookup</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'a5</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t <span style="color: #D0372D;">'lookup</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">'b</span> <span style="color: #D0372D;">'b1</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t <span style="color: #D0372D;">'lookup</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">'b</span> <span style="color: #D0372D;">'b3</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t <span style="color: #D0372D;">'lookup</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">'b</span> <span style="color: #D0372D;">'b4</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t <span style="color: #D0372D;">'lookup</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">'c</span> <span style="color: #D0372D;">'c1</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<pre class="example">
+10
+13
+#f
+20
+22
+#f
+#f
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-orgcc67343" class="outline-4">
+<h4 id="orgcc67343">Exercise 3.24 - user-provided key comparison function</h4>
+<div class="outline-text-4" id="text-orgcc67343">
+<p>
+Design a table constructor <code>make-table</code> that takes as an argument a <code>same-key?</code> procedure that will be used to test "equality" of keys.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="org90df75b"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-table</span> same-key?<span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">assoc</span> key records<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #709870;">(</span><span style="color: #907373;">(</span><span style="color: #006FE0;">null?</span> records<span style="color: #907373;">)</span> <span style="color: #006FE0;">false</span><span style="color: #709870;">)</span>
+          <span style="color: #709870;">(</span><span style="color: #907373;">(</span>same-key? key <span style="color: #6276BA;">(</span><span style="color: #006FE0;">caar</span> records<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">car</span> records<span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+          <span style="color: #709870;">(</span><span style="color: #0000FF;">else</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">assoc</span> key <span style="color: #6276BA;">(</span><span style="color: #006FE0;">cdr</span> records<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">let</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #BA36A5;">table</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">cons</span> <span style="color: #D0372D;">'*table*</span> '<span style="color: #6276BA;">()</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #709870;">(</span><span style="color: #006699;">lookup</span> key-1 key-2<span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #0000FF;">let</span> <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #BA36A5;">subtable</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">assoc</span> key-1 <span style="color: #80A880;">(</span><span style="color: #006FE0;">cdr</span> table<span style="color: #80A880;">)</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+        <span style="color: #907373;">(</span><span style="color: #0000FF;">if</span> subtable
+            <span style="color: #6276BA;">(</span><span style="color: #0000FF;">let</span> <span style="color: #858580;">(</span><span style="color: #80A880;">(</span><span style="color: #BA36A5;">record</span> <span style="color: #887070;">(</span><span style="color: #006FE0;">assoc</span> key-2 <span style="color: #707183;">(</span><span style="color: #006FE0;">cdr</span> subtable<span style="color: #707183;">)</span><span style="color: #887070;">)</span><span style="color: #80A880;">)</span><span style="color: #858580;">)</span>
+              <span style="color: #858580;">(</span><span style="color: #0000FF;">if</span> record
+                  <span style="color: #80A880;">(</span><span style="color: #006FE0;">cdr</span> record<span style="color: #80A880;">)</span>
+                  <span style="color: #006FE0;">false</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+            <span style="color: #006FE0;">false</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #709870;">(</span><span style="color: #006699;">insert!</span> key-1 key-2 value<span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #0000FF;">let</span> <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #BA36A5;">subtable</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">assoc</span> key-1 <span style="color: #80A880;">(</span><span style="color: #006FE0;">cdr</span> table<span style="color: #80A880;">)</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+        <span style="color: #907373;">(</span><span style="color: #0000FF;">if</span> subtable
+            <span style="color: #6276BA;">(</span><span style="color: #0000FF;">let</span> <span style="color: #858580;">(</span><span style="color: #80A880;">(</span><span style="color: #BA36A5;">record</span> <span style="color: #887070;">(</span><span style="color: #006FE0;">assoc</span> key-2 <span style="color: #707183;">(</span><span style="color: #006FE0;">cdr</span> subtable<span style="color: #707183;">)</span><span style="color: #887070;">)</span><span style="color: #80A880;">)</span><span style="color: #858580;">)</span>
+              <span style="color: #858580;">(</span><span style="color: #0000FF;">if</span> record
+                  <span style="color: #80A880;">(</span>set-cdr! record value<span style="color: #80A880;">)</span>
+                  <span style="color: #80A880;">(</span>set-cdr! subtable <span style="color: #887070;">(</span><span style="color: #006FE0;">cons</span> <span style="color: #707183;">(</span><span style="color: #006FE0;">cons</span> key-2 value<span style="color: #707183;">)</span>
+                                           <span style="color: #707183;">(</span><span style="color: #006FE0;">cdr</span> subtable<span style="color: #707183;">)</span><span style="color: #887070;">)</span><span style="color: #80A880;">)</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+            <span style="color: #6276BA;">(</span>set-cdr! table
+                      <span style="color: #858580;">(</span><span style="color: #0000FF;">let*</span> <span style="color: #80A880;">(</span><span style="color: #887070;">(</span><span style="color: #BA36A5;">new-record</span> <span style="color: #707183;">(</span><span style="color: #006FE0;">cons</span> key-2 value<span style="color: #707183;">)</span><span style="color: #887070;">)</span>
+                             <span style="color: #887070;">(</span><span style="color: #BA36A5;">new-subtable-records</span> <span style="color: #707183;">(</span><span style="color: #006FE0;">cons</span> new-record '<span style="color: #7388D6;">()</span><span style="color: #707183;">)</span><span style="color: #887070;">)</span>
+                             <span style="color: #887070;">(</span><span style="color: #BA36A5;">new-subtable</span> <span style="color: #707183;">(</span><span style="color: #006FE0;">cons</span> key-1 new-subtable-records<span style="color: #707183;">)</span><span style="color: #887070;">)</span><span style="color: #80A880;">)</span>
+                        <span style="color: #80A880;">(</span><span style="color: #006FE0;">cons</span> new-subtable <span style="color: #887070;">(</span><span style="color: #006FE0;">cdr</span> table<span style="color: #887070;">)</span><span style="color: #80A880;">)</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+      <span style="color: #D0372D;">'ok</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #709870;">(</span><span style="color: #006699;">dispatch</span> m<span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #006FE0;">eq?</span> m <span style="color: #D0372D;">'lookup-proc</span><span style="color: #6276BA;">)</span> lookup<span style="color: #907373;">)</span>
+            <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #006FE0;">eq?</span> m <span style="color: #D0372D;">'insert!-proc</span><span style="color: #6276BA;">)</span> insert!<span style="color: #907373;">)</span>
+            <span style="color: #907373;">(</span><span style="color: #0000FF;">else</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"Unknown method -- TABLE"</span> m<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    dispatch<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #0000FF;">#lang</span> <span style="color: #BA36A5;">sicp</span>
+
+
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">t</span> <span style="color: #7388D6;">(</span>make-table <span style="color: #006FE0;">eq?</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t <span style="color: #D0372D;">'insert!-proc</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'a1</span> <span style="color: #D0372D;">10</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t <span style="color: #D0372D;">'insert!-proc</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'a2</span> <span style="color: #D0372D;">11</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t <span style="color: #D0372D;">'insert!-proc</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'a3</span> <span style="color: #D0372D;">12</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t <span style="color: #D0372D;">'insert!-proc</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'a4</span> <span style="color: #D0372D;">13</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t <span style="color: #D0372D;">'insert!-proc</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">'b</span> <span style="color: #D0372D;">'b1</span> <span style="color: #D0372D;">20</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t <span style="color: #D0372D;">'insert!-proc</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">'b</span> <span style="color: #D0372D;">'b2</span> <span style="color: #D0372D;">21</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t <span style="color: #D0372D;">'insert!-proc</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">'b</span> <span style="color: #D0372D;">'b3</span> <span style="color: #D0372D;">22</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t <span style="color: #D0372D;">'lookup-proc</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'a1</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t <span style="color: #D0372D;">'lookup-proc</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'a4</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t <span style="color: #D0372D;">'lookup-proc</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'a5</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t <span style="color: #D0372D;">'lookup-proc</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">'b</span> <span style="color: #D0372D;">'b1</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t <span style="color: #D0372D;">'lookup-proc</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">'b</span> <span style="color: #D0372D;">'b3</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t <span style="color: #D0372D;">'lookup-proc</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">'b</span> <span style="color: #D0372D;">'b4</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t <span style="color: #D0372D;">'lookup-proc</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">'c</span> <span style="color: #D0372D;">'c1</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">t2</span> <span style="color: #7388D6;">(</span>make-table <span style="color: #909183;">(</span><span style="color: #0000FF;">lambda</span> <span style="color: #709870;">(</span>k1 k2<span style="color: #709870;">)</span>
+                         <span style="color: #709870;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #0000FF;">and</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">number?</span> k1<span style="color: #858580;">)</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">number?</span> k2<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+                                <span style="color: #6276BA;">(</span><span style="color: #006FE0;">&lt;</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">abs</span> <span style="color: #80A880;">(</span><span style="color: #006FE0;">-</span> k1 k2<span style="color: #80A880;">)</span><span style="color: #858580;">)</span> <span style="color: #D0372D;">0.0001</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+                               <span style="color: #907373;">(</span><span style="color: #0000FF;">else</span>
+                                <span style="color: #6276BA;">(</span><span style="color: #006FE0;">equal?</span> k1 k2<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t2 <span style="color: #D0372D;">'insert!-proc</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">0.001</span> <span style="color: #D0372D;">'a1</span> <span style="color: #D0372D;">10</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t2 <span style="color: #D0372D;">'lookup-proc</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">0.00105</span> <span style="color: #D0372D;">'a1</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>t2 <span style="color: #D0372D;">'lookup-proc</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">0.002</span> <span style="color: #D0372D;">'a1</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<pre class="example" id="orgb14a74d">
+ok
+ok
+ok
+ok
+ok
+ok
+ok
+10
+13
+#f
+20
+22
+#f
+#f
+ok
+10
+#f
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgd0a542d" class="outline-4">
+<h4 id="orgd0a542d">Exercise 3.25 - table-x</h4>
+<div class="outline-text-4" id="text-orgd0a542d">
+<p>
+Generalizing one- and two-dimensional tables, show how to implement a table in which values are stored under an arbitrary number of keys and different values may be stored under different number of keys. The <code>lookup</code> and <code>insert!</code> procedures should take as an input a list of keys used to access the table.
+</p>
+
+<hr />
+
+<p>
+There are two complications:
+</p>
+<ol class="org-ol">
+<li>recursive access to the record</li>
+<li>a key prefix can contain a value <i>and</i> a subtable</li>
+</ol>
+
+<p>
+To address #2 we can model a record with three values, key, value, subtable, where value and subtable are both optional.
+Records operations are abstracted with a private interface - <code>make-record</code>, <code>key-record</code>, <code>value-record</code>, <code>subtable-record</code>, <code>set-value-record!</code> and <code>set-subtable-record!</code>.
+They are implemented using list of 3 items, <code>'(key value subtable)</code> and respective accessors/mutators.
+</p>
+
+<p>
+Similarly to table1 and table2, table-x is implemented as a headed list, with top-level head resembling a record for uniformity.
+</p>
+
+<p>
+Publicly exposed functions <code>lookup</code> and <code>insert!</code> validate that <code>keys</code> list is not empty, and call recursive implementations, <code>lookup-rec</code> and <code>insert-rec!</code> respectively.
+</p>
+
+<p>
+<code>lookup-rec</code> tries to find a record associated with the first key in <code>keys</code> in the <code>parent</code> subtable. If there are none, no value with associated <code>keys</code> exists in the table and it returns <code>false</code>. If there is a record, 3 cases are possible:
+</p>
+<ul class="org-ul">
+<li>this is the last part of the key and the record has a value, then return the value,</li>
+<li>this is the last part of the key and the record has no value (record only has subtable), the return <code>false</code>,</li>
+<li>this is not the last part of the key, then recursively call <code>lookup-rec</code> on this record with the rest of the keys.</li>
+</ul>
+
+<p>
+<code>insert-rec!</code> tries to find a record associated with the first key in <code>keys</code> in the <code>parent</code> subtable. If there are none, helper <code>create!</code> is called that will recursively insert all missing records and backbone pairs. If there is a record and it's the final key, update the value in this record. Finally, if there is a record and there are more keys, call <code>insert-rec!</code> on the record with the rest of the keys.
+</p>
+
+<p>
+<code>(create! keys value parent)</code> helper creates a new record and a new backbone pair, and inserts the pair into <code>parent</code>'s backbone. If this is the final key, update the new record's value, otherwise recursively <code>create!</code> nested structures starting from the record.
+</p>
+
+<p>
+To easily inspect the table, <code>(collect-rec parent keys-prefix acc)</code> procedure can be used. <code>collect-rec</code> essentially implements a depth-first search, tracking the <code>keys-prefix</code> and accumulating <code>(keys . value)</code> pairs if a record with the value was reached (but not stopping there).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-racket" id="org78bb17d"><span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #7388D6;">(</span><span style="color: #006699;">make-table-x</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">make-record</span> key value subtable<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #006FE0;">list</span> key value subtable<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">key-record</span> r<span style="color: #909183;">)</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">car</span> r<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">value-record</span> r<span style="color: #909183;">)</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">cadr</span> r<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">subtable-record</span> r<span style="color: #909183;">)</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">caddr</span> r<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">set-value-record!</span> r v<span style="color: #909183;">)</span> <span style="color: #909183;">(</span>set-car! <span style="color: #709870;">(</span><span style="color: #006FE0;">cdr</span> r<span style="color: #709870;">)</span> v<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">set-subtable-record!</span> r v<span style="color: #909183;">)</span> <span style="color: #909183;">(</span>set-car! <span style="color: #709870;">(</span><span style="color: #006FE0;">cddr</span> r<span style="color: #709870;">)</span> v<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">assoc</span> key backbone<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #709870;">(</span><span style="color: #907373;">(</span><span style="color: #006FE0;">null?</span> backbone<span style="color: #907373;">)</span> <span style="color: #006FE0;">false</span><span style="color: #709870;">)</span>
+          <span style="color: #709870;">(</span><span style="color: #907373;">(</span><span style="color: #006FE0;">eq?</span> key <span style="color: #6276BA;">(</span><span style="color: #006FE0;">caar</span> backbone<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">car</span> backbone<span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+          <span style="color: #709870;">(</span><span style="color: #0000FF;">else</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">assoc</span> key <span style="color: #6276BA;">(</span><span style="color: #006FE0;">cdr</span> backbone<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">lookup-rec</span> keys parent<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">let</span> <span style="color: #709870;">(</span><span style="color: #907373;">(</span><span style="color: #BA36A5;">record</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">assoc</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">car</span> keys<span style="color: #858580;">)</span> <span style="color: #858580;">(</span>subtable-record parent<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #006FE0;">not</span> record<span style="color: #6276BA;">)</span> <span style="color: #006FE0;">false</span><span style="color: #907373;">)</span>
+            <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #006FE0;">null?</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">cdr</span> keys<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+             <span style="color: #6276BA;">(</span><span style="color: #0000FF;">if</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">null?</span> <span style="color: #80A880;">(</span>value-record record<span style="color: #80A880;">)</span><span style="color: #858580;">)</span>
+                 <span style="color: #006FE0;">false</span>
+                 <span style="color: #858580;">(</span>value-record record<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+            <span style="color: #907373;">(</span><span style="color: #0000FF;">else</span> <span style="color: #6276BA;">(</span>lookup-rec <span style="color: #858580;">(</span><span style="color: #006FE0;">cdr</span> keys<span style="color: #858580;">)</span> record<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">create!</span> keys value parent<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">let*</span> <span style="color: #709870;">(</span><span style="color: #907373;">(</span><span style="color: #BA36A5;">new-record</span> <span style="color: #6276BA;">(</span>make-record <span style="color: #858580;">(</span><span style="color: #006FE0;">car</span> keys<span style="color: #858580;">)</span> '<span style="color: #858580;">()</span> '<span style="color: #858580;">()</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+           <span style="color: #907373;">(</span><span style="color: #BA36A5;">new-subtable</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">cons</span> new-record <span style="color: #858580;">(</span>subtable-record parent<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span>set-subtable-record! parent new-subtable<span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #0000FF;">if</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">null?</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">cdr</span> keys<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+          <span style="color: #907373;">(</span>set-value-record! new-record value<span style="color: #907373;">)</span>
+          <span style="color: #907373;">(</span>create! <span style="color: #6276BA;">(</span><span style="color: #006FE0;">cdr</span> keys<span style="color: #6276BA;">)</span> value new-record<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">insert-rec!</span> keys value parent<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">let</span> <span style="color: #709870;">(</span><span style="color: #907373;">(</span><span style="color: #BA36A5;">record</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">assoc</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">car</span> keys<span style="color: #858580;">)</span> <span style="color: #858580;">(</span>subtable-record parent<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #006FE0;">not</span> record<span style="color: #6276BA;">)</span>
+             <span style="color: #6276BA;">(</span>create! keys value parent<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+            <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #006FE0;">null?</span> <span style="color: #858580;">(</span><span style="color: #006FE0;">cdr</span> keys<span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+             <span style="color: #6276BA;">(</span>set-value-record! record value<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+            <span style="color: #907373;">(</span><span style="color: #0000FF;">else</span>
+             <span style="color: #6276BA;">(</span>insert-rec! <span style="color: #858580;">(</span><span style="color: #006FE0;">cdr</span> keys<span style="color: #858580;">)</span> value record<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #D0372D;">'ok</span><span style="color: #7388D6;">)</span>
+
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">define</span> <span style="color: #909183;">(</span><span style="color: #006699;">collect-rec</span> parent keys-prefix acc<span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #709870;">(</span><span style="color: #006699;">iter</span> backbone acc<span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #0000FF;">if</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">null?</span> backbone<span style="color: #907373;">)</span>
+          acc
+          <span style="color: #907373;">(</span><span style="color: #0000FF;">let*</span> <span style="color: #6276BA;">(</span><span style="color: #858580;">(</span><span style="color: #BA36A5;">record</span> <span style="color: #80A880;">(</span><span style="color: #006FE0;">car</span> backbone<span style="color: #80A880;">)</span><span style="color: #858580;">)</span>
+                 <span style="color: #858580;">(</span><span style="color: #BA36A5;">keys-prefix-1</span> <span style="color: #80A880;">(</span><span style="color: #006FE0;">cons</span> <span style="color: #887070;">(</span>key-record record<span style="color: #887070;">)</span> keys-prefix<span style="color: #80A880;">)</span><span style="color: #858580;">)</span>
+                 <span style="color: #858580;">(</span><span style="color: #BA36A5;">acc-1</span> <span style="color: #80A880;">(</span>collect-rec record
+                                     keys-prefix-1
+                                     <span style="color: #887070;">(</span><span style="color: #0000FF;">if</span> <span style="color: #707183;">(</span><span style="color: #006FE0;">null?</span> <span style="color: #7388D6;">(</span>value-record record<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+                                         acc
+                                         <span style="color: #707183;">(</span><span style="color: #006FE0;">cons</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">cons</span> <span style="color: #909183;">(</span><span style="color: #006FE0;">reverse</span> keys-prefix-1<span style="color: #909183;">)</span>
+                                                     <span style="color: #909183;">(</span>value-record record<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+                                               acc<span style="color: #707183;">)</span><span style="color: #887070;">)</span><span style="color: #80A880;">)</span><span style="color: #858580;">)</span><span style="color: #6276BA;">)</span>
+            <span style="color: #6276BA;">(</span>iter <span style="color: #858580;">(</span><span style="color: #006FE0;">cdr</span> backbone<span style="color: #858580;">)</span> acc-1<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span>iter <span style="color: #709870;">(</span>subtable-record parent<span style="color: #709870;">)</span> acc<span style="color: #909183;">)</span><span style="color: #7388D6;">)</span>
+
+  <span style="color: #7388D6;">(</span><span style="color: #0000FF;">let</span> <span style="color: #909183;">(</span><span style="color: #709870;">(</span><span style="color: #BA36A5;">root</span> <span style="color: #907373;">(</span>make-record <span style="color: #D0372D;">'*table*</span> '<span style="color: #6276BA;">()</span> '<span style="color: #6276BA;">()</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #709870;">(</span><span style="color: #006699;">lookup</span> keys<span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #0000FF;">if</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">null?</span> keys<span style="color: #907373;">)</span>
+          <span style="color: #907373;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"Empty keys"</span><span style="color: #907373;">)</span>
+          <span style="color: #907373;">(</span>lookup-rec keys root<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #709870;">(</span><span style="color: #006699;">insert!</span> keys value<span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #0000FF;">if</span> <span style="color: #907373;">(</span><span style="color: #006FE0;">null?</span> keys<span style="color: #907373;">)</span>
+          <span style="color: #907373;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"Empty keys"</span><span style="color: #907373;">)</span>
+          <span style="color: #907373;">(</span>insert-rec! keys value root<span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #709870;">(</span><span style="color: #006699;">print-table</span><span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #006FE0;">display</span> <span style="color: #907373;">(</span>collect-rec root '<span style="color: #6276BA;">()</span> '<span style="color: #6276BA;">()</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #006FE0;">newline</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+
+    <span style="color: #909183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #709870;">(</span><span style="color: #006699;">dispatch</span> m<span style="color: #709870;">)</span>
+      <span style="color: #709870;">(</span><span style="color: #0000FF;">cond</span> <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #006FE0;">eq?</span> m <span style="color: #D0372D;">'lookup</span><span style="color: #6276BA;">)</span> lookup<span style="color: #907373;">)</span>
+            <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #006FE0;">eq?</span> m <span style="color: #D0372D;">'insert!</span><span style="color: #6276BA;">)</span> insert!<span style="color: #907373;">)</span>
+            <span style="color: #907373;">(</span><span style="color: #6276BA;">(</span><span style="color: #006FE0;">eq?</span> m <span style="color: #D0372D;">'print</span><span style="color: #6276BA;">)</span> <span style="color: #6276BA;">(</span>print-table<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span>
+            <span style="color: #907373;">(</span><span style="color: #0000FF;">else</span> <span style="color: #6276BA;">(</span><span style="color: #006FE0;">error</span> <span style="color: #008000;">"Unknown method -- TABLE-X"</span> m<span style="color: #6276BA;">)</span><span style="color: #907373;">)</span><span style="color: #709870;">)</span><span style="color: #909183;">)</span>
+    dispatch<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-racket"><span style="color: #0000FF;">#lang</span> <span style="color: #BA36A5;">sicp</span>
+
+
+
+<span style="color: #707183;">(</span><span style="color: #0000FF;">define</span> <span style="color: #BA36A5;">tab</span> <span style="color: #7388D6;">(</span>make-table-x<span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>tab <span style="color: #D0372D;">'insert!</span><span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">list</span> <span style="color: #D0372D;">'a</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">10</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>tab <span style="color: #D0372D;">'print</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>tab <span style="color: #D0372D;">'insert!</span><span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">list</span> <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'a1</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">11</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>tab <span style="color: #D0372D;">'lookup</span><span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">list</span> <span style="color: #D0372D;">'a</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>tab <span style="color: #D0372D;">'lookup</span><span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">list</span> <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'a1</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>tab <span style="color: #D0372D;">'insert!</span><span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">list</span> <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'a1</span> <span style="color: #D0372D;">'a2</span> <span style="color: #D0372D;">'a3</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">12</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>tab <span style="color: #D0372D;">'lookup</span><span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">list</span> <span style="color: #D0372D;">'a</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>tab <span style="color: #D0372D;">'lookup</span><span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">list</span> <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'a1</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>tab <span style="color: #D0372D;">'lookup</span><span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">list</span> <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'a1</span> <span style="color: #D0372D;">'a2</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>tab <span style="color: #D0372D;">'print</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>tab <span style="color: #D0372D;">'lookup</span><span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">list</span> <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'a1</span> <span style="color: #D0372D;">'a2</span> <span style="color: #D0372D;">'a3</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>tab <span style="color: #D0372D;">'insert!</span><span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">list</span> <span style="color: #D0372D;">'a</span> <span style="color: #D0372D;">'a1</span> <span style="color: #D0372D;">'a2</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">13</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>tab <span style="color: #D0372D;">'insert!</span><span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">list</span> <span style="color: #D0372D;">'b</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">10</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>tab <span style="color: #D0372D;">'insert!</span><span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">list</span> <span style="color: #D0372D;">'b</span> <span style="color: #D0372D;">'a1</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">11</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>tab <span style="color: #D0372D;">'insert!</span><span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">list</span> <span style="color: #D0372D;">'b</span> <span style="color: #D0372D;">'a1</span> <span style="color: #D0372D;">'a2</span> <span style="color: #D0372D;">'a3</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">12</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>tab <span style="color: #D0372D;">'insert!</span><span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">list</span> <span style="color: #D0372D;">'b</span> <span style="color: #D0372D;">'a1</span> <span style="color: #D0372D;">'a2</span><span style="color: #7388D6;">)</span> <span style="color: #D0372D;">13</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span><span style="color: #7388D6;">(</span>tab <span style="color: #D0372D;">'lookup</span><span style="color: #7388D6;">)</span> <span style="color: #7388D6;">(</span><span style="color: #006FE0;">list</span> <span style="color: #D0372D;">'b</span> <span style="color: #D0372D;">'a1</span><span style="color: #7388D6;">)</span><span style="color: #707183;">)</span>
+<span style="color: #707183;">(</span>tab <span style="color: #D0372D;">'print</span><span style="color: #707183;">)</span>
+</pre>
+</div>
+
+<pre class="example" id="org1a66146">
+ok
+(((a) . 10))
+ok
+10
+11
+ok
+10
+11
+#f
+(((a a1 a2 a3) . 12) ((a a1) . 11) ((a) . 10))
+12
+ok
+ok
+ok
+ok
+ok
+11
+(((a a1 a2 a3) . 12) ((a a1 a2) . 13) ((a a1) . 11) ((a) . 10) ((b a1 a2 a3) . 12) ((b a1 a2) . 13) ((b a1) . 11) ((b) . 10))
+</pre>
 </div>
 </div>
 </div>
@@ -1377,7 +2301,7 @@ My solution in 3.18 already consumes constant space besides the size of the inpu
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: LMG</p>
-<p class="date">Created: 2023-07-20 Thu 20:10</p>
+<p class="date">Created: 2023-07-23 Sun 23:49</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

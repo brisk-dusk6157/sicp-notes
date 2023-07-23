@@ -326,7 +326,7 @@ The Monte Carlo method consists of choosing sample experiments at random from a 
 
 For example, we can appoximate $\pi$ using the fact that $6/\pi^2$ is the probability that two integers choosen at random will have no factors in common; that is that their gcd is 1. To obtain the approximation to $\pi$, we perform a large number of experiments. In each experiment we choose two integers at random and perform a test to see if their GCDs is 1. The fraction of times that the test is passed gives us our estimate of $6/\pi^2$.
 
-#+begin_src racket :cache no
+#+begin_src racket :cache no :exports both
   #lang sicp
 
   (define (estimate-pi trials)
@@ -601,7 +601,7 @@ Define a simple procedure ~f~ the evaluating ~(+ (f 0) (f 1))~ will return 0 if 
 
 #+RESULTS[c8cdbefd116f1d293a3e52f545f9f79b171813e5]: ex3.8-f
 
-#+begin_src racket :noweb no-export
+#+begin_src racket :noweb no-export :exports both
   <<ex3.8-f>>
   (+ (f 0) (f 1))
 #+end_src
@@ -609,7 +609,7 @@ Define a simple procedure ~f~ the evaluating ~(+ (f 0) (f 1))~ will return 0 if 
 #+RESULTS[49b9a16d5d9d8ce1c14977f7e1c850b8f7330afb]:
 : 0
 
-#+begin_src racket
+#+begin_src racket :exports both
   <<ex3.8-f>>
   (+ (f 1) (f 0))
 #+end_src
@@ -899,3 +899,790 @@ My solution in 3.18 already consumes constant space besides the size of the inpu
 
 #+attr_html: :width 100%
 [[./images/Exercise-3.20.jpeg]]
+
+** 3.3.2 Representing Queues
+
+A /queue/ is a sequence in which items are inserted at one end (the /rear/ of the queue) and deleted from the other end (the /front/).
+
+Queue operations:
+#+begin_src racket
+  (define q (make-queue))
+
+  (insert-queue! q 'a)  ;; a
+  (insert-queue! q 'b)  ;; a b
+  (delete-queue! q)     ;; b
+  (insert-queue! q 'c)  ;; b c
+  (insert-queue! q 'd)  ;; b c d
+  (delete-queue! q)     ;; c d
+#+end_src
+
+Data abstraction:
+- a constructor
+  
+  ~(make-queue)~ - returns an empty queue
+- two selectors
+  
+  ~(empty-queue? <queue>)~ - tests if the queue is empty
+  ~(front-queue <queue>)~ - returns the object at the front of the queue, or signals an error if the queue is empty; does not modify the queue
+- two mutators
+  
+  ~(insert-queue! <queue> <item>)~ - insert the item at the rear of the queue and return mutated queue
+  ~(delete-queue! <queue>)~ - remove the item at the front of the queue and return mutated queue; signals an error if the queue is empty before the deletion
+
+We could represent a queue as a list - let the ~car~ of the list be the front end of the queue, and the last item of the lis be the rear end of the queue. Then to delete an item would just mean taking ~car~ of a list, and inserting a new element would mean appending it at the end of the list.
+
+With list, though, it would take $O(n)$ steps to find append an element, which is inefficient.
+
+To overcome this inefficiency we can store the pointer to the last pair of the list. Then to insert an element we can consult the rear pointer and avoid scanning the list.
+
+A queue represented then as a pair of pointers ~front-ptr~ and ~rear-ptr~, which indicate, respectively, the first and the last pair in the queue. We can use ~cons~ to combine two pointers.
+
+#+name: 3.3.1-queue-primitives
+#+begin_src racket
+  (define (front-ptr queue) (car queue))
+  (define (rear-ptr queue) (cdr queue))
+  (define (set-front-ptr! queue item) (set-car! queue item))
+  (define (set-rear-ptr! queue item) (set-cdr! queue item))
+#+end_src
+
+#+name: 3.3.1-queue-interface
+#+begin_src racket
+  <<3.3.1-queue-primitives>>
+  (define (make-queue) (cons '() '()))
+  (define (empty-queue? queue) (null? (front-ptr queue)))
+  (define (front-queue queue)
+    (if (empty-queue? queue)
+	(error "FRONT called with an empty queue" queue)
+	(car (front-ptr queue))))
+
+  (define (insert-queue! queue element)
+    (let ((item (cons element '())))
+      (cond ((empty-queue? queue)
+	     (set-front-ptr! queue item)
+	     (set-rear-ptr! queue item)
+	     queue)
+	    (else
+	     (set-cdr! (rear-ptr queue) item)
+	     (set-rear-ptr! queue item)
+	     queue))))
+
+  (define (delete-queue! queue)
+    (if (empty-queue? queue)
+	(error "DELETE called with an empty queue" queue)
+	(begin
+	  (set-front-ptr! queue (cdr (front-ptr queue)))
+	  queue)))
+
+  (define q (make-queue))
+#+end_src
+
+#+begin_src racket :exports both
+  #lang sicp
+  <<3.3.1-queue-interface>>
+  (insert-queue! q 'a)  ;; a
+  (insert-queue! q 'b)  ;; a b
+  (delete-queue! q)     ;; b
+  (insert-queue! q 'c)  ;; b c
+  (insert-queue! q 'd)  ;; b c d
+  (delete-queue! q)     ;; c d
+#+end_src
+
+#+RESULTS[80008d863a89eb6dbd2ca24afeb4daaa190e7ac7]:
+: ((a) a)
+: ((a b) b)
+: ((b) b)
+: ((b c) c)
+: ((b c d) d)
+: ((c d) d)
+
+*** Exercise 3.21 - queue print representation
+Problem: "Last element inserted into the queue twice. After deleting all items, ~'b~ is still there, so queue is not empty".
+
+Problem reproduction example:
+#+begin_src racket :exports both
+  #lang sicp
+  <<3.3.1-queue-interface>>
+  (define q1 (make-queue))
+  (insert-queue! q1 'a)
+  (insert-queue! q1 'b)
+  (delete-queue! q1)
+  (delete-queue! q1)
+#+end_src
+
+#+RESULTS[6b5642228a685b896a8d60a4052006e11265128c]:
+: ((a) a)
+: ((a b) b)
+: ((b) b)
+: (() b)
+
+**** Show why example produces the output it does
+Queue is represented as a cons, with the cdr being the pointer to the rear of the queue. While the rear-ptr is not cleaned up after deleting the last element of the queue, there is no way to access it through the public interface.
+
+**** Define a ~print-queue~ procedure
+
+#+name: ex3.22-print-queue
+#+begin_src racket
+  (define (print-queue queue)
+    (display (car queue))
+    (newline))
+#+end_src
+
+#+begin_src racket :exports both
+  #lang sicp
+  <<3.3.1-queue-interface>>
+  <<ex3.22-print-queue>>
+  (define q1 (make-queue))
+  (print-queue (insert-queue! q1 'a))
+  (print-queue (insert-queue! q1 'b))
+  (print-queue (delete-queue! q1))
+  (print-queue (delete-queue! q1))
+#+end_src
+
+#+RESULTS[c7aba7ae23a075101cd08ce3f8b9edc1fb205270]:
+: (a)
+: (a b)
+: (b)
+: ()
+
+*** Exercise 3.23 - /deque/
+
+Interface:
+- ~(make-deque)~
+- ~(front-deque q)~
+- ~(rear-deque q)~
+- ~(insert-front-deque q)~
+- ~(delete-front-deque q)~
+- ~(insert-rear-deque q)~
+- ~(delete-rear-deque q)~
+
+All operations should take $O(1)$ time.
+
+Similarly to the queue list-based implementation, we need to store the rear pointer. Unlike in the queue, each spot should also store the pointer to the previous spot, so in ~(delete-rear-deque q)~ we can efficiently update the rear pointer.
+
+
+
+#+name: ex-3.23-deque
+#+begin_src racket
+  ;; private procedures
+  (define (front-ptr d) (car d))
+  (define (rear-ptr d) (cdr d))
+  (define (set-front-ptr! d spot) (set-car! d spot))
+  (define (set-rear-ptr! d spot) (set-cdr! d spot))
+
+  ;; (define (make-spot v prev next) (cons v (cons prev next)))
+  ;; (define (value spot) (car spot))
+  ;; (define (prev-spot spot) (cadr spot))
+  ;; (define (next-spot spot) (cddr spot))
+  ;; (define (set-prev-spot! spot prev) (set-car! (cdr spot) prev))
+  ;; (define (set-next-spot! spot next) (set-cdr! (cdr spot) next))
+
+  (define (make-spot v prev next) (cons v (cons prev (cons next '()))))
+  (define (value spot) (car spot))
+  (define (prev-spot spot) (cadr spot))
+  (define (next-spot spot) (caddr spot))
+  (define (set-prev-spot! spot prev) (set-car! (cdr spot) prev))
+  (define (set-next-spot! spot next) (set-car! (cddr spot) next))
+
+  ;; public interface
+  (define (make-deque) (cons '() '()))
+  (define (empty-deque? d) (null? (front-ptr d)))
+  (define (front-deque d) (value (front-ptr d)))
+  (define (rear-deque d) (value (rear-ptr d)))
+
+  (define (insert-front-deque! d v)
+    (let ((spot (make-spot v '() '())))
+      (if (empty-deque? d)
+	  (begin
+	    (set-front-ptr! d spot)
+	    (set-rear-ptr! d spot)
+	    d)
+	  (begin
+	    (set-next-spot! spot (front-ptr d))
+	    (set-prev-spot! (front-ptr d) spot)
+	    (set-front-ptr! d spot)
+	    d))))
+
+  (define (insert-rear-deque! d v)
+    (let ((spot (make-spot v '() '())))
+      (if (empty-deque? d)
+	  (begin
+	    (set-front-ptr! d spot)
+	    (set-rear-ptr! d spot)
+	    d)
+	  (begin
+	    (set-prev-spot! spot (rear-ptr d))
+	    (set-next-spot! (rear-ptr d) spot)
+	    (set-rear-ptr! d spot)
+	    d))))
+
+  (define (delete-front-deque! d)
+    (cond ((empty-deque? d) (error "DELETE called with empty queue" d))
+	  ((null? (next-spot (front-ptr d)))
+	   (set-front-ptr! d '())
+	   (set-rear-ptr! d '())
+	   d)
+	  (else
+	   (let ((new-front (next-spot (front-ptr d))))
+	     (set-next-spot! (front-ptr d) '())
+	     (set-prev-spot! new-front '())
+	     (set-front-ptr! d new-front)
+	     d))))
+
+  (define (delete-rear-deque! d)
+    (cond ((empty-deque? d) (error "DELETE called with empty queue" d))
+	  ((null? (prev-spot (rear-ptr d)))
+	   (set-front-ptr! d '())
+	   (set-rear-ptr! d '()))
+	  (else
+	   (let ((new-rear (prev-spot (rear-ptr d))))
+	     (set-prev-spot! (rear-ptr d) '())
+	     (set-next-spot! new-rear '())
+	     (set-rear-ptr! d new-rear)
+	     d))))
+
+  (define (print-deque d)
+    (define (iter spot vals)
+      (if (null? spot)
+	  vals
+	  (iter (prev-spot spot) (cons (value spot) vals))))
+    (display (iter (rear-ptr d) '()))
+    (newline))
+#+end_src
+
+#+begin_src racket :exports both
+  #lang sicp
+
+  <<ex-3.23-deque>>
+
+  (define d (make-deque))
+  d
+  (print-deque (insert-front-deque! d 'a))
+  (print-deque (insert-rear-deque! d 'b))
+  (print-deque (insert-rear-deque! d 'c))
+  (print-deque (delete-front-deque! d))
+  (print-deque (delete-rear-deque! d))
+  (print-deque (delete-front-deque! d))
+  d
+  ;; (print-deque (delete-front-deque! d))
+  (print-deque (insert-front-deque! d 'a))
+  (print-deque (insert-front-deque! d 'b))
+  (print-deque (insert-front-deque! d 'c))
+  (print-deque (insert-front-deque! d 'd))
+  (print-deque (insert-front-deque! d 'e))
+  (print-deque (insert-front-deque! d 'f))
+  (front-deque d)
+  (rear-deque d)
+  d
+  (print-deque (insert-rear-deque! d '0))
+  (print-deque (delete-front-deque! d))
+  (print-deque (delete-front-deque! d))
+  (print-deque (delete-front-deque! d))
+  (print-deque (delete-front-deque! d))
+  (print-deque (delete-front-deque! d))
+  (print-deque (delete-front-deque! d))
+  (print-deque (delete-front-deque! d))
+  d
+#+end_src
+
+#+RESULTS[80a6c227688ffe92d22bcf64f2137c5e644308ac]:
+#+begin_example
+(())
+(a)
+(a b)
+(a b c)
+(b c)
+(b)
+()
+(())
+(a)
+(b a)
+(c b a)
+(d c b a)
+(e d c b a)
+(f e d c b a)
+f
+a
+(#0=(f () #1=(e #0# #2=(d #1# #3=(c #2# #4=(b #3# #5=(a #4# ())))))) . #5#)
+(f e d c b a 0)
+(e d c b a 0)
+(d c b a 0)
+(c b a 0)
+(b a 0)
+(a 0)
+(0)
+()
+(())
+#+end_example
+
+** 3.3.3 Representing Tables
+
+How to build tables as mutable data structures (e.g. as used in 2.4.3).
+
+We implement the table as a list of records, each of which is implemented as a pair consisting of a key and the associated value.
+
+*** One-dimensional table
+
+The records are glued together to form a list by pairs whose ~cars~ point to successive records. These gluing paris are called the /backbone/ of the table.
+
+In order to have a place that we can change when we add a new record to the table, we build the table as a /headed list/ - it has a special backbone pair at the beginning, which holds a dummy "record".
+
+To find a value by key, ~(lookup key table)~ procedure is used. It returns the value or ~false~ if no key exists in the table. ~lookup~ uses ~assoc~ procedure that find the record associated with the key. ~assoc~ scans through the backbone pairs checking if each pair's record is associated with the key. In no such records exist, it returns false. ~assoc~ never touches the head of the list, working only on backbone pairs that point to real records.
+
+To insert ~(insert! key value table)~ procedure is used. It also uses ~assoc~ to locate the record. If it exists then the value is updated using ~set-cdr!~. Otherwise a new record and a backbone pair created and inserted after the head of the list. Head of the list is important to have a stable position a table variable can point to: if the new record is inserted at the beginning of the list, ~insert!~ would have to return a new pointer to the start of the table when adding a new record.
+
+#+name: 3.3.3-table1
+#+begin_src racket
+  (define (assoc key records)
+    (cond
+      ((null? records) false)
+      ((eq? key (caar records)) (car records))
+      (else (assoc key (cdr records)))))
+
+  (define (lookup key table)
+    (let ((record (assoc key (cdr table))))
+      (if record
+	  (cdr record)
+	  false)))
+
+  (define (insert! key value table)
+    (let ((record (assoc key (cdr table))))
+      (if record
+	  (set-cdr! record value)
+	  (set-cdr! table
+		    (cons (cons key value)
+			  (cdr table))))))
+
+  (define (make-table)
+    (cons '*table* '()))
+#+end_src
+
+#+begin_src racket :exports both
+  #lang sicp
+
+  <<3.3.3-table1>>
+
+  (define t (make-table))
+  (insert! 'a 1 t)
+  (insert! 'b 2 t)
+  (insert! 'c 3 t)
+  (insert! 'd 4 t)
+
+  (lookup 'a t)
+  (lookup 'd t)
+  (lookup 'e t)
+#+end_src
+
+#+RESULTS[6f5b91ea07d637d0b5cbde41d75bcf4ddd6e6961]:
+: 1
+: 4
+: #f
+
+*** Two-dimensional tables
+
+Each value is indexed by two keys. We can construct such table by having a single-key table indexing the first key whose ~car~ are single-key subtables indexing the second key. The subtables does not need a special header pair, as the key pair of the main table serves as one.
+
+#+name: 3.3.3-table2
+#+begin_src racket
+  (define (assoc key records)
+    (cond ((null? records) false)
+	  ((eq? key (caar records)) (car records))
+	  (else (assoc key (cdr records)))))
+
+
+  (define (lookup key-1 key-2 table)
+    (let ((subtable (assoc key-1 (cdr table))))
+      (if subtable
+	  (let ((record (assoc key-2 (cdr subtable))))
+	    (if record
+		(cdr record)
+		false))
+	  false)))
+
+
+  (define (insert! key-1 key-2 value table)
+    (let ((subtable (assoc key-1 (cdr table))))
+      (if subtable
+	  (let ((record (assoc key-2 (cdr subtable))))
+	    (if record
+		(set-cdr! record value)
+		(set-cdr! subtable
+			  (cons (cons key-2 value)
+				(cdr subtable)))))
+	  (set-cdr! table
+		    (let* ((new-record (cons key-2 value))
+			   (new-subtable (cons new-record '())))
+		      (cons (cons key-1 new-subtable)
+			    (cdr table))))))
+    'ok)
+
+  (define (make-table)
+    (cons '*table* '()))
+#+end_src
+
+#+begin_src racket :tangle "two-key-table-test.rkt"
+  #lang sicp
+
+  <<3.3.3-table2>>
+
+  (define t (make-table))
+  (insert! 'a 'a1 10 t)
+  (insert! 'a 'a2 11 t)
+  (insert! 'a 'a3 12 t)
+  (insert! 'a 'a4 13 t)
+  (insert! 'b 'b1 20 t)
+  (insert! 'b 'b2 21 t)
+  (insert! 'b 'b3 22 t)
+
+  (lookup 'a 'a1 t)
+  (lookup 'a 'a4 t)
+  (lookup 'a 'a5 t)
+  (lookup 'b 'b1 t)
+  (lookup 'b 'b3 t)
+  (lookup 'b 'b4 t)
+  (lookup 'c 'c1 t)
+#+end_src
+
+#+RESULTS[4daf85ea3ece85a21a661ac13eaa48d0aa72bf10]:
+#+begin_example
+ok
+ok
+ok
+ok
+ok
+ok
+ok
+10
+13
+#f
+20
+22
+#f
+#f
+#+end_example
+
+*** Creating local tables
+
+#+name: 3.3.3-table2-object
+#+begin_src racket
+  (define (assoc key records)
+    (cond ((null? records) false)
+	  ((eq? key (caar records)) (car records))
+	  (else (assoc key (cdr records)))))
+
+
+  (define (make-table)
+    (let ((table (cons '*table* '())))
+      (define (lookup key-1 key-2)
+	(let ((subtable (assoc key-1 (cdr table))))
+	  (if subtable
+	      (let ((record (assoc key-2 (cdr subtable))))
+		(if record
+		    (cdr record)
+		    false))
+	      false)))
+      (define (insert! key-1 key-2 value)
+	(let ((subtable (assoc key-1 (cdr table))))
+	  (if subtable
+	      (let ((record (assoc key-2 (cdr subtable))))
+		(if record
+		    (set-cdr! record value)
+		    (set-cdr! subtable (cons (cons key-2 value)
+					     (cdr subtable)))))
+	      (set-cdr! table
+			(let* ((new-record (cons key-2 value))
+			       (new-subtable-records (cons new-record '()))
+			       (new-subtable (cons key-1 new-subtable-records)))
+			  (cons new-subtable
+				(cdr table)))))))
+      (define (dispatch m)
+	(cond ((eq? m 'lookup) lookup)
+	      ((eq? m 'insert!) insert!)
+	      (else (error "Unknown method -- TABLE" m))))
+      dispatch))
+#+end_src
+
+#+begin_src racket :exports both
+  #lang sicp
+
+  <<3.3.3-table2-object>>
+
+  (define t (make-table))
+  ((t 'insert!) 'a 'a1 10)
+  ((t 'insert!) 'a 'a2 11)
+  ((t 'insert!) 'a 'a3 12)
+  ((t 'insert!) 'a 'a4 13)
+  ((t 'insert!) 'b 'b1 20)
+  ((t 'insert!) 'b 'b2 21)
+  ((t 'insert!) 'b 'b3 22)
+
+  ((t 'lookup) 'a 'a1)
+  ((t 'lookup) 'a 'a4)
+  ((t 'lookup) 'a 'a5)
+  ((t 'lookup) 'b 'b1)
+  ((t 'lookup) 'b 'b3)
+  ((t 'lookup) 'b 'b4)
+  ((t 'lookup) 'c 'c1)
+#+end_src
+
+#+RESULTS[575a4e78a785c7fbfa98c3e1babf86d428474931]:
+: 10
+: 13
+: #f
+: 20
+: 22
+: #f
+: #f
+
+
+*** Exercise 3.24 - user-provided key comparison function
+Design a table constructor ~make-table~ that takes as an argument a ~same-key?~ procedure that will be used to test "equality" of keys.
+
+#+name: ex3.24-table2-same-key?
+#+begin_src racket
+  (define (make-table same-key?)
+    (define (assoc key records)
+      (cond ((null? records) false)
+	    ((same-key? key (caar records)) (car records))
+	    (else (assoc key (cdr records)))))
+    (let ((table (cons '*table* '())))
+      (define (lookup key-1 key-2)
+	(let ((subtable (assoc key-1 (cdr table))))
+	  (if subtable
+	      (let ((record (assoc key-2 (cdr subtable))))
+		(if record
+		    (cdr record)
+		    false))
+	      false)))
+      (define (insert! key-1 key-2 value)
+	(let ((subtable (assoc key-1 (cdr table))))
+	  (if subtable
+	      (let ((record (assoc key-2 (cdr subtable))))
+		(if record
+		    (set-cdr! record value)
+		    (set-cdr! subtable (cons (cons key-2 value)
+					     (cdr subtable)))))
+	      (set-cdr! table
+			(let* ((new-record (cons key-2 value))
+			       (new-subtable-records (cons new-record '()))
+			       (new-subtable (cons key-1 new-subtable-records)))
+			  (cons new-subtable (cdr table))))))
+	'ok)
+      (define (dispatch m)
+	(cond ((eq? m 'lookup-proc) lookup)
+	      ((eq? m 'insert!-proc) insert!)
+	      (else (error "Unknown method -- TABLE" m))))
+      dispatch))
+#+end_src
+
+#+begin_src racket :exports both
+  #lang sicp
+
+  <<ex3.24-table2-same-key?>>
+
+  (define t (make-table eq?))
+  ((t 'insert!-proc) 'a 'a1 10)
+  ((t 'insert!-proc) 'a 'a2 11)
+  ((t 'insert!-proc) 'a 'a3 12)
+  ((t 'insert!-proc) 'a 'a4 13)
+  ((t 'insert!-proc) 'b 'b1 20)
+  ((t 'insert!-proc) 'b 'b2 21)
+  ((t 'insert!-proc) 'b 'b3 22)
+
+  ((t 'lookup-proc) 'a 'a1)
+  ((t 'lookup-proc) 'a 'a4)
+  ((t 'lookup-proc) 'a 'a5)
+  ((t 'lookup-proc) 'b 'b1)
+  ((t 'lookup-proc) 'b 'b3)
+  ((t 'lookup-proc) 'b 'b4)
+  ((t 'lookup-proc) 'c 'c1)
+
+  (define t2 (make-table (lambda (k1 k2)
+			   (cond ((and (number? k1) (number? k2))
+				  (< (abs (- k1 k2)) 0.0001))
+				 (else
+                                  (equal? k1 k2))))))
+  ((t2 'insert!-proc) 0.001 'a1 10)
+  ((t2 'lookup-proc) 0.00105 'a1)
+  ((t2 'lookup-proc) 0.002 'a1)
+#+end_src
+
+#+RESULTS[9132de42dc44f340bc7174bf7a3c8044be9e7118]:
+#+begin_example
+ok
+ok
+ok
+ok
+ok
+ok
+ok
+10
+13
+#f
+20
+22
+#f
+#f
+ok
+10
+#f
+#+end_example
+
+*** Exercise 3.25 - table-x
+
+Generalizing one- and two-dimensional tables, show how to implement a table in which values are stored under an arbitrary number of keys and different values may be stored under different number of keys. The ~lookup~ and ~insert!~ procedures should take as an input a list of keys used to access the table.
+
+-----
+
+There are two complications:
+1. recursive access to the record
+2. a key prefix can contain a value /and/ a subtable
+
+To address #2 we can model a record with three values, key, value, subtable, where value and subtable are both optional.
+Records operations are abstracted with a private interface - ~make-record~, ~key-record~, ~value-record~, ~subtable-record~, ~set-value-record!~ and ~set-subtable-record!~.
+They are implemented using list of 3 items, ~'(key value subtable)~ and respective accessors/mutators.
+
+Similarly to table1 and table2, table-x is implemented as a headed list, with top-level head resembling a record for uniformity.
+
+Publicly exposed functions ~lookup~ and ~insert!~ validate that ~keys~ list is not empty, and call recursive implementations, ~lookup-rec~ and ~insert-rec!~ respectively.
+
+~lookup-rec~ tries to find a record associated with the first key in ~keys~ in the ~parent~ subtable. If there are none, no value with associated ~keys~ exists in the table and it returns ~false~. If there is a record, 3 cases are possible:
+- this is the last part of the key and the record has a value, then return the value,
+- this is the last part of the key and the record has no value (record only has subtable), the return ~false~,
+- this is not the last part of the key, then recursively call ~lookup-rec~ on this record with the rest of the keys.
+
+~insert-rec!~ tries to find a record associated with the first key in ~keys~ in the ~parent~ subtable. If there are none, helper ~create!~ is called that will recursively insert all missing records and backbone pairs. If there is a record and it's the final key, update the value in this record. Finally, if there is a record and there are more keys, call ~insert-rec!~ on the record with the rest of the keys.
+
+~(create! keys value parent)~ helper creates a new record and a new backbone pair, and inserts the pair into ~parent~'s backbone. If this is the final key, update the new record's value, otherwise recursively ~create!~ nested structures starting from the record.
+
+To easily inspect the table, ~(collect-rec parent keys-prefix acc)~ procedure can be used. ~collect-rec~ essentially implements a depth-first search, tracking the ~keys-prefix~ and accumulating ~(keys . value)~ pairs if a record with the value was reached (but not stopping there).
+
+#+name: ex3.25-table-x
+#+begin_src racket
+  (define (make-table-x)
+    (define (make-record key value subtable)
+      (list key value subtable))
+    (define (key-record r) (car r))
+    (define (value-record r) (cadr r))
+    (define (subtable-record r) (caddr r))
+    (define (set-value-record! r v) (set-car! (cdr r) v))
+    (define (set-subtable-record! r v) (set-car! (cddr r) v))
+
+    (define (assoc key backbone)
+      (cond ((null? backbone) false)
+	    ((eq? key (caar backbone)) (car backbone))
+	    (else (assoc key (cdr backbone)))))
+
+    (define (lookup-rec keys parent)
+      (let ((record (assoc (car keys) (subtable-record parent))))
+	(cond ((not record) false)
+	      ((null? (cdr keys))
+	       (if (null? (value-record record))
+		   false
+		   (value-record record)))
+	      (else (lookup-rec (cdr keys) record)))))
+
+    (define (create! keys value parent)
+      (let* ((new-record (make-record (car keys) '() '()))
+	     (new-subtable (cons new-record (subtable-record parent))))
+	(set-subtable-record! parent new-subtable)
+	(if (null? (cdr keys))
+	    (set-value-record! new-record value)
+	    (create! (cdr keys) value new-record))))
+
+    (define (insert-rec! keys value parent)
+      (let ((record (assoc (car keys) (subtable-record parent))))
+	(cond ((not record)
+	       (create! keys value parent))
+	      ((null? (cdr keys))
+	       (set-value-record! record value))
+	      (else
+	       (insert-rec! (cdr keys) value record))))
+      'ok)
+
+    (define (collect-rec parent keys-prefix acc)
+      (define (iter backbone acc)
+	(if (null? backbone)
+	    acc
+	    (let* ((record (car backbone))
+		   (keys-prefix-1 (cons (key-record record) keys-prefix))
+		   (acc-1 (collect-rec record
+				       keys-prefix-1
+				       (if (null? (value-record record))
+					   acc
+					   (cons (cons (reverse keys-prefix-1)
+						       (value-record record))
+						 acc)))))
+	      (iter (cdr backbone) acc-1))))
+      (iter (subtable-record parent) acc))
+
+    (let ((root (make-record '*table* '() '())))
+      (define (lookup keys)
+	(if (null? keys)
+	    (error "Empty keys")
+	    (lookup-rec keys root)))
+      (define (insert! keys value)
+	(if (null? keys)
+	    (error "Empty keys")
+	    (insert-rec! keys value root)))
+      (define (print-table)
+	(display (collect-rec root '() '()))
+	(newline))
+
+      (define (dispatch m)
+	(cond ((eq? m 'lookup) lookup)
+	      ((eq? m 'insert!) insert!)
+	      ((eq? m 'print) (print-table))
+	      (else (error "Unknown method -- TABLE-X" m))))
+      dispatch))
+#+end_src
+
+#+RESULTS[d13466ca3793e7393455065418654883ccdc4926]:
+
+#+begin_src racket :tangle ex3.25-table-x.rkt :exports both
+  #lang sicp
+
+  <<ex3.25-table-x>>
+
+  (define tab (make-table-x))
+
+  ((tab 'insert!) (list 'a) 10)
+  (tab 'print)
+  ((tab 'insert!) (list 'a 'a1) 11)
+  ((tab 'lookup) (list 'a))
+  ((tab 'lookup) (list 'a 'a1))
+  ((tab 'insert!) (list 'a 'a1 'a2 'a3) 12)
+  ((tab 'lookup) (list 'a))
+  ((tab 'lookup) (list 'a 'a1))
+  ((tab 'lookup) (list 'a 'a1 'a2))
+  (tab 'print)
+  ((tab 'lookup) (list 'a 'a1 'a2 'a3))
+  ((tab 'insert!) (list 'a 'a1 'a2) 13)
+  ((tab 'insert!) (list 'b) 10)
+  ((tab 'insert!) (list 'b 'a1) 11)
+  ((tab 'insert!) (list 'b 'a1 'a2 'a3) 12)
+  ((tab 'insert!) (list 'b 'a1 'a2) 13)
+  ((tab 'lookup) (list 'b 'a1))
+  (tab 'print)
+#+end_src
+
+#+RESULTS[58629191db689199df73813ed6547b2d14405c74]:
+#+begin_example
+ok
+(((a) . 10))
+ok
+10
+11
+ok
+10
+11
+#f
+(((a a1 a2 a3) . 12) ((a a1) . 11) ((a) . 10))
+12
+ok
+ok
+ok
+ok
+ok
+11
+(((a a1 a2 a3) . 12) ((a a1 a2) . 13) ((a a1) . 11) ((a) . 10) ((b a1 a2 a3) . 12) ((b a1 a2) . 13) ((b a1) . 11) ((b) . 10))
+#+end_example
